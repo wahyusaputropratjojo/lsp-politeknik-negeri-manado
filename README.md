@@ -1,0 +1,1 @@
+# LSP Politeknik Negeri Manado
