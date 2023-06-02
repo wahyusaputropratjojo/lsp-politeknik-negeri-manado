@@ -2,6 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+	font-family: 'Aileron';
+	src: url('../src/assets/fonts/aileron/aileron-regular-400.otf')
+		format('truetype');
+	font-weight: 400; /* Regular */
+	font-style: normal; /* Normal (non-italic) */
+}
+
+@font-face {
+	font-family: 'Aileron';
+	src: url('../src/assets/fonts/aileron/aileron-bold-700.otf')
+		format('truetype');
+	font-weight: 700; /* Regular */
+	font-style: normal; /* Normal (non-italic) */
+}
+
+@font-face {
+	font-family: 'Anek Latin';
+	src: url('../src/assets/fonts/anek-latin/anek-latin-regular-400.ttf')
+		format('truetype');
+	font-weight: 400; /* Regular */
+	font-style: normal; /* Normal (non-italic) */
+}
+
+@font-face {
+	font-family: 'Anek Latin';
+	src: url('../src/assets/fonts/anek-latin/anek-latin-semibold-600.ttf')
+		format('truetype');
+	font-weight: 600; /* Regular */
+	font-style: normal; /* Normal (non-italic) */
+}
+
+@font-face {
+	font-family: 'Anek Latin';
+	src: url('../src/assets/fonts/anek-latin/anek-latin-bold-700.ttf')
+		format('truetype');
+	font-weight: 700; /* Regular */
+	font-style: normal; /* Normal (non-italic) */
+}
+
+@font-face {
+	font-family: 'Anek Latin';
+	src: url('../src/assets/fonts/anek-latin/anek-latin-extrabold-800.ttf')
+		format('truetype');
+	font-weight: 800; /* Regular */
+	font-style: normal; /* Normal (non-italic) */
+}
+
 *,
 *::before,
 *::after {
