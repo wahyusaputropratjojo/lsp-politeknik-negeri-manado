@@ -1,0 +1,19 @@
+{
+	"name": "server-lsp-politeknik-negeri-manado",
+	"version": "1.0.0",
+	"description": "Aplikasi Server untuk LSP Politeknik Negeri Manado",
+	"main": "main.js",
+	"type": "module",
+	"scripts": {
+		"dev": "nodemon main.js"
+	},
+	"author": "Wahyu Saputro Pratjojo",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.18.2",
+		"nodemon": "^2.0.22"
+	},
+	"devDependencies": {
+		"prisma": "^4.15.0"
+	}
+}
