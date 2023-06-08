@@ -9,3 +9,32 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String   @id @default(uuid()) @map("id_user")
+  email     String   @unique @map("email")
+  password  String   @map("password")
+  role      Role     @default(peserta) @map("role")
+  profil    Profil?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model Profil {
+  id        String   @id @default(uuid()) @map("id_profil")
+  nama      String   @map("nama")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique @map("id_user")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("profil")
+}
+
+enum Role {
+  peserta
+  asesor
+  administrator
+}
