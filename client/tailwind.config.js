@@ -81,10 +81,10 @@ export default {
 					white: '#ffffff',
 				},
 			},
-		},
-		fontFamily: {
-			aileron: ['Aileron'],
-			'anek-latin': ['Anek Latin'],
+			fontFamily: {
+				aileron: ['Aileron'],
+				'anek-latin': ['Anek Latin'],
+			},
 		},
 	},
 	plugins: [],

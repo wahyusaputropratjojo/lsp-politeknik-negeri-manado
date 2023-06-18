@@ -1,20 +1,20 @@
 import { Navigation } from './Navigation';
 
-import { LogoLSP, LogoPoliteknikNegeriManado } from '../../assets/logo/Logo';
+import { LSP } from '../../assets/logo/components';
 
 import {
 	Home01,
 	UserSquare,
 	DotsVertical,
 	User01,
-} from '../../assets/icons/untitled-ui/line-icons/UntitledUILineIcons';
+} from '../../assets/icons/untitled-ui-icons/line/components';
 
 export const Sidebar = (props) => {
 	return (
 		<>
 			<div className="flex h-full flex-col justify-between gap-11 rounded-2xl bg-shades-white px-8 py-8">
 				<div>
-					<LogoLSP className="h-10" />
+					<LSP className="h-10" />
 				</div>
 				<nav className="flex h-full max-h-full flex-col gap-1">
 					<Navigation
