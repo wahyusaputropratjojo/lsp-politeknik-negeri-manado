@@ -1,28 +1,29 @@
-// import package
+// Packages
 import express from 'express';
+import { Role } from '@prisma/client';
 
-// import controller function
+// Middleware
+import { authenticationUser } from '../middlewares/authentication.js';
+import { authorizationRole } from '../middlewares/authorization.js';
+
+// Controllers
 import {
 	getUser,
 	getAllUsers,
 	createUser,
 	updateUser,
 	deleteUser,
-	registerUser,
-	loginUser,
-	currentUser,
 } from '../controllers/userController.js';
 
-// import middeleware
-import { validateTokenHandler } from '../middleware/validateTokenHandler.js';
+export const route = express.Router();
 
-export const router = express.Router();
-
-router.post('/', createUser);
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.get('/current', validateTokenHandler, currentUser);
-router.get('/', getAllUsers);
-router.get('/:id', getUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+route.post('/', createUser);
+route.get('/', getAllUsers);
+route.get('/:id', getUser);
+route.put('/:id', updateUser);
+route.delete(
+	'/:id',
+	authenticationUser,
+	authorizationRole(Role.Administrator, Role.Asesor, Role.Peserta),
+	deleteUser,
+);

@@ -1,6 +1,4 @@
 import asyncHandler from 'express-async-handler';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -105,117 +103,15 @@ export const deleteUser = async (req, res) => {
 	});
 };
 
-export const registerUser = asyncHandler(async (req, res) => {
-	const { nama, email, password } = req.body;
+// export const currentUser = asyncHandler(async (req, res) => {
+// 	const user = req.user;
 
-	const emailAvailability = await prisma.user.findUnique({
-		where: {
-			email,
-		},
-	});
-
-	// validasi
-	if (!nama && !email && !password) {
-		res.status(400);
-		throw new Error('Semua kolom harus diisi!');
-	} else if (!nama) {
-		res.status(400);
-		throw new Error('Kolom Nama harus diisi!');
-	} else if (!email) {
-		res.status(400);
-		throw new Error('Kolom Email harus diisi!');
-	} else if (!password) {
-		res.status(400);
-		throw new Error('Kolom Password harus diisi!');
-	} else if (emailAvailability) {
-		res.status(400);
-		throw new Error('Email sudah digunakan!');
-	}
-
-	const hashedPassword = await bcrypt.hash(password, 10);
-
-	const user = await prisma.user.create({
-		data: {
-			email,
-			password: hashedPassword,
-			profil: {
-				create: {
-					nama,
-				},
-			},
-		},
-		include: {
-			profil: true,
-		},
-	});
-
-	res.status(201).json({
-		code: 201,
-		status: 'Created',
-		message: 'Pendaftaran berhasil',
-		data: {
-			...user,
-		},
-	});
-});
-
-export const loginUser = asyncHandler(async (req, res) => {
-	const { email, password } = req.body;
-
-	if (!email && !password) {
-		res.status(400);
-		throw new Error('Semua kolom harus diisi!');
-	} else if (!email) {
-		res.status(400);
-		throw new Error('Kolom Email harus diisi!');
-	} else if (!password) {
-		res.status(400);
-		throw new Error('Kolom Password harus diisi!');
-	}
-
-	const user = await prisma.user.findUnique({
-		where: {
-			email,
-		},
-		include: {
-			profil: true,
-		},
-	});
-
-	if (user && (await bcrypt.compare(password, user.password))) {
-		const accessToken = jwt.sign(
-			{
-				id: user.id,
-				nama: user.profil.nama,
-				email: user.email,
-				role: user.role,
-			},
-			process.env.ACCESS_TOKEN_SECRET,
-			{ expiresIn: '1h' },
-		);
-
-		res.status(200).json({ accessToken });
-	} else {
-		res.status(401);
-		throw new Error('Email atau password salah!');
-	}
-
-	res.status(200).json({
-		code: 200,
-		status: 'OK',
-		message: 'Login',
-	});
-});
-
-export const currentUser = asyncHandler(async (req, res) => {
-	const user = req.user;
-
-	res.status(200).json({
-		code: 200,
-		status: 'OK',
-		message: 'Current user',
-		data: {
-			...user,
-		},
-	});
-});
+// 	res.status(200).json({
+// 		code: 200,
+// 		status: 'OK',
+// 		message: 'Current user',
+// 		data: {
+// 			...user,
+// 		},
+// 	});
+// });

@@ -14,8 +14,9 @@ model User {
   id        String   @id @default(uuid()) @map("id_user")
   email     String   @unique @map("email")
   password  String   @map("password")
-  role      Role     @default(peserta) @map("role")
+  role      Role     @default(Peserta) @map("role")
   profil    Profil?
+  auth      Auth[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -25,7 +26,7 @@ model User {
 model Profil {
   id        String   @id @default(uuid()) @map("id_profil")
   nama      String   @map("nama")
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @unique @map("id_user")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -33,8 +34,17 @@ model Profil {
   @@map("profil")
 }
 
+model Auth {
+  id     String @id @default(uuid()) @map("id_jwt")
+  token  String @map("token") @db.Text
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("id_user")
+
+  @@map("auth")
+}
+
 enum Role {
-  peserta
-  asesor
-  administrator
+  Peserta
+  Asesor
+  Administrator
 }
