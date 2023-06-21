@@ -1,15 +1,12 @@
-import { Button } from '../components/Button';
-
-import { CheckCircle } from '../assets/icons/untitled-ui-icons/line/components';
+import { Input } from '../components/ui/input';
 
 export const Test = () => {
 	return (
 		<>
-			<div className="mx-[auto] flex h-[100vh] max-w-[16rem] items-center justify-center">
-				<Button
-					label="Daftar"
-					icon={<CheckCircle />}
-				/>
+			<div className="w-full bg-neutral-500">
+				<div className="mx-[auto] flex h-[100vh] max-w-[16rem] items-center justify-center">
+					<Input />
+				</div>
 			</div>
 		</>
 	);

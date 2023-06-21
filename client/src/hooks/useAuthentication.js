@@ -1,28 +1,41 @@
-import { useMutation } from '@tanstack/react-query';
-import { axiosPublic, axiosPrivate } from '../utils/axios';
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
-export const useRegister = (onSuccess) => {
-	return useMutation({
-		mutationFn: (data) => {
-			return axiosPublic.post('/auth/register', data);
-		},
-		onSuccess,
-	});
-};
+export const useSetToken = () => {
+	const { data, mutate } = useRefreshToken();
+	const { auth } = useContext(AuthContext);
 
-export const useLogin = (onSuccess) => {
-	return useMutation({
-		mutationFn: (data) => {
-			return axiosPublic.post('/auth/login', data);
-		},
-		onSuccess,
-	});
-};
+	useEffect(() => {
+		const requestInterceptor = axiosPrivate.interceptors.request.use(
+			(config) => {
+				if (!config.headers.Authorization) {
+					config.headers['Authorization'] = `Bearer ${auth.accessToken}`;
+				}
+				return config;
+			},
+			(error) => Promise.reject(error),
+		);
 
-export const useRefreshToken = () => {
-	return useMutation({
-		mutationFn: () => {
-			return axiosPrivate.get('/auth/token/access/refresh');
-		},
-	});
+		const responseInterceptor = axiosPrivate.interceptors.response.use(
+			(response) => response,
+			async (error) => {
+				const prevRequest = error?.config;
+				if (error?.response?.status === 403 && !prevRequest?.sent) {
+					prevRequest.sent = true;
+					mutate();
+					const newAccessToken = data?.data?.accessToken;
+					prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+					return axiosPrivate(prevRequest);
+				}
+				return Promise.reject(error);
+			},
+		);
+
+		return () => {
+			axiosPrivate.interceptors.request.eject(requestInterceptor);
+			axiosPrivate.interceptors.response.eject(responseInterceptor);
+		};
+	}, [auth, mutate]);
+
+	return axiosPrivate;
 };

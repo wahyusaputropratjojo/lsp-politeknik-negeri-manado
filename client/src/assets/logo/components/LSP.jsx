@@ -1,8 +1,7 @@
 const SvgLSP = ({ title, titleId, ...props }) => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
-		width={103}
-		height={33}
+		viewBox="0 0 103 32"
 		fill="none"
 		aria-labelledby={titleId}
 		{...props}>

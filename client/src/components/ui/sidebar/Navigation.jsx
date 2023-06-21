@@ -1,6 +1,12 @@
 import { NavLink } from 'react-router-dom';
 
 export const Navigation = (props) => {
+	let isHide = false;
+
+	if (props.hide === true || props.hide === true) {
+		isHide = true;
+	}
+
 	return (
 		<>
 			<NavLink
@@ -9,7 +15,7 @@ export const Navigation = (props) => {
 				<span>
 					<props.icon className="text-lg text-secondary-500" />
 				</span>
-				{props.label}
+				{!isHide && <p>{props.label}</p>}
 			</NavLink>
 		</>
 	);

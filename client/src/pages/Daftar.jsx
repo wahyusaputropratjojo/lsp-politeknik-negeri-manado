@@ -2,75 +2,75 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { DevTool } from '@hookform/devtools';
+import { useMutation } from '@tanstack/react-query';
 
-// Hooks
-import { useRegister } from '../hooks/useAuthentication';
+// Utils
+import axios from '../utils/axios';
+import { registerSchema } from '../utils/yup';
 
-//Logo
-import { BNSP, LSP } from '../assets/logo/components';
-
-// Button
-import { Button } from '../components/Button';
-
-// Input
-import { Input } from '../components/Input';
+// Components
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '../components/ui/form';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '../components/ui/dialog';
 
 // Assets
-import { InfoCircle } from '../assets/icons/untitled-ui-icons/line/components';
+import BNSP from '../assets/logo/components/BNSP';
+import LSP from '../assets/logo/components/LSP';
+import CheckCircle from '../assets/icons/untitled-ui-icons/line/components/CheckCircle';
 
 export const Daftar = () => {
 	const navigate = useNavigate();
 
-	const onSuccess = (data) => {
-		console.log(data);
-		navigate('/masuk');
-	};
-
-	const { mutate } = useRegister(onSuccess);
-
-	const schema = yup.object().shape({
-		nama: yup.string().required('Nama tidak boleh kosong!'),
-		email: yup
-			.string()
-			.required('Email tidak boleh kosong!')
-			.email('Format Email tidak valid!'),
-		password: yup.string().required('Password tidak boleh kosong!'),
-		konfirmasiPassword: yup
-			.string()
-			.required('Konfirmasi Password tidak boleh kosong!')
-			.oneOf([yup.ref('password'), null], 'Password tidak sama!'),
+	const { error, isError, isSuccess, mutate } = useMutation({
+		mutationFn: async (data) => await axios.post('/auth/register', data),
+		onSuccess: () => {
+			setTimeout(() => {
+				navigate('/masuk');
+			}, 2000);
+		},
 	});
 
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isSubmitting, isSubmitSuccessful },
-		control,
-	} = useForm({
-		resolver: yupResolver(schema),
+	const form = useForm({
+		resolver: yupResolver(registerSchema),
 		mode: 'onSubmit',
 	});
 
 	const onSubmit = (data) => {
+		if (isError) {
+			form.setError('email', {
+				type: 'manual',
+				message: error.response.data.message,
+			});
+		}
+
 		const { nama, email, password } = data;
 
-		const userRegister = {
+		mutate({
 			nama,
 			email,
 			password,
-		};
-
-		mutate(userRegister);
-
-		// console.log(data);
+		});
 	};
 
 	return (
 		<>
 			<div className="flex h-full justify-center gap-16">
-				<div className="flex h-full w-[28rem] min-w-max flex-col justify-between rounded-2xl bg-shades-white p-12">
+				<div className="flex h-full w-[28rem] min-w-max flex-col justify-between rounded-2xl bg-white p-12">
 					<div>
 						<LSP className="h-12" />
 					</div>
@@ -87,69 +87,127 @@ export const Daftar = () => {
 						<BNSP className="h-8" />
 					</div>
 				</div>
-				<form
-					className="flex w-[28rem] flex-col justify-between gap-12 py-8"
-					onSubmit={handleSubmit(onSubmit)}>
-					<div className="flex flex-col">
-						<h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
-							Daftar
-						</h1>
-						<p className="font-aileron text-base text-secondary-500">
-							Sudah punya Akun?{' '}
-							<Link
-								to="/masuk"
-								className="underline">
-								Masuk Sekarang
-							</Link>
-						</p>
-					</div>
-					<div className="flex max-h-[35rem] flex-col gap-4 overflow-y-auto">
-						<Input
-							id="nama"
-							label="Nama"
-							type="text"
-							state={errors.nama ? 'true' : 'false'}
-							message={errors.nama?.message}
-							messageicon={<InfoCircle />}
-							register={{ ...register('nama') }}
-						/>
-						<Input
-							id="email"
-							label="Email"
-							type="text"
-							state={errors.email ? 'true' : 'false'}
-							message={errors.email?.message}
-							messageicon={<InfoCircle />}
-							register={{ ...register('email') }}
-						/>
-						<Input
-							id="katasandi"
-							label="Password"
-							type="password"
-							state={errors.password ? 'true' : 'false'}
-							message={errors.password?.message}
-							messageicon={<InfoCircle />}
-							register={{ ...register('password') }}
-						/>
-						<Input
-							id="konfirmasikatasandi"
-							label="Konfirmasi Password"
-							type="password"
-							state={errors.konfirmasiPassword ? 'true' : 'false'}
-							message={errors.konfirmasiPassword?.message}
-							messageicon={<InfoCircle />}
-							register={{ ...register('konfirmasiPassword') }}
-						/>
-					</div>
-					<div>
-						<Button
-							label="Daftar"
-							disabled={isSubmitting}
-							fillcontainer="true"
-						/>
-					</div>
-				</form>
-				<DevTool control={control} />
+				<div className="flex w-[28rem] flex-col py-8">
+					<Form {...form}>
+						<form
+							onSubmit={form.handleSubmit(onSubmit)}
+							className="flex h-full flex-col justify-between gap-12">
+							<div className="flex flex-col">
+								<h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
+									Daftar
+								</h1>
+								<p className="font-aileron text-base text-secondary-500">
+									Sudah punya Akun?{' '}
+									<Link
+										to="/masuk"
+										className="underline">
+										Masuk Sekarang
+									</Link>
+								</p>
+							</div>
+							<div className="flex max-h-[36rem] flex-col gap-4 overflow-y-auto">
+								<FormField
+									control={form.control}
+									name="nama"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Nama</FormLabel>
+											<FormControl>
+												<Input
+													type="text"
+													variant={
+														form.formState.errors?.nama ? 'error' : 'primary'
+													}
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="email"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Email</FormLabel>
+											<FormControl>
+												<Input
+													type="email"
+													variant={
+														form.formState.errors?.email ? 'error' : 'primary'
+													}
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="password"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Password</FormLabel>
+											<FormControl>
+												<Input
+													type="password"
+													variant={
+														form.formState.errors?.password
+															? 'error'
+															: 'primary'
+													}
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="konfirmasiPassword"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Konfirmasi Password</FormLabel>
+											<FormControl>
+												<Input
+													type="password"
+													variant={
+														form.formState.errors?.konfirmasiPassword
+															? 'error'
+															: 'primary'
+													}
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+							<div>
+								<Dialog>
+									<DialogTrigger className="w-full">
+										<Button size="large">Daftar</Button>
+									</DialogTrigger>
+									{isSuccess && (
+										<DialogContent className="w-max p-12">
+											<DialogHeader className="flex items-center">
+												<CheckCircle className="text-7xl text-success-500" />
+												<DialogTitle className="font-anek-latin text-2xl font-semibold">
+													Pendaftaran Berhasil
+												</DialogTitle>
+											</DialogHeader>
+										</DialogContent>
+									)}
+								</Dialog>
+							</div>
+						</form>
+					</Form>
+				</div>
+				<DevTool control={form.control} />
 			</div>
 		</>
 	);

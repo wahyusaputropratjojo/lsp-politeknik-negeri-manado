@@ -1,8 +1,7 @@
 const SvgBNSP = ({ title, titleId, ...props }) => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
-		width={83}
-		height={32}
+		viewBox="0 0 83 32"
 		fill="none"
 		aria-labelledby={titleId}
 		{...props}>

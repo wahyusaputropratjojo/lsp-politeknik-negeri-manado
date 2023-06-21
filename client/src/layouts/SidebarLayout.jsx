@@ -1,17 +1,19 @@
 import { Outlet } from 'react-router-dom';
 
-import { Sidebar } from '../components/Sidebar/Sidebar';
+import { Sidebar } from '../components/ui/sidebar';
 
 export const SidebarLayout = () => {
 	return (
 		<>
-			<div className="flex h-[100vh] gap-8 p-4">
-				<header className="min-w-[18rem]">
-					<Sidebar />
-				</header>
-				<main className="w-full">
-					<Outlet />
-				</main>
+			<div className="container mx-auto flex">
+				<div className="flex h-[100vh] w-full gap-12 p-4">
+					<header className="w-min">
+						<Sidebar />
+					</header>
+					<main className="w-full">
+						<Outlet />
+					</main>
+				</div>
 			</div>
 		</>
 	);

@@ -5,7 +5,11 @@ import {
 } from 'react-router-dom';
 
 // Components
-import { Authentication } from './components/Auth/Authentication';
+import {
+	Authentication,
+	RefreshAuthentication,
+	Authorization,
+} from './components/Auth';
 
 // Layouts
 import { DefaultLayout } from './layouts/DefaultLayout';
@@ -28,18 +32,27 @@ const Roles = {
 export const Router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route>
-			<Route element={<Authentication allowedRoles={Roles.Administrator} />}>
-				<Route
-					path="/"
-					element={<SidebarLayout />}>
+			<Route element={<RefreshAuthentication />}>
+				<Route element={<Authentication />}>
 					<Route
-						index
-						element={<Dashboard />}
-					/>
-					<Route
-						path="kontak"
-						element={<Kontak />}
-					/>
+						path="/"
+						element={<SidebarLayout />}>
+						<Route
+							index
+							element={<Dashboard />}
+						/>
+						<Route
+							element={
+								<Authorization
+									allowedRoles={[Roles.Peserta, Roles.Administrator]}
+								/>
+							}>
+							<Route
+								path="kontak"
+								element={<Kontak />}
+							/>
+						</Route>
+					</Route>
 				</Route>
 			</Route>
 			<Route
