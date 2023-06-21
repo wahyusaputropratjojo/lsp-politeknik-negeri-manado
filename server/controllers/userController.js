@@ -8,6 +8,16 @@ export const getUser = asyncHandler(async (req, res) => {
 		where: {
 			id: req.params.id,
 		},
+		select: {
+			id: true,
+			email: true,
+			role: true,
+			profil: {
+				select: {
+					nama: true,
+				},
+			},
+		},
 	});
 
 	if (user === null) {

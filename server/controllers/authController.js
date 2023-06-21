@@ -138,42 +138,6 @@ export const logout = asyncHandler(async (req, res) => {
 		return res.sendStatus(204);
 	}
 
-	await prisma.auth.delete({
-		where: {
-			id: userRefreshToken.id,
-		},
-	});
-
-	res.clearCookie('refreshToken', {
-		httpOnly: true,
-		secure: true,
-		sameSite: 'none',
-	});
-
-	res.sendStatus(204);
-});
-
-export const logoutAll = asyncHandler(async (req, res) => {
-	const cookies = req.cookies;
-	if (!cookies?.refreshToken) return res.sendStatus(204);
-
-	const refreshToken = cookies.refreshToken;
-
-	const userRefreshToken = await prisma.auth.findFirst({
-		where: {
-			token: refreshToken,
-		},
-	});
-
-	if (!userRefreshToken) {
-		res.clearCookie('refreshToken', {
-			httpOnly: true,
-			secure: true,
-			sameSite: 'none',
-		});
-		return res.sendStatus(204);
-	}
-
 	await prisma.auth.deleteMany({
 		where: {
 			userId: userRefreshToken.userId,
