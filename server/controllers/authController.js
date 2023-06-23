@@ -38,7 +38,7 @@ export const register = asyncHandler(async (req, res) => {
 
 	const hashedPassword = await bcrypt.hash(password, 10);
 
-	const user = await prisma.user.create({
+	await prisma.user.create({
 		data: {
 			email,
 			password: hashedPassword,
@@ -54,9 +54,6 @@ export const register = asyncHandler(async (req, res) => {
 		code: 201,
 		status: 'Created',
 		message: 'Pendaftaran berhasil',
-		data: {
-			...user,
-		},
 	});
 });
 
@@ -92,12 +89,12 @@ export const login = asyncHandler(async (req, res) => {
 
 		await prisma.auth.create({
 			data: {
-				userId: user.id,
+				id_user: user.id,
 				token: refreshToken,
 			},
 		});
 
-		res.cookie('refreshToken', refreshToken, {
+		res.cookie('REFRESH_TOKEN', refreshToken, {
 			httpOnly: true,
 			secure: true,
 			sameSite: 'none',
@@ -107,9 +104,10 @@ export const login = asyncHandler(async (req, res) => {
 		res.status(200).json({
 			code: 200,
 			status: 'OK',
-			message: 'Login',
-			...payload,
-			accessToken,
+			message: 'Login Berhasil',
+			data: {
+				access_token: accessToken,
+			},
 		});
 	} else {
 		res.status(401);
@@ -119,9 +117,9 @@ export const login = asyncHandler(async (req, res) => {
 
 export const logout = asyncHandler(async (req, res) => {
 	const cookies = req.cookies;
-	if (!cookies?.refreshToken) return res.sendStatus(204);
+	if (!cookies?.REFRESH_TOKEN) return res.sendStatus(204);
 
-	const refreshToken = cookies.refreshToken;
+	const refreshToken = cookies.REFRESH_TOKEN;
 
 	const userRefreshToken = await prisma.auth.findFirst({
 		where: {
@@ -130,7 +128,7 @@ export const logout = asyncHandler(async (req, res) => {
 	});
 
 	if (!userRefreshToken) {
-		res.clearCookie('refreshToken', {
+		res.clearCookie('REFRESH_TOKEN', {
 			httpOnly: true,
 			secure: true,
 			sameSite: 'none',
@@ -140,11 +138,11 @@ export const logout = asyncHandler(async (req, res) => {
 
 	await prisma.auth.deleteMany({
 		where: {
-			userId: userRefreshToken.userId,
+			id_user: userRefreshToken.userId,
 		},
 	});
 
-	res.clearCookie('refreshToken', {
+	res.clearCookie('REFRESH_TOKEN', {
 		httpOnly: true,
 		secure: true,
 		sameSite: 'none',
@@ -155,9 +153,9 @@ export const logout = asyncHandler(async (req, res) => {
 
 export const accessTokenRefresh = asyncHandler(async (req, res) => {
 	const cookies = req.cookies;
-	if (!cookies?.refreshToken) return res.sendStatus(401);
+	if (!cookies?.REFRESH_TOKEN) return res.sendStatus(401);
 
-	const refreshToken = cookies.refreshToken;
+	const refreshToken = cookies.REFRESH_TOKEN;
 
 	const userRefreshToken = await prisma.auth.findFirst({
 		where: {
@@ -177,6 +175,11 @@ export const accessTokenRefresh = asyncHandler(async (req, res) => {
 	const accessToken = generateAccessToken(payload);
 
 	res.status(200).json({
-		accessToken,
+		code: 200,
+		status: 'OK',
+		message: 'Access Token berhasil diperbarui',
+		data: {
+			access_token: accessToken,
+		},
 	});
 });

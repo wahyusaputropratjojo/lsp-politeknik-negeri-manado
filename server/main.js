@@ -13,6 +13,8 @@ import { credentials } from './middlewares/credentials.js';
 // Routes
 import { route as authRoute } from './routes/authRoute.js';
 import { route as userRoute } from './routes/userRoute.js';
+import { route as skemaSertifikasiRoute } from './routes/skemaSertifikasiRoute.js';
+import { route as unitKompetensiRoute } from './routes/unitKompetensiRoute.js';
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
+app.use('/api/skema-sertifikasi', skemaSertifikasiRoute);
+app.use('/api/unit-kompetensi', unitKompetensiRoute);
 
 app.use(errorHandler);
 

@@ -11,36 +11,123 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid()) @map("id_user")
-  email     String   @unique @map("email")
-  password  String   @map("password")
-  role      Role     @default(Peserta) @map("role")
-  profil    Profil?
-  auth      Auth[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id         String   @id @default(uuid()) @map("id")
+  email      String   @unique @map("email")
+  password   String   @map("password")
+  role       Role     @default(Peserta) @map("role")
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  profil     Profil?
+  auth       Auth[]
 
   @@map("user")
 }
 
 model Profil {
-  id        String   @id @default(uuid()) @map("id_profil")
-  nama      String   @map("nama")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String   @unique @map("id_user")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id         String   @id @default(uuid()) @map("id")
+  id_user    String   @unique @map("id_user")
+  nama       String   @map("nama")
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [id_user], references: [id], onDelete: Cascade)
 
   @@map("profil")
 }
 
 model Auth {
-  id     String @id @default(uuid()) @map("id_jwt")
-  token  String @map("token") @db.Text
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @map("id_user")
+  id         String   @id @default(uuid()) @map("id")
+  id_user    String   @map("id_user")
+  token      String   @map("token") @db.Text
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [id_user], references: [id], onDelete: Cascade)
 
   @@map("auth")
+}
+
+model SkemaSertifikasi {
+  id              String           @id @default(uuid()) @map("id")
+  kode            String           @unique @map("kode")
+  nama            String           @map("nama")
+  created_at      DateTime         @default(now()) @map("created_at")
+  updated_at      DateTime         @updatedAt @map("updated_at")
+  unit_kompetensi UnitKompetensi[]
+
+  @@map("skema_sertifikasi")
+}
+
+model UnitKompetensi {
+  id                        String                    @id @default(uuid()) @map("id")
+  id_skema_sertifikasi      String                    @map("id_skema_sertifikasi")
+  kode                      String                    @unique @map("kode")
+  nama                      String                    @map("nama")
+  standar_kompetensi        String                    @map("standar_kompetensi")
+  skema_sertifikasi         SkemaSertifikasi          @relation(fields: [id_skema_sertifikasi], references: [id])
+  aktivitas_unit_kompetensi AktivitasUnitKompetensi[]
+  pertanyaan_observasi      PertanyaanObservasi[]
+  pertanyaan_esai           PertanyaanEsai[]
+  pertanyaan_lisan          PertanyaanLisan[]
+  pertanyaan_tertulis       PertanyaanTertulis[]
+
+  @@map("unit_kompetensi")
+}
+
+model AktivitasUnitKompetensi {
+  id                 String         @id @default(uuid()) @map("id")
+  id_unit_kompetensi String         @map("id_unit_kompetensi")
+  element            String         @map("element")
+  kriteria           Json           @map("kriteria")
+  tolok_ukur         String         @map("tolok_ukur")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id])
+
+  @@map("aktivitas_unit_kompetensi")
+}
+
+model PertanyaanObservasi {
+  id                 String         @id @default(uuid()) @map("id")
+  id_unit_kompetensi String         @map("id_unit_kompetensi")
+  pertanyaan         String         @map("pertanyaan")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id])
+
+  @@map("pertanyaan_observasi")
+}
+
+model PertanyaanEsai {
+  id                 String         @id @default(uuid()) @map("id")
+  id_unit_kompetensi String         @map("id_unit_kompetensi")
+  pertanyaan         String         @map("pertanyaan")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id])
+
+  @@map("pertanyaan_esai")
+}
+
+model PertanyaanLisan {
+  id                 String         @id @default(uuid()) @map("id")
+  id_unit_kompetensi String         @map("id_unit_kompetensi")
+  pertanyaan         String         @map("pertanyaan")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id])
+
+  @@map("pertanyaan_lisan")
+}
+
+model PertanyaanTertulis {
+  id                          String                      @id @default(uuid()) @map("id")
+  id_unit_kompetensi          String                      @map("id_unit_kompetensi")
+  pertanyaan                  String                      @map("pertanyaan")
+  unit_kompetensi             UnitKompetensi              @relation(fields: [id_unit_kompetensi], references: [id])
+  jawaban_pertanyaan_tertulis JawabanPertanyaanTertulis[]
+
+  @@map("pertanyaan_tertulis")
+}
+
+model JawabanPertanyaanTertulis {
+  id                     String             @id @default(uuid()) @map("id")
+  id_pertanyaan_tertulis String             @map("id_pertanyaan_tulis")
+  jawaban                String             @map("pertanyaan")
+  benar                  Boolean            @map("benar")
+  pertanyaan_tertulis    PertanyaanTertulis @relation(fields: [id_pertanyaan_tertulis], references: [id])
+
+  @@map("jawaban_pertanyaan_tertulis")
 }
 
 enum Role {

@@ -33,8 +33,16 @@ export const getUser = asyncHandler(async (req, res) => {
 	});
 });
 
-export const getAllUsers = asyncHandler(async (req, res) => {
-	const user = await prisma.user.findMany();
+export const listUser = asyncHandler(async (req, res) => {
+	const user = await prisma.user.findMany({
+		select: {
+			id: true,
+			email: true,
+			role: true,
+			created_at: true,
+			updated_at: true,
+		},
+	});
 
 	res.status(200).json({
 		code: 200,
@@ -77,7 +85,7 @@ export const createUser = asyncHandler(async (req, res) => {
 	});
 });
 
-export const updateUser = async (req, res) => {
+export const updateUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
 	const user = await prisma.user.update({
 		where: {
@@ -97,31 +105,18 @@ export const updateUser = async (req, res) => {
 			...user,
 		},
 	});
-};
+});
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = asyncHandler(async (req, res) => {
 	await prisma.user.delete({
 		where: {
 			id: req.params.id,
 		},
 	});
 
-	res.status(200).json({
+	res.status(204).json({
 		code: 200,
-		status: 'OK',
+		status: 'No Content',
 		message: 'Berhasil menghapus user',
 	});
-};
-
-// export const currentUser = asyncHandler(async (req, res) => {
-// 	const user = req.user;
-
-// 	res.status(200).json({
-// 		code: 200,
-// 		status: 'OK',
-// 		message: 'Current user',
-// 		data: {
-// 			...user,
-// 		},
-// 	});
-// });
+});

@@ -9,7 +9,7 @@ import { authorizationRole } from '../middlewares/authorization.js';
 // Controllers
 import {
 	getUser,
-	getAllUsers,
+	listUser,
 	createUser,
 	updateUser,
 	deleteUser,
@@ -18,12 +18,7 @@ import {
 export const route = express.Router();
 
 route.post('/', createUser);
-route.get('/', getAllUsers);
+route.get('/', listUser);
 route.get('/:id', getUser);
-route.put('/:id', updateUser);
-route.delete(
-	'/:id',
-	authenticationUser,
-	authorizationRole(Role.Administrator, Role.Asesor, Role.Peserta),
-	deleteUser,
-);
+route.patch('/:id', updateUser);
+route.delete('/:id', deleteUser);

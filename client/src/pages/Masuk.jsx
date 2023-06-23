@@ -29,7 +29,6 @@ import {
 // Assets
 import BNSP from '../assets/logo/components/BNSP';
 import LSP from '../assets/logo/components/LSP';
-import InfoCircle from '../assets/icons/untitled-ui-icons/line/components/InfoCircle';
 
 export const Masuk = () => {
 	const navigate = useNavigate();
@@ -41,9 +40,9 @@ export const Masuk = () => {
 			return axios.post('/auth/login', data);
 		},
 		onSuccess: (data) => {
-			const { accessToken } = data.data;
-			const { id, email, role } = decodeJWT(accessToken);
-			setAuth({ id, email, role, accessToken });
+			const { access_token } = data.data.data;
+			const { id, email, role } = decodeJWT(access_token);
+			setAuth({ id, email, role, access_token });
 			navigate('/');
 		},
 	});

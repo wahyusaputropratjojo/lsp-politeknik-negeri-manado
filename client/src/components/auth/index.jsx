@@ -20,7 +20,7 @@ export const Authentication = () => {
 	const { auth } = useContext(AuthContext);
 	const location = useLocation();
 
-	return auth?.accessToken ? (
+	return auth?.access_token ? (
 		<Outlet />
 	) : (
 		<Navigate
@@ -58,12 +58,11 @@ export const RefreshAuthentication = () => {
 		},
 		onSuccess: (data) => {
 			const verify = () => {
-				const { accessToken } = data.data;
-				const { id, email, role } = decodeJWT(data.data.accessToken);
-				setAuth({ id, email, role, accessToken });
+				const { access_token } = data.data.data;
+				const { id, email, role } = decodeJWT(access_token);
+				setAuth({ id, email, role, access_token });
 			};
-
-			!auth?.accessToken && verify();
+			!auth?.access_token && verify();
 		},
 		onError: (error) => {
 			console.log(error);
