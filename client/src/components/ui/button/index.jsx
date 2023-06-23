@@ -14,6 +14,8 @@ export const buttonVariants = cva(
 					'bg-transparent border-4 border-secondary-500 text-secondary-foreground hover:bg-secondary-500 hover:text-white focus:bg-secondary-700 focus:text-white',
 				error:
 					'bg-error-50 text-error-500 hover:bg-error-100 focus:bg-error-200',
+				ghost:
+					'bg-primary-500 hover:bg-primary-500 foucs:bg-secondary-500 active:bg-secondary-700',
 			},
 			size: {
 				small: 'px-4 py-2 text-lg',

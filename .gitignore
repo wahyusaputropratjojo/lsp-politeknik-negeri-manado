@@ -80,3 +80,5 @@ dist-ssr
 /server/*.njsproj
 /server/*.sln
 /server/*.sw?
+
+/server/prisma/migrations/

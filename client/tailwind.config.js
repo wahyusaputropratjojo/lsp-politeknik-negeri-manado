@@ -11,6 +11,9 @@ export default {
 	],
 	theme: {
 		extend: {
+			height: {
+				sidebar: 'calc(100dvh - 2rem)',
+			},
 			colors: {
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
