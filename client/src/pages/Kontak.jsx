@@ -1,7 +1,7 @@
 export const Kontak = () => {
-	return (
-		<>
-			<div className="h-full">Halaman Kontak</div>
-		</>
-	);
+  return (
+    <>
+      <div className="h-full">Halaman Kontak</div>
+    </>
+  );
 };
