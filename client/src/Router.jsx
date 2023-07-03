@@ -16,7 +16,6 @@ import { DefaultLayout, ContentLayout, SidebarLayout } from "./layouts";
 
 // Pages
 import { Dashboard } from "./pages/Dashboard";
-import { Kontak } from "./pages/Kontak";
 import { Masuk } from "./pages/Masuk";
 import { Daftar } from "./pages/Daftar";
 import { Test } from "./pages/Test";

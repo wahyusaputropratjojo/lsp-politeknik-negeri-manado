@@ -46,12 +46,12 @@ model Auth {
 }
 
 model SkemaSertifikasi {
-  id              String           @id @default(uuid()) @map("id")
-  kode            String           @unique @map("kode")
-  nama            String           @map("nama")
-  created_at      DateTime         @default(now()) @map("created_at")
-  updated_at      DateTime         @updatedAt @map("updated_at")
-  unit_kompetensi UnitKompetensi[]
+  id                     String           @id @default(uuid()) @map("id")
+  kode_skema_sertifikasi String           @unique @map("kode")
+  nama_skema_sertifikasi String           @map("nama")
+  created_at             DateTime         @default(now()) @map("created_at")
+  updated_at             DateTime         @updatedAt @map("updated_at")
+  unit_kompetensi        UnitKompetensi[]
 
   @@map("skema_sertifikasi")
 }
@@ -59,10 +59,9 @@ model SkemaSertifikasi {
 model UnitKompetensi {
   id                        String                    @id @default(uuid()) @map("id")
   id_skema_sertifikasi      String                    @map("id_skema_sertifikasi")
-  kode                      String                    @unique @map("kode")
-  nama                      String                    @map("nama")
-  standar_kompetensi        String                    @map("standar_kompetensi")
-  skema_sertifikasi         SkemaSertifikasi          @relation(fields: [id_skema_sertifikasi], references: [id])
+  kode_unit_kompetensi      String                    @unique @map("kode")
+  nama_unit_kompetensi      String                    @map("nama")
+  skema_sertifikasi         SkemaSertifikasi          @relation(fields: [id_skema_sertifikasi], references: [id], onDelete: Cascade)
   aktivitas_unit_kompetensi AktivitasUnitKompetensi[]
   pertanyaan_observasi      PertanyaanObservasi[]
   pertanyaan_esai           PertanyaanEsai[]
@@ -73,21 +72,29 @@ model UnitKompetensi {
 }
 
 model AktivitasUnitKompetensi {
-  id                 String         @id @default(uuid()) @map("id")
-  id_unit_kompetensi String         @map("id_unit_kompetensi")
-  element            String         @map("element")
-  kriteria           Json           @map("kriteria")
-  tolok_ukur         String         @map("tolok_ukur")
-  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id])
+  id                   String               @id @default(uuid()) @map("id")
+  id_unit_kompetensi   String               @map("id_unit_kompetensi")
+  elemen               String               @map("element")
+  unit_kompetensi      UnitKompetensi       @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  kriteria_unjuk_kerja KriteriaUnjukKerja[]
 
   @@map("aktivitas_unit_kompetensi")
+}
+
+model KriteriaUnjukKerja {
+  id                           String                  @id @default(uuid()) @map("id")
+  id_aktivitas_unit_kompetensi String                  @map("id_aktivitas_unit_kompetensi")
+  kriteria                     String                  @map("kriteria_unjuk_kerja")
+  aktivitas_unit_kompetensi    AktivitasUnitKompetensi @relation(fields: [id_aktivitas_unit_kompetensi], references: [id], onDelete: Cascade)
+
+  @@map("kriteria_unjuk_kerja")
 }
 
 model PertanyaanObservasi {
   id                 String         @id @default(uuid()) @map("id")
   id_unit_kompetensi String         @map("id_unit_kompetensi")
   pertanyaan         String         @map("pertanyaan")
-  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id])
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
 
   @@map("pertanyaan_observasi")
 }
@@ -96,7 +103,8 @@ model PertanyaanEsai {
   id                 String         @id @default(uuid()) @map("id")
   id_unit_kompetensi String         @map("id_unit_kompetensi")
   pertanyaan         String         @map("pertanyaan")
-  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id])
+  jawaban            String         @map("jawaban")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
 
   @@map("pertanyaan_esai")
 }
@@ -105,7 +113,8 @@ model PertanyaanLisan {
   id                 String         @id @default(uuid()) @map("id")
   id_unit_kompetensi String         @map("id_unit_kompetensi")
   pertanyaan         String         @map("pertanyaan")
-  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id])
+  jawaban            String         @map("jawaban")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
 
   @@map("pertanyaan_lisan")
 }
@@ -114,7 +123,7 @@ model PertanyaanTertulis {
   id                          String                      @id @default(uuid()) @map("id")
   id_unit_kompetensi          String                      @map("id_unit_kompetensi")
   pertanyaan                  String                      @map("pertanyaan")
-  unit_kompetensi             UnitKompetensi              @relation(fields: [id_unit_kompetensi], references: [id])
+  unit_kompetensi             UnitKompetensi              @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
   jawaban_pertanyaan_tertulis JawabanPertanyaanTertulis[]
 
   @@map("pertanyaan_tertulis")
@@ -123,9 +132,9 @@ model PertanyaanTertulis {
 model JawabanPertanyaanTertulis {
   id                     String             @id @default(uuid()) @map("id")
   id_pertanyaan_tertulis String             @map("id_pertanyaan_tulis")
-  jawaban                String             @map("pertanyaan")
+  jawaban                String             @map("jawaban")
   benar                  Boolean            @map("benar")
-  pertanyaan_tertulis    PertanyaanTertulis @relation(fields: [id_pertanyaan_tertulis], references: [id])
+  pertanyaan_tertulis    PertanyaanTertulis @relation(fields: [id_pertanyaan_tertulis], references: [id], onDelete: Cascade)
 
   @@map("jawaban_pertanyaan_tertulis")
 }

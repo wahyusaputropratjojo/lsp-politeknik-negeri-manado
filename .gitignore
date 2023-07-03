@@ -48,6 +48,8 @@ dist-ssr
 /client/*.sln
 /client/*.sw?
 
+/client/*.txt
+
 #Server
 /server/logs
 /server/*.log
@@ -82,3 +84,5 @@ dist-ssr
 /server/*.sw?
 
 /server/prisma/migrations/
+
+/server/*.txt

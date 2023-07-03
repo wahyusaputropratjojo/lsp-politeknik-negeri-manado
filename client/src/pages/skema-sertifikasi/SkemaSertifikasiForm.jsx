@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
-import { v4 as uuid } from "uuid";
+import { stringify, v4 as uuid } from "uuid";
+import axios from "../../utils/axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "../../components/ui/button";
 import { Form } from "../../components/ui/form";
@@ -15,12 +17,38 @@ import {
   FormPertanyaanTertulis,
 } from "./form";
 
+import ChevronRight from "../../assets/icons/untitled-ui-icons/line/components/ChevronRight";
+import ChevronLeft from "../../assets/icons/untitled-ui-icons/line/components/ChevronLeft";
+
 export const SkemaSertifikasiForm = () => {
   const [formPage, setFormPage] = useState(0);
   const [aktivitas, setAktivitas] = useState([]);
 
+  const { error, isError, isSuccess, mutate } = useMutation({
+    mutationFn: async (data) =>
+      await axios.post(
+        "/skema-sertifikasi/unit-kompetensi/aktivitas-unit-kompetensi/all",
+        data
+      ),
+  });
+
   const onSubmit = (data) => {
-    console.log(data);
+    const { nama_skema_sertifikasi, kode_skema_sertifikasi, unit_kompetensi } =
+      data;
+
+    console.log(unit_kompetensi);
+
+    const destructureUnitKompetensi = unit_kompetensi.map(
+      ({ id, ...rest }) => rest
+    );
+
+    // console.log(destructureUnitKompetensi);
+
+    mutate({
+      nama_skema_sertifikasi,
+      kode_skema_sertifikasi,
+      unit_kompetensi: destructureUnitKompetensi,
+    });
   };
 
   const defaultValues = {
@@ -39,6 +67,46 @@ export const SkemaSertifikasiForm = () => {
                 kriteria_unjuk_kerja: "",
               },
             ],
+          },
+        ],
+        pertanyaan_tertulis: [
+          {
+            pertanyaan: "",
+            jawaban_pertanyaan_tertulis: [
+              {
+                jawaban: "",
+                benar: false,
+              },
+              {
+                jawaban: "",
+                benar: false,
+              },
+              {
+                jawaban: "",
+                benar: false,
+              },
+              {
+                jawaban: "",
+                benar: false,
+              },
+            ],
+          },
+        ],
+        pertanyaan_esai: [
+          {
+            pertanyaan: "",
+            jawaban: "",
+          },
+        ],
+        pertanyaan_lisan: [
+          {
+            pertanyaan: "",
+            jawaban: "",
+          },
+        ],
+        pertanyaan_observasi: [
+          {
+            pertanyaan: "",
           },
         ],
       },
@@ -64,8 +132,8 @@ export const SkemaSertifikasiForm = () => {
         <article>
           <Form {...form}>
             <form
-              className="flex flex-col gap-12"
               onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-12"
             >
               {formPage === 0 ? (
                 <div className="flex flex-col gap-12">
@@ -83,33 +151,40 @@ export const SkemaSertifikasiForm = () => {
               ) : formPage === 5 ? (
                 <FormPertanyaanObservasi form={form} />
               ) : undefined}
-              <div className="flex w-full gap-4">
+              <div className="flex justify-between gap-8">
                 <Button
-                  className="w-full"
+                  type="button"
+                  className=""
                   disabled={formPage === 0}
                   onClick={() => {
                     setFormPage((currentFormPage) => currentFormPage - 1);
                   }}
                 >
-                  Sebelumnya
+                  <ChevronLeft />
                 </Button>
                 <Button
+                  type="submit"
+                  disabled={formPage < 5}
                   className="w-full"
+                >
+                  Submit
+                </Button>
+                <Button
+                  type="button"
+                  className=""
+                  disabled={formPage === 5}
                   onClick={() => {
-                    if (formPage === 5) {
-                      alert("submit");
-                    } else {
-                      setFormPage((currentFormPage) => currentFormPage + 1);
-                    }
+                    setFormPage((currentFormPage) => currentFormPage + 1);
                   }}
                 >
-                  {formPage === 5 ? "Selesai" : "Selanjutnya"}
+                  <ChevronRight />
                 </Button>
               </div>
             </form>
           </Form>
           <DevTool control={form.control} />
         </article>
+        <footer></footer>
       </div>
     </>
   );

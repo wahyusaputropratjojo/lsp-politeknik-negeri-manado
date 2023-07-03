@@ -91,6 +91,7 @@ const AktivitasUnitKompetensi = ({ indexUnitKompetensi, form }) => {
         />
         {index > 0 && (
           <button
+            type="button"
             className="absolute right-1 top-1 rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100"
             onClick={() => remove(index)}
           >
@@ -107,6 +108,7 @@ const AktivitasUnitKompetensi = ({ indexUnitKompetensi, form }) => {
         {aktivitasUnitKompetensiFields}
       </div>
       <Button
+        type="button"
         className="col-span-1 col-start-10"
         onClick={() =>
           append({
@@ -137,50 +139,50 @@ const KriteriaUnjukKerja = ({
 
   const kriteriaUnjukKerjaFields = fields.map((field, index) => {
     return (
-      <>
-        <div key={field.id} className="relative">
-          <div className="flex flex-col gap-1">
-            <p className="font-aileron text-secondary-300 transition-colors hover:text-secondary-400">
-              Kriteria Unjuk Kerja
-            </p>
-            <FormField
-              control={form.control}
-              name={`unit_kompetensi.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.kriteria_unjuk_kerja.${index}.kriteria_unjuk_kerja`}
-              render={({ field }) => (
-                <FormItem className="relative">
-                  <FormLabel className="absolute -left-2 top-1 -translate-x-full">
-                    {indexAktivitasUnitKompetensi + 1}.{index + 1}
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {index > 0 && (
-            <button
-              className="absolute -right-2 top-1 translate-x-full rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100"
-              onClick={() => remove(index)}
-            >
-              <XCircle />
-            </button>
-          )}
-          {index === fields.length - 1 && (
-            <button
-              className="absolute -right-2 bottom-1 translate-x-full rounded-lg bg-primary-500 p-1 text-xl text-secondary-500 transition-colors hover:bg-primary-600 focus:bg-primary-700"
-              onClick={() =>
-                append({
-                  kriteria_unjuk_kerja: "",
-                })
-              }
-            >
-              <PlusSquare />
-            </button>
-          )}
+      <div key={field.id} className="relative">
+        <div className="flex flex-col gap-1">
+          <p className="font-aileron text-secondary-300 transition-colors hover:text-secondary-400">
+            Kriteria Unjuk Kerja
+          </p>
+          <FormField
+            control={form.control}
+            name={`unit_kompetensi.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.kriteria_unjuk_kerja.${index}.kriteria_unjuk_kerja`}
+            render={({ field }) => (
+              <FormItem className="relative">
+                <FormLabel className="absolute -left-2 top-1 -translate-x-full">
+                  {indexAktivitasUnitKompetensi + 1}.{index + 1}
+                </FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-      </>
+        {index > 0 && (
+          <button
+            type="button"
+            className="absolute -right-2 top-1 translate-x-full rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100"
+            onClick={() => remove(index)}
+          >
+            <XCircle />
+          </button>
+        )}
+        {index === fields.length - 1 && (
+          <button
+            type="button"
+            className="absolute -right-2 bottom-1 translate-x-full rounded-lg bg-primary-500 p-1 text-xl text-secondary-500 transition-colors hover:bg-primary-600 focus:bg-primary-700"
+            onClick={() =>
+              append({
+                kriteria_unjuk_kerja: "",
+              })
+            }
+          >
+            <PlusSquare />
+          </button>
+        )}
+      </div>
     );
   });
 

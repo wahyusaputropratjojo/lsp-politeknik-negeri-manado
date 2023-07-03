@@ -60,6 +60,7 @@ export const FormUnitKompetensi = ({ form }) => {
           />
           {index > 0 && (
             <button
+              type="button"
               className="absolute -right-2 top-6 translate-x-full rounded-lg bg-error-50 p-1 text-error-500 transition-colors hover:bg-error-100"
               onClick={() => remove(index)}
             >
@@ -70,6 +71,7 @@ export const FormUnitKompetensi = ({ form }) => {
 
         {index === fields.length - 1 && (
           <Button
+            type="button"
             size="md"
             className="col-span-full"
             onClick={() =>
@@ -85,6 +87,46 @@ export const FormUnitKompetensi = ({ form }) => {
                         kriteria_unjuk_kerja: "",
                       },
                     ],
+                  },
+                ],
+                pertanyaan_tertulis: [
+                  {
+                    pertanyaan: "",
+                    jawaban_pertanyaan_tertulis: [
+                      {
+                        jawaban: "",
+                        benar: false,
+                      },
+                      {
+                        jawaban: "",
+                        benar: false,
+                      },
+                      {
+                        jawaban: "",
+                        benar: false,
+                      },
+                      {
+                        jawaban: "",
+                        benar: false,
+                      },
+                    ],
+                  },
+                ],
+                pertanyaan_esai: [
+                  {
+                    pertanyaan: "",
+                    jawaban: "",
+                  },
+                ],
+                pertanyaan_lisan: [
+                  {
+                    pertanyaan: "",
+                    jawaban: "",
+                  },
+                ],
+                pertanyaan_observasi: [
+                  {
+                    pertanyaan: "",
                   },
                 ],
               })

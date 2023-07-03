@@ -53,7 +53,7 @@ export const FormPertanyaanLisan = ({ form }) => {
 
 const PertanyaanLisan = ({ indexUnitKompetensi, form }) => {
   const { fields, remove, prepend, append } = useFieldArray({
-    name: `unit_kompetensi.${indexUnitKompetensi}.pertanyaan_esai`,
+    name: `unit_kompetensi.${indexUnitKompetensi}.pertanyaan_lisan`,
     control: form.control,
   });
 
@@ -105,6 +105,7 @@ const PertanyaanLisan = ({ indexUnitKompetensi, form }) => {
         </div>
         {index > 0 && (
           <button
+            type="button"
             className="absolute right-1 top-1 rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100"
             onClick={() => remove(index)}
           >
@@ -119,6 +120,7 @@ const PertanyaanLisan = ({ indexUnitKompetensi, form }) => {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-12">{pertanyaanLisanFields}</div>
       <Button
+        type="button"
         className="col-span-1 col-start-10"
         onClick={() =>
           append({

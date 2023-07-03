@@ -98,6 +98,7 @@ const PertanyaanTertulis = ({ indexUnitKompetensi, form }) => {
         </div>
         {index > 0 && (
           <button
+            type="button"
             className="absolute right-1 top-1 rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100"
             onClick={() => remove(index)}
           >
@@ -112,11 +113,24 @@ const PertanyaanTertulis = ({ indexUnitKompetensi, form }) => {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-12">{pertanyaanTertulisFields}</div>
       <Button
+        type="button"
         className="col-span-1 col-start-10"
         onClick={() =>
           append({
             pertanyaan: "",
-            jawaban: [
+            jawaban_pertanyaan_tertulis: [
+              {
+                jawaban: "",
+                benar: false,
+              },
+              {
+                jawaban: "",
+                benar: false,
+              },
+              {
+                jawaban: "",
+                benar: false,
+              },
               {
                 jawaban: "",
                 benar: false,
@@ -138,7 +152,7 @@ const JawabanPertanyaanTertulis = ({
 }) => {
   const isOptionChecked = (option) => {
     const checked = form.getValues(
-      `unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${option}.benar`
+      `unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${option}.benar`
     );
     return checked === true;
   };
@@ -149,7 +163,7 @@ const JawabanPertanyaanTertulis = ({
         <div className="relative col-span-5">
           <FormField
             control={form.control}
-            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${0}.jawaban`}
+            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${0}.jawaban`}
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="absolute -left-2 top-1 -translate-x-full">
@@ -164,7 +178,7 @@ const JawabanPertanyaanTertulis = ({
           />
           <FormField
             control={form.control}
-            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${0}.benar`}
+            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${0}.benar`}
             render={({ field }) => (
               <FormItem className="absolute -left-1 top-6 -translate-x-full">
                 <FormControl>
@@ -185,7 +199,7 @@ const JawabanPertanyaanTertulis = ({
         <div className="relative col-span-5">
           <FormField
             control={form.control}
-            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${1}.jawaban`}
+            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${1}.jawaban`}
             render={({ field }) => (
               <FormItem className="relative col-span-5">
                 <FormLabel className="absolute -left-2 top-1 -translate-x-full">
@@ -200,7 +214,7 @@ const JawabanPertanyaanTertulis = ({
           />
           <FormField
             control={form.control}
-            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${1}.benar`}
+            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${1}.benar`}
             render={({ field }) => (
               <FormItem className="absolute -left-1 top-6 -translate-x-full">
                 <FormControl>
@@ -221,7 +235,7 @@ const JawabanPertanyaanTertulis = ({
         <div className="relative col-span-5">
           <FormField
             control={form.control}
-            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${2}.jawaban`}
+            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${2}.jawaban`}
             render={({ field }) => (
               <FormItem className="relative col-span-5">
                 <FormLabel className="absolute -left-2 top-1 -translate-x-full">
@@ -236,7 +250,7 @@ const JawabanPertanyaanTertulis = ({
           />
           <FormField
             control={form.control}
-            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${2}.benar`}
+            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${2}.benar`}
             render={({ field }) => (
               <FormItem className="absolute -left-1 top-6 -translate-x-full">
                 <FormControl>
@@ -257,7 +271,7 @@ const JawabanPertanyaanTertulis = ({
         <div className="relative col-span-5">
           <FormField
             control={form.control}
-            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${3}.jawaban`}
+            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${3}.jawaban`}
             render={({ field }) => (
               <FormItem className="relative col-span-5">
                 <FormLabel className="absolute -left-2 top-1 -translate-x-full">
@@ -272,7 +286,7 @@ const JawabanPertanyaanTertulis = ({
           />
           <FormField
             control={form.control}
-            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban.${3}.benar`}
+            name={`unit_kompetensi.${indexUnitKompetensi}.pertanyaan_tertulis.${indexPertanyaan}.jawaban_pertanyaan_tertulis.${3}.benar`}
             render={({ field }) => (
               <FormItem className="absolute -left-1 top-6 -translate-x-full">
                 <FormControl>
