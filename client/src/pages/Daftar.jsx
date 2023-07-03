@@ -113,7 +113,6 @@ export const Daftar = () => {
                       <FormLabel>Nama</FormLabel>
                       <FormControl>
                         <Input
-                          size="l"
                           type="text"
                           variant={
                             form.formState.errors?.nama ? "error" : "primary"
@@ -133,7 +132,6 @@ export const Daftar = () => {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          size="l"
                           type="email"
                           variant={
                             form.formState.errors?.email ? "error" : "primary"
@@ -153,7 +151,6 @@ export const Daftar = () => {
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input
-                          size="l"
                           type="password"
                           variant={
                             form.formState.errors?.password
@@ -175,7 +172,6 @@ export const Daftar = () => {
                       <FormLabel>Konfirmasi Password</FormLabel>
                       <FormControl>
                         <Input
-                          size="l"
                           type="password"
                           variant={
                             form.formState.errors?.konfirmasiPassword
@@ -193,7 +189,9 @@ export const Daftar = () => {
               <div>
                 <Dialog>
                   <DialogTrigger className="w-full">
-                    <Button size="xl">Daftar</Button>
+                    <Button size="lg" className="w-full">
+                      Daftar
+                    </Button>
                   </DialogTrigger>
                   {isSuccess && (
                     <DialogContent className="w-max p-12">

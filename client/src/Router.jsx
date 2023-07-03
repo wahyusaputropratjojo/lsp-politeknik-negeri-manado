@@ -12,8 +12,7 @@ import {
 } from "./components/Auth";
 
 // Layouts
-import { DefaultLayout } from "./layouts/DefaultLayout";
-import { SidebarLayout } from "./layouts/SidebarLayout";
+import { DefaultLayout, ContentLayout, SidebarLayout } from "./layouts";
 
 // Pages
 import { Dashboard } from "./pages/Dashboard";
@@ -22,8 +21,11 @@ import { Masuk } from "./pages/Masuk";
 import { Daftar } from "./pages/Daftar";
 import { Test } from "./pages/Test";
 import { Unauthorized } from "./pages/Unauthorized";
-import { SkemaSertifikasi } from "./pages/skema-sertifikasi/SkemaSertifikasi";
-import { BuatSkemaSertifikasi } from "./pages/skema-sertifikasi/BuatSkemaSertifikasi";
+
+import {
+  SkemaSertifikasiDashboard,
+  SkemaSertifikasiForm,
+} from "./pages/skema-sertifikasi";
 
 const Roles = {
   Administrator: "Administrator",
@@ -37,9 +39,12 @@ export const Router = createBrowserRouter(
       <Route element={<RefreshAuthentication />}>
         <Route element={<Authentication />}>
           <Route path="/" element={<SidebarLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="skema-sertifikasi" element={<SkemaSertifikasi />}>
-              <Route path="buat" element={<BuatSkemaSertifikasi />} />
+            <Route element={<ContentLayout />}>
+              <Route index element={<Dashboard />} />
+            </Route>
+            <Route path="skema-sertifikasi" element={<ContentLayout />}>
+              <Route index element={<SkemaSertifikasiDashboard />} />
+              <Route path="buat" element={<SkemaSertifikasiForm />} />
             </Route>
           </Route>
         </Route>

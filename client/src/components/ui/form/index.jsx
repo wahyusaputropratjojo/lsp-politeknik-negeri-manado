@@ -3,7 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { Controller, FormProvider, useFormContext } from "react-hook-form";
 import { cn } from "../../../utils/cn";
 import { Label } from "../label";
-import { Alert, AlertDescription, AlertTitle } from "../alert";
+import { Alert, AlertDescription } from "../alert";
 import InfoCircle from "../../../assets/icons/untitled-ui-icons/line/components/InfoCircle";
 
 export const Form = FormProvider;
@@ -120,7 +120,6 @@ export const FormMessage = React.forwardRef(
     return (
       <Alert variant="error">
         <InfoCircle />
-        <AlertTitle>Error</AlertTitle>
         <AlertDescription ref={ref} id={formMessageId}>
           {body}
         </AlertDescription>

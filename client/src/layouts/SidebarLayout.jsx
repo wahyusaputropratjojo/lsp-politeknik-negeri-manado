@@ -5,17 +5,15 @@ import { Sidebar } from "../components/ui/sidebar";
 export const SidebarLayout = () => {
   return (
     <>
-      <div className="container mx-auto py-4">
-        <div className="fixed left-0 right-0 top-0 border-8 border-neutral-500" />
+      <div className="container mx-auto px-12 py-4">
         <div className="flex gap-12">
-          <aside className="sticky bottom-4 top-4 h-sidebar">
+          <aside className="sidebar sticky bottom-4 top-4">
             <Sidebar />
           </aside>
-          <main className="w-full">
+          <main className="w-full py-8">
             <Outlet />
           </main>
         </div>
-        <div className="fixed bottom-0 left-0 right-0 border-8 border-neutral-500" />
       </div>
     </>
   );

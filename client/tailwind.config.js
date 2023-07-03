@@ -2,22 +2,15 @@ import tailwindcssAnimate from "tailwindcss-animate";
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: ["class"],
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "app/**/*.{ts,tsx}",
-    "components/**/*.{ts,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      height: {
-        sidebar: "calc(100dvh - 2rem)",
+      content: {
+        "chevron-right":
+          "url('/src/assets/icons/untitled-ui-icons/line/svg/chevron-right.svg')",
       },
       colors: {
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
           50: "hsl(var(--primary-50))",
           100: "hsl(var(--primary-100))",
           200: "hsl(var(--primary-200))",
@@ -30,8 +23,6 @@ export default {
           900: "hsl(var(--primary-900))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
           50: "hsl(var(--secondary-50))",
           100: "hsl(var(--secondary-100))",
           200: "hsl(var(--secondary-200))",
@@ -90,31 +81,6 @@ export default {
           700: "hsl(var(--error-700))",
           800: "hsl(var(--error-800))",
           900: "hsl(var(--error-900))",
-        },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
         },
       },
       fontFamily: {

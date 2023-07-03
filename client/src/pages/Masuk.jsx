@@ -15,8 +15,9 @@ import { loginSchema } from "../utils/yup";
 import { AuthContext } from "../context/AuthContext";
 
 // Components
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
+import { Input, InputFile } from "../components/ui/input";
 import {
   Form,
   FormControl,
@@ -32,7 +33,6 @@ import LSP from "../assets/logo/components/LSP";
 
 export const Masuk = () => {
   const navigate = useNavigate();
-
   const { setAuth } = useContext(AuthContext);
 
   const { error, isError, mutate } = useMutation({
@@ -51,6 +51,9 @@ export const Masuk = () => {
     resolver: yupResolver(loginSchema),
     mode: "onSubmit",
   });
+
+  const img = form.getValues("file");
+  console.log(img);
 
   const onSubmit = (user) => {
     if (isError) {
@@ -114,7 +117,6 @@ export const Masuk = () => {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          size="l"
                           type="email"
                           variant={
                             form.formState.errors?.email ? "error" : "primary"
@@ -134,7 +136,6 @@ export const Masuk = () => {
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input
-                          size="l"
                           type="password"
                           variant={
                             form.formState.errors?.password
@@ -150,7 +151,9 @@ export const Masuk = () => {
                 />
               </div>
               <div>
-                <Button size="xl">Masuk</Button>
+                <Button size="lg" className="w-full">
+                  Masuk
+                </Button>
               </div>
             </form>
           </Form>

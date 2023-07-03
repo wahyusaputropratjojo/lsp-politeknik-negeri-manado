@@ -87,7 +87,7 @@ export const Sidebar = () => {
     <>
       <section
         className={cn(
-          "flex h-full w-72 flex-col justify-between gap-11 rounded-2xl bg-white px-8 py-8",
+          "flex h-full w-72 flex-col gap-12 rounded-lg bg-white p-8",
           {
             "w-24 px-6 py-8": isMinimized,
           }
@@ -109,13 +109,12 @@ export const Sidebar = () => {
           <div>
             <Navigation to="/skema-sertifikasi" isMinimized={isMinimized}>
               <Archive className="text-lg" />
-              {!isMinimized && <span>Skema</span>}
+              {!isMinimized && <span>Skema Sertifikasi</span>}
             </Navigation>
           </div>
         </nav>
         <footer className="flex flex-col gap-4">
-          <hr className="rounded-full border-2 text-secondary-50" />
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex gap-2">
             <Avatar>
               <AvatarImage src="/profil.png" />
               <AvatarFallback>
@@ -123,9 +122,9 @@ export const Sidebar = () => {
               </AvatarFallback>
             </Avatar>
             {!isMinimized && (
-              <div className="flex w-full items-center justify-between gap-2">
-                <div>
-                  <p className="w-36 truncate font-anek-latin text-lg font-semibold text-secondary-500">
+              <div className="flex items-center justify-between gap-2">
+                <div className="w-36">
+                  <p className="truncate font-anek-latin text-lg font-semibold text-secondary-500">
                     {nama}
                   </p>
                   <p className="font-aileron text-xs font-normal text-secondary-500">
@@ -142,7 +141,7 @@ export const Sidebar = () => {
           </div>
         </footer>
       </section>
-      <div className="absolute -right-2 top-0 flex h-8 w-8 translate-x-full rounded-xl bg-white">
+      <div className="absolute -right-2 top-0 flex h-8 w-8 translate-x-full rounded-lg bg-white">
         <button className="flex h-full w-full items-center justify-center">
           {!isMinimized && (
             <ChevronLeft onClick={handleMinimized} className="text-xl" />
@@ -153,13 +152,8 @@ export const Sidebar = () => {
         </button>
       </div>
       {visible && (
-        <div className="absolute -right-4 bottom-0 flex h-min translate-x-full flex-col gap-2 rounded-2xl bg-white px-4 py-4">
-          <Button
-            size="small"
-            variant="error"
-            className="flex gap-2"
-            onClick={logOut}
-          >
+        <div className="absolute -right-4 bottom-0 z-50 flex h-min translate-x-full flex-col gap-2 rounded-lg bg-white p-4">
+          <Button size="sm" variant="error" className="gap-2" onClick={logOut}>
             <LogOut02 />
             Keluar
           </Button>

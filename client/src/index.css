@@ -4,22 +4,6 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-
-    --primary: 222.2 47.4% 11.2%;
     --primary-50: 58, 100%, 95%;
     --primary-100: 57, 100%, 85%;
     --primary-200: 57, 100%, 77%;
@@ -30,9 +14,7 @@
     --primary-700: 57, 100%, 35%;
     --primary-800: 57, 100%, 27%;
     --primary-900: 57, 100%, 21%;
-    --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
     --secondary-50: 0, 0%, 91%;
     --secondary-100: 0, 1%, 73%;
     --secondary-200: 0, 1%, 60%;
@@ -43,7 +25,6 @@
     --secondary-700: 340, 6%, 9%;
     --secondary-800: 330, 6%, 7%;
     --secondary-900: 0, 7%, 5%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
 
     --neutral-50: 0, 0%, 100%;
     --neutral-100: 0, 0%, 98.5%;
@@ -88,108 +69,23 @@
     --error-700: 5, 69%, 39%;
     --error-800: 4, 69%, 30%;
     --error-900: 5, 69%, 23%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 215 20.2% 65.1%;
-
-    --radius: 0.5rem;
   }
 
-  .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-
-    --muted: 223 47% 11%;
-    --muted-foreground: 215.4 16.3% 56.9%;
-
-    --popover: 224 71% 4%;
-    --popover-foreground: 215 20.2% 65.1%;
-
-    --card: 224 71% 4%;
-    --card-foreground: 213 31% 91%;
-
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 1.2%;
-
-    --secondary: 222.2 47.4% 11.2%;
-    --secondary-foreground: 210 40% 98%;
-
-    --accent: 216 34% 17%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 216 34% 17%;
-
-    --radius: 0.5rem;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  .sidebar {
+    height: calc(100dvh - 2rem);
+  }
+
+  .main-content-footer {
+    top: calc(70dvh - 2rem);
+  }
 }
 
-@font-face {
-  font-family: "Aileron";
-  src: url("../src/assets/fonts/aileron/aileron-regular-400.otf")
-    format("truetype");
-  font-weight: 400; /* Regular */
-  font-style: normal; /* Normal (non-italic) */
-}
-
-@font-face {
-  font-family: "Aileron";
-  src: url("../src/assets/fonts/aileron/aileron-bold-700.otf")
-    format("truetype");
-  font-weight: 700; /* Regular */
-  font-style: normal; /* Normal (non-italic) */
-}
-
-@font-face {
-  font-family: "Anek Latin";
-  src: url("../src/assets/fonts/anek-latin/anek-latin-regular-400.ttf")
-    format("truetype");
-  font-weight: 400; /* Regular */
-  font-style: normal; /* Normal (non-italic) */
-}
-
-@font-face {
-  font-family: "Anek Latin";
-  src: url("../src/assets/fonts/anek-latin/anek-latin-semibold-600.ttf")
-    format("truetype");
-  font-weight: 600; /* Regular */
-  font-style: normal; /* Normal (non-italic) */
-}
-
-@font-face {
-  font-family: "Anek Latin";
-  src: url("../src/assets/fonts/anek-latin/anek-latin-bold-700.ttf")
-    format("truetype");
-  font-weight: 700; /* Regular */
-  font-style: normal; /* Normal (non-italic) */
-}
-
-@font-face {
-  font-family: "Anek Latin";
-  src: url("../src/assets/fonts/anek-latin/anek-latin-extrabold-800.ttf")
-    format("truetype");
-  font-weight: 800; /* Regular */
-  font-style: normal; /* Normal (non-italic) */
+::-webkit-scrollbar {
+  display: none;
 }
 
 *,
@@ -216,6 +112,50 @@ video {
   max-width: 100%;
 }
 
-a.active {
-  @apply rounded-lg bg-secondary-50;
+@font-face {
+  font-family: "Aileron";
+  src: url("../src/assets/fonts/aileron/aileron-regular-400.otf")
+    format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Aileron";
+  src: url("../src/assets/fonts/aileron/aileron-bold-700.otf")
+    format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Anek Latin";
+  src: url("../src/assets/fonts/anek-latin/anek-latin-regular-400.ttf")
+    format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Anek Latin";
+  src: url("../src/assets/fonts/anek-latin/anek-latin-semibold-600.ttf")
+    format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Anek Latin";
+  src: url("../src/assets/fonts/anek-latin/anek-latin-bold-700.ttf")
+    format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Anek Latin";
+  src: url("../src/assets/fonts/anek-latin/anek-latin-extrabold-800.ttf")
+    format("truetype");
+  font-weight: 800;
+  font-style: normal;
 }

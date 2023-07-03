@@ -1,9 +1,11 @@
 export const Dashboard = () => {
   return (
     <>
-      <div className="bg-primary-500 font-aileron text-2xl">
-        Halaman Dashboard
-      </div>
+      <header className="flex flex-col gap-2">
+        <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
+          Dashboard
+        </h1>
+      </header>
     </>
   );
 };
