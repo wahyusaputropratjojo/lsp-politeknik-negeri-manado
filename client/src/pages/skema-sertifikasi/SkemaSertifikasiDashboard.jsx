@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "../../utils/axios";
 import { AspectRatio } from "../../components/ui/aspect-ratio";
 import { Button } from "../../components/ui/button";
 import {
@@ -13,6 +16,41 @@ import PlusCircle from "../../assets/icons/untitled-ui-icons/line/components/Plu
 import SearchLg from "../../assets/icons/untitled-ui-icons/line/components/SearchLg";
 
 export const SkemaSertifikasiDashboard = () => {
+  const [skemaSertifikasi, setSkemaSertifikasi] = useState([]);
+
+  useQuery({
+    queryKey: ["skema_sertifikasi"],
+    queryFn: () => {
+      return axios.get(`/skema-sertifikasi`);
+    },
+    onSuccess: (data) => {
+      setSkemaSertifikasi(data.data.data);
+    },
+  });
+
+  const skemaSertifikasiCard = skemaSertifikasi.map((item) => {
+    return (
+      <Card key={item.id}>
+        <CardHeader>
+          <AspectRatio ratio={1 / 1}>
+            <img
+              src="/food-and-baverage-outlet-manager.png"
+              className="rounded-xl object-cover"
+            />
+          </AspectRatio>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          <p className="truncate font-anek-latin text-2xl font-semibold">
+            {item.nama_skema_sertifikasi}
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button size="sm">Lihat Skema</Button>
+        </CardFooter>
+      </Card>
+    );
+  });
+
   return (
     <>
       <header className="flex flex-col gap-2">
@@ -41,29 +79,7 @@ export const SkemaSertifikasiDashboard = () => {
       </nav>
       <div>
         <article className="grid grid-cols-4 gap-4">
-          <Card>
-            <CardHeader>
-              <AspectRatio ratio={1 / 1}>
-                <img
-                  src="/food-and-baverage-outlet-manager.png"
-                  className="rounded-xl object-cover"
-                />
-              </AspectRatio>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <p className="truncate font-anek-latin text-2xl font-semibold">
-                Food and Beverage Outlet Manager
-              </p>
-              <p className="truncate font-aileron text-sm">
-                Pelatihan ini dirancang untuk memberikan pemahaman mendalam
-                tentang semua aspek penting dalam proses memasang dan merakit
-                PHB
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button size="sm">Lihat Skema</Button>
-            </CardFooter>
-          </Card>
+          {skemaSertifikasiCard}
         </article>
       </div>
     </>

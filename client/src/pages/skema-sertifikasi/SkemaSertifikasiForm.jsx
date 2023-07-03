@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
@@ -21,8 +22,8 @@ import ChevronRight from "../../assets/icons/untitled-ui-icons/line/components/C
 import ChevronLeft from "../../assets/icons/untitled-ui-icons/line/components/ChevronLeft";
 
 export const SkemaSertifikasiForm = () => {
+  const navigate = useNavigate();
   const [formPage, setFormPage] = useState(0);
-  const [aktivitas, setAktivitas] = useState([]);
 
   const { error, isError, isSuccess, mutate } = useMutation({
     mutationFn: async (data) =>
@@ -36,19 +37,19 @@ export const SkemaSertifikasiForm = () => {
     const { nama_skema_sertifikasi, kode_skema_sertifikasi, unit_kompetensi } =
       data;
 
-    console.log(unit_kompetensi);
-
     const destructureUnitKompetensi = unit_kompetensi.map(
       ({ id, ...rest }) => rest
     );
-
-    // console.log(destructureUnitKompetensi);
 
     mutate({
       nama_skema_sertifikasi,
       kode_skema_sertifikasi,
       unit_kompetensi: destructureUnitKompetensi,
     });
+
+    if (isSuccess) {
+      navigate("/skema-sertifikasi");
+    }
   };
 
   const defaultValues = {
