@@ -139,6 +139,41 @@ model JawabanPertanyaanTertulis {
   @@map("jawaban_pertanyaan_tertulis")
 }
 
+model Provinsi {
+  id        String      @id @map("id")
+  nama      String      @map("nama")
+  value     String      @map("value")
+  Kabupaten Kabupaten[]
+
+  @@map("provinsi")
+}
+
+model Kabupaten {
+  id          String      @id @map("id")
+  id_provinsi String      @map("id_provinsi")
+  nama        String      @map("nama")
+  value       String      @map("value")
+  provinsi    Provinsi    @relation(fields: [id_provinsi], references: [id])
+  Kecamatan   Kecamatan[]
+}
+
+model Kecamatan {
+  id           String    @id @map("id")
+  id_kabupaten String    @map("id_kabupaten")
+  nama         String    @map("nama")
+  value        String    @map("value")
+  kabupaten    Kabupaten @relation(fields: [id_kabupaten], references: [id])
+  Desa         Desa[]
+}
+
+model Desa {
+  id           String    @id @map("id")
+  id_kecamatan String    @map("id_kecamatan")
+  nama         String    @map("nama")
+  value        String    @map("value")
+  kecamatan    Kecamatan @relation(fields: [id_kecamatan], references: [id])
+}
+
 enum Role {
   Peserta
   Asesor

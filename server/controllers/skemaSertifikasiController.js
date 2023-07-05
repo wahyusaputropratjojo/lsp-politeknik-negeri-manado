@@ -10,6 +10,24 @@ export const getSkemaSertifikasi = asyncHandler(async (req, res) => {
     where: {
       id,
     },
+    include: {
+      unit_kompetensi: {
+        include: {
+          aktivitas_unit_kompetensi: {
+            include: {
+              kriteria_unjuk_kerja: true,
+            },
+          },
+          pertanyaan_tertulis: {
+            include: {
+              jawaban_pertanyaan_tertulis: true,
+            },
+          },
+          pertanyaan_esai: true,
+          pertanyaan_lisan: true,
+        },
+      },
+    },
   });
 
   res.status(200).json({

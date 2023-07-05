@@ -17,6 +17,7 @@
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
+    "idn-area-data": "^2.1.0",
     "jsonwebtoken": "^9.0.0",
     "nodemon": "^2.0.22"
   },
