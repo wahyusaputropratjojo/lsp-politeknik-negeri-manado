@@ -56,9 +56,7 @@ export const RefreshAuthentication = () => {
       };
       !auth?.access_token && verify();
     },
-    onError: (error) => {
-      console.log(error);
-    },
+    onError: (error) => {},
     onSettled: () => {
       setTimeout(() => setIsLoading(false), 1000);
     },

@@ -10,13 +10,9 @@ export const getUser = asyncHandler(async (req, res) => {
     },
     select: {
       id: true,
+      nama_lengkap: true,
       email: true,
       role: true,
-      profil: {
-        select: {
-          nama: true,
-        },
-      },
     },
   });
 

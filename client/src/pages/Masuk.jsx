@@ -17,7 +17,7 @@ import { AuthContext } from "../context/AuthContext";
 // Components
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
-import { Input, InputFile } from "../components/ui/input";
+import { Input } from "../components/ui/input";
 import {
   Form,
   FormControl,
@@ -52,9 +52,6 @@ export const Masuk = () => {
     mode: "onSubmit",
   });
 
-  const img = form.getValues("file");
-  console.log(img);
-
   const onSubmit = (user) => {
     if (isError) {
       form.setError("email", {
@@ -68,6 +65,7 @@ export const Masuk = () => {
     }
 
     const { email, password } = user;
+
     mutate({ email, password });
   };
 
@@ -76,7 +74,13 @@ export const Masuk = () => {
       <div className="flex h-full justify-center gap-16">
         <div className="flex h-full w-[28rem] min-w-max flex-col justify-between rounded-2xl bg-white p-12">
           <div>
-            <LSP className="h-12" />
+            <button
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              <LSP className="h-12" />
+            </button>
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-anek-latin text-[2.5rem] font-semibold text-secondary-500">

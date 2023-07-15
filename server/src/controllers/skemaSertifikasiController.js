@@ -41,13 +41,32 @@ export const getSkemaSertifikasi = asyncHandler(async (req, res) => {
 });
 
 export const listSkemaSertifikasi = asyncHandler(async (req, res) => {
-  const skemaSertifikasi = await prisma.skemaSertifikasi.findMany();
+  const skemaSertifikasi = await prisma.skemaSertifikasi.findMany({
+    orderBy: {
+      nama_skema_sertifikasi: "asc",
+    },
+  });
 
   res.status(200).json({
     code: 200,
     status: "OK",
-    message: "Berhasil mendapatkan data skema sertifikasi",
-    data: [...skemaSertifikasi],
+    message: "Berhasil mendapatkan data Skema Sertifikasi",
+    data: skemaSertifikasi,
+  });
+});
+
+export const listTujuanAsesmen = asyncHandler(async (req, res) => {
+  const tujuanAsesmen = await prisma.tujuanAsesmen.findMany({
+    orderBy: {
+      tujuan: "asc",
+    },
+  });
+
+  res.status(200).json({
+    code: 200,
+    status: "OK",
+    message: "Berhasil mendapatkan data Tujuan Asesmen",
+    data: tujuanAsesmen,
   });
 });
 

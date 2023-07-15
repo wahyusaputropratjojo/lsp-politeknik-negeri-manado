@@ -5,6 +5,7 @@ import express from "express";
 import {
   getSkemaSertifikasi,
   listSkemaSertifikasi,
+  listTujuanAsesmen,
   createSkemaSertifikasi,
   createSkemaSertifikasiWithAllRelated,
   updateSkemaSertifikasi,
@@ -19,6 +20,7 @@ route.post(
   createSkemaSertifikasiWithAllRelated,
 );
 route.get("/", listSkemaSertifikasi);
+route.get("/tujuan-asesmen", listTujuanAsesmen);
 route.get("/:id", getSkemaSertifikasi);
 route.patch("/:id", updateSkemaSertifikasi);
 route.delete("/:id", deleteSkemaSertifikasi);

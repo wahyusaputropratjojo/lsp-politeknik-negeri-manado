@@ -1,7 +1,7 @@
 // Packages
 import { useState, useContext } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, redirect } from "react-router-dom";
 
 // Context
 import { AuthContext } from "../../../context/AuthContext";
@@ -33,34 +33,39 @@ import {
 // Assets
 import LSP from "../../../assets/logo/components/LSP";
 import PoliteknikNegeriManado from "../../../assets/logo/components/PoliteknikNegeriManado";
+import HomeLine from "../../../assets/icons/untitled-ui-icons/line/components/HomeLine";
 import Archive from "../../../assets/icons/untitled-ui-icons/line/components/Archive";
 import LayoutAlt04 from "../../../assets/icons/untitled-ui-icons/line/components/LayoutAlt04";
-import UserSquare from "../../../assets/icons/untitled-ui-icons/line/components/UserSquare";
 import DotsVertical from "../../../assets/icons/untitled-ui-icons/line/components/DotsVertical";
 import User01 from "../../../assets/icons/untitled-ui-icons/line/components/User01";
+import LogIn02 from "../../../assets/icons/untitled-ui-icons/line/components/LogIn02";
 import LogOut02 from "../../../assets/icons/untitled-ui-icons/line/components/LogOut02";
 import ChevronRight from "../../../assets/icons/untitled-ui-icons/line/components/ChevronRight";
 import ChevronLeft from "../../../assets/icons/untitled-ui-icons/line/components/ChevronLeft";
+import FileAttachment04 from "../../../assets/icons/untitled-ui-icons/line/components/FileAttachment04";
+import UserLeft01 from "../../../assets/icons/untitled-ui-icons/line/components/UserLeft01";
 
 export const Sidebar = () => {
+  const navigate = useNavigate();
+  const { auth, setAuth } = useContext(AuthContext);
   const [nama, setNama] = useState("");
   const [role, setRole] = useState("");
-  const { auth, setAuth } = useContext(AuthContext);
   const [visible, setVisible] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
 
   useQuery({
     queryKey: ["user"],
-    queryFn: () => {
-      return axios.get(`/user/${auth.id}`);
+    queryFn: async () => {
+      if (auth) return await axios.get(`/user/${auth?.id}`);
     },
     onSuccess: (data) => {
       const { role } = data.data.data;
-      const { nama } = data.data.data.profil;
+      const { nama_lengkap } = data.data.data;
 
-      setNama(nama);
+      setNama(nama_lengkap);
       setRole(role);
     },
+    enabled: !!auth,
   });
 
   const { mutate } = useMutation({
@@ -70,6 +75,7 @@ export const Sidebar = () => {
   });
 
   const logOut = async () => {
+    navigate(0);
     mutate();
     setAuth({});
   };
@@ -98,47 +104,97 @@ export const Sidebar = () => {
             "justify-center": isMinimized,
           })}
         >
-          {!isMinimized && <LSP className="h-10" />}
-          {isMinimized && <PoliteknikNegeriManado className="h-10" />}
+          {!isMinimized && (
+            <button
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              <LSP className="h-10" />
+            </button>
+          )}
+          {isMinimized && (
+            <button
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              <PoliteknikNegeriManado className="h-10" />
+            </button>
+          )}
         </header>
-        <nav className="flex h-full max-h-full flex-col gap-1">
-          <Navigation to="/" isMinimized={isMinimized}>
-            <LayoutAlt04 className="text-lg" />
-            {!isMinimized && <span>Dashboard</span>}
-          </Navigation>
+        <nav className="flex h-full max-h-full flex-col gap-4">
           <div>
+            <Navigation to="/" isMinimized={isMinimized}>
+              <HomeLine className="text-lg" />
+              {!isMinimized && <span>Beranda</span>}
+            </Navigation>
+            {/* <Navigation to="/dashboard" isMinimized={isMinimized}>
+              <LayoutAlt04 className="text-lg" />
+              {!isMinimized && <span>Dashboard</span>}
+            </Navigation>
             <Navigation to="/skema-sertifikasi" isMinimized={isMinimized}>
               <Archive className="text-lg" />
               {!isMinimized && <span>Skema Sertifikasi</span>}
-            </Navigation>
+            </Navigation> */}
           </div>
+
+          {auth?.role === "Administrator" && (
+            <div>
+              <Navigation
+                to="/manajemen-asesi/tinjau-persyaratan"
+                isMinimized={isMinimized}
+              >
+                <FileAttachment04 className="text-lg" />
+                {!isMinimized && <span>Tinjau Persyaratan</span>}
+              </Navigation>
+              <Navigation
+                to="/manajemen-asesi/penentuan-asesor"
+                isMinimized={isMinimized}
+              >
+                <UserLeft01 className="text-lg" />
+                {!isMinimized && <span>Penentuan Asesor</span>}
+              </Navigation>
+            </div>
+          )}
         </nav>
         <footer className="flex flex-col gap-4">
-          <div className="flex gap-2">
-            <Avatar>
-              <AvatarImage src="/profil.png" />
-              <AvatarFallback>
-                <User01 className="text-xl" />
-              </AvatarFallback>
-            </Avatar>
-            {!isMinimized && (
-              <div className="flex items-center justify-between gap-2">
-                <div className="w-36">
-                  <p className="truncate font-anek-latin text-lg font-semibold text-secondary-500">
-                    {nama}
-                  </p>
-                  <p className="font-aileron text-xs font-normal text-secondary-500">
-                    {role}
-                  </p>
+          {auth ? (
+            <div className="flex gap-2">
+              <Avatar>
+                <AvatarImage src="http://localhost:3000/uploads/new-profile-1024px-7-10-2023-23-57-40-819-2659.png" />
+                <AvatarFallback>
+                  <User01 className="text-xl" />
+                </AvatarFallback>
+              </Avatar>
+              {!isMinimized && (
+                <div className="flex items-center justify-between gap-2">
+                  <div className="w-36">
+                    <p className="truncate font-anek-latin text-lg font-semibold text-secondary-500">
+                      {nama}
+                    </p>
+                    <p className="font-aileron text-xs font-normal text-secondary-500">
+                      {role}
+                    </p>
+                  </div>
+                  <div>
+                    <button onClick={profileMenu}>
+                      <DotsVertical className="text-lg" />
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <button onClick={profileMenu}>
-                    <DotsVertical className="text-lg" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          ) : (
+            <Button
+              className="items-center gap-2"
+              content={isMinimized && "icon"}
+              onClick={() => navigate("/masuk")}
+            >
+              <LogIn02 className="p-0 text-lg" />
+              <span hidden={isMinimized}>Masuk</span>
+            </Button>
+          )}
         </footer>
       </section>
       <div className="absolute -right-2 top-0 flex h-8 w-8 translate-x-full rounded-lg bg-white">

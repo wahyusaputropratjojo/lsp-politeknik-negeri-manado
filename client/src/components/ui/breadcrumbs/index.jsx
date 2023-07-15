@@ -1,7 +1,9 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { v4 as uuid } from "uuid";
+import HomeLine from "../../../assets/icons/untitled-ui-icons/line/components/HomeLine";
 
 export const Breadcrumbs = () => {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   let currentRoute = "";
 
@@ -14,7 +16,7 @@ export const Breadcrumbs = () => {
         <li key={uuid()}>
           <Link
             to={currentRoute}
-            className="flex gap-2 font-aileron capitalize text-secondary-400 transition-colors after:content-['>'] hover:text-secondary-900"
+            className="flex gap-2 font-aileron capitalize text-secondary-400 transition-colors after:content-['>'] hover:text-secondary-500"
           >
             {crumb.replace(/-/g, " ")}
           </Link>
@@ -24,7 +26,18 @@ export const Breadcrumbs = () => {
 
   return (
     <nav>
-      <ul className="flex items-center gap-2">{crumbs}</ul>
+      <ul className="flex items-center gap-2">
+        <button
+          className="flex items-center gap-2 text-secondary-400 transition-colors hover:text-secondary-500"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          <HomeLine />
+          <span>&#62;</span>
+        </button>
+        {crumbs}
+      </ul>
     </nav>
   );
 };

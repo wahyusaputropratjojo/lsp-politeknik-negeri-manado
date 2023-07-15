@@ -1,0 +1,444 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid()) @map("id")
+  nama_lengkap  String         @map("nama_lengkap")
+  email         String         @unique @map("email")
+  password      String         @map("password")
+  role          Role           @default(Asesi) @map("role")
+  created_at    DateTime       @default(now()) @map("created_at")
+  updated_at    DateTime       @updatedAt @map("updated_at")
+  auth          Auth[]
+  profil        Profil?
+  asesi         Asesi?
+  asesor        Asesor?
+  administrator Administrator?
+
+  @@map("user")
+}
+
+// Asesi
+model Asesi {
+  id                      String                 @id @default(uuid()) @map("id")
+  id_user                 String                 @unique @map("id_user")
+  id_data_diri            String                 @unique @map("id_data_diri")
+  id_data_pekerjaan       String                 @unique @map("id_data_pekerjaan")
+  created_at              DateTime               @default(now()) @map("created_at")
+  updated_at              DateTime               @updatedAt @map("updated_at")
+  user                    User                   @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  data_diri               DataDiri               @relation(fields: [id_data_diri], references: [id], onDelete: Cascade)
+  data_pekerjaan          DataPekerjaan          @relation(fields: [id_data_pekerjaan], references: [id], onDelete: Cascade)
+  asesi_skema_sertifikasi AsesiSkemaSertifikasi?
+  asesor_asesi            AsesorAsesi[]
+
+  @@map("asesi")
+}
+
+model AsesiSkemaSertifikasi {
+  id                      String                  @id @default(uuid()) @map("id")
+  id_asesi                String                  @unique @map("id_asesi")
+  id_skema_sertifikasi    String                  @unique @map("id_skema")
+  id_tujuan_asesmen       String                  @unique @map("id_tujuan_asesmen")
+  created_at              DateTime                @default(now()) @map("created_at")
+  updated_at              DateTime                @updatedAt @map("updated_at")
+  asesi                   Asesi                   @relation(fields: [id_asesi], references: [id], onDelete: Cascade)
+  skema_sertifikasi       SkemaSertifikasi        @relation(fields: [id_skema_sertifikasi], references: [id], onDelete: Cascade)
+  tujuan_asesmen          TujuanAsesmen           @relation(fields: [id_tujuan_asesmen], references: [id], onDelete: Cascade)
+  bukti_persyaratan_dasar BuktiPersyaratanDasar[]
+  portofolio              Portofolio[]
+
+  @@map("asesi_skema")
+}
+
+model Portofolio {
+  id                         String                @id @default(uuid()) @map("id")
+  id_asesi_skema_sertifikasi String                @map("id_asesi_skema_sertifikasi")
+  keterangan                 String                @map("keterangan")
+  created_at                 DateTime              @default(now()) @map("created_at")
+  updated_at                 DateTime              @updatedAt @map("updated_at")
+  file_portofolio            FilePortofolio[]
+  asesi_skema_sertifikasi    AsesiSkemaSertifikasi @relation(fields: [id_asesi_skema_sertifikasi], references: [id])
+
+  @@map("portofolio")
+}
+
+model FilePortofolio {
+  id            String      @id @default(uuid()) @map("id")
+  id_portofolio String      @map("id_portofolio")
+  file          String      @map("file")
+  created_at    DateTime    @default(now()) @map("created_at")
+  updated_at    DateTime    @updatedAt @map("updated_at")
+  portofolio    Portofolio? @relation(fields: [id_portofolio], references: [id])
+
+  @@map("file_portofolio")
+}
+
+model BuktiPersyaratanDasar {
+  id                           String                      @id @default(uuid()) @map("id")
+  id_asesi_skema_sertifikasi   String                      @map("id_asesi_skema_sertifikasi")
+  id_persyaratan_dasar         String                      @map("id_persyaratan_dasar")
+  created_at                   DateTime                    @default(now()) @map("created_at")
+  updated_at                   DateTime                    @updatedAt @map("updated_at")
+  persyaratan_dasar            PersyaratanDasar            @relation(fields: [id_persyaratan_dasar], references: [id], onDelete: Cascade)
+  file_bukti_persyaratan_dasar FileBuktiPersyaratanDasar[]
+  asesi_skema_sertifikasi      AsesiSkemaSertifikasi       @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
+
+  @@map("bukti_persyaratan_dasar")
+}
+
+model FileBuktiPersyaratanDasar {
+  id                         String                 @id @default(uuid()) @map("id")
+  id_bukti_persyaratan_dasar String                 @map("id_bukti_persyaratan_dasar")
+  file                       String                 @map("file")
+  created_at                 DateTime               @default(now()) @map("created_at")
+  updated_at                 DateTime               @updatedAt @map("updated_at")
+  bukti_persyaratan_dasar    BuktiPersyaratanDasar? @relation(fields: [id_bukti_persyaratan_dasar], references: [id], onDelete: Cascade)
+
+  @@map("file_bukti_persyaratan_dasar")
+}
+
+// Asesor
+model Asesor {
+  id                       String                   @id @default(uuid()) @map("id")
+  id_user                  String                   @unique @map("id_user")
+  id_data_diri             String?                  @unique @map("id_data_diri")
+  created_at               DateTime                 @default(now()) @map("created_at")
+  updated_at               DateTime                 @updatedAt @map("updated_at")
+  user                     User                     @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  data_diri                DataDiri?                @relation(fields: [id_data_diri], references: [id])
+  asesor_skema_sertifikasi AsesorSkemaSertifikasi[]
+  asesor_asesi             AsesorAsesi[]
+
+  @@map("asesor")
+}
+
+model AsesorSkemaSertifikasi {
+  id         String           @id @default(uuid()) @map("id")
+  id_asesor  String           @unique @map("id_asesor")
+  id_skema   String           @unique @map("id_skema")
+  created_at DateTime         @default(now()) @map("created_at")
+  updated_at DateTime         @updatedAt @map("updated_at")
+  asesor     Asesor           @relation(fields: [id_asesor], references: [id], onDelete: Cascade)
+  skema      SkemaSertifikasi @relation(fields: [id_skema], references: [id], onDelete: Cascade)
+
+  @@map("asesor_skema")
+}
+
+model AsesorAsesi {
+  id         String   @id @default(uuid()) @map("id")
+  id_asesor  String   @unique @map("id_asesor")
+  id_asesi   String   @unique @map("id_asesi")
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  asesor     Asesor   @relation(fields: [id_asesor], references: [id], onDelete: Cascade)
+  asesi      Asesi    @relation(fields: [id_asesi], references: [id], onDelete: Cascade)
+
+  @@map("asesor_asesi")
+}
+
+// Administrator
+model Administrator {
+  id                       String              @id @default(uuid()) @map("id")
+  id_user                  String              @unique @map("id_user")
+  id_tempat_uji_kompetensi String              @unique @map("id_tempat_uji_kompetensi")
+  created_at               DateTime            @default(now()) @map("created_at")
+  updated_at               DateTime            @updatedAt @map("updated_at")
+  user                     User                @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  tempat_uji_kompetensi    TempatUjiKompetensi @relation(fields: [id_tempat_uji_kompetensi], references: [id], onDelete: Cascade)
+
+  @@map("admin")
+}
+
+// All Role
+model DataDiri {
+  id                     String   @id @default(uuid()) @map("id")
+  id_alamat              String   @unique @map("id_alamat")
+  nik                    String   @map("nik")
+  tempat_lahir           String   @map("tempat_lahir")
+  tanggal_lahir          DateTime @map("tanggal_lahir")
+  jenis_kelamin          String   @map("jenis_kelamin")
+  kebangsaan             String   @map("kebangsaan")
+  nomor_telepon          String   @map("nomor_telepon")
+  kualifikasi_pendidikan String   @map("kualifikasi_pendidikan")
+  foto_profil            String   @map("foto_profil")
+  created_at             DateTime @default(now()) @map("created_at")
+  updated_at             DateTime @updatedAt @map("updated_at")
+  alamat                 Alamat   @relation(fields: [id_alamat], references: [id], onDelete: Cascade)
+  asesi                  Asesi?
+  asesor                 Asesor?
+
+  @@map("data_diri")
+}
+
+model DataPekerjaan {
+  id                        String   @id @default(uuid()) @map("id")
+  id_alamat                 String   @unique @map("id_alamat")
+  nama_institusi_perusahaan String   @map("nama_perusahaan")
+  jabatan                   String   @map("jabatan")
+  nomor_telepon             String   @map("nomor_telepon")
+  email                     String   @map("email")
+  fax                       String   @map("fax")
+  created_at                DateTime @default(now()) @map("created_at")
+  updated_at                DateTime @updatedAt @map("updated_at")
+  alamat                    Alamat   @relation(fields: [id_alamat], references: [id], onDelete: Cascade)
+  asesi                     Asesi?
+
+  @@map("data_pekerjaan")
+}
+
+model Profil {
+  id         String   @id @default(uuid()) @map("id")
+  id_user    String   @unique @map("id_user")
+  nama       String   @map("nama")
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [id_user], references: [id], onDelete: Cascade)
+
+  @@map("profil")
+}
+
+model Alamat {
+  id                    String               @id @default(uuid()) @map("id")
+  provinsi              String               @map("provinsi")
+  kota_kabupaten        String               @map("kota_kabupaten")
+  kecamatan             String               @map("kecamatan")
+  kelurahan_desa        String               @map("kelurahan_desa")
+  keterangan_lainnya    String               @map("keterangan_lainnya")
+  created_at            DateTime             @default(now()) @map("created_at")
+  updated_at            DateTime             @updatedAt @map("updated_at")
+  data_pekerjaan        DataPekerjaan?
+  data_diri             DataDiri?
+  tempat_uji_kompetensi TempatUjiKompetensi?
+
+  @@map("alamat")
+}
+
+model Auth {
+  id         String   @id @default(uuid()) @map("id")
+  id_user    String   @map("id_user")
+  token      String   @map("token") @db.Text
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [id_user], references: [id], onDelete: Cascade)
+
+  @@map("auth")
+}
+
+// Skema Sertifikasi
+model TempatUjiKompetensi {
+  id                         String             @id @default(uuid()) @map("id")
+  id_alamat                  String?            @unique @map("id_alamat")
+  kode_tempat_uji_kompetensi String             @map("kode_tempat_uji_kompetensi")
+  tempat_uji_kompetensi      String             @map("tempat_uji_kompetensi")
+  created_at                 DateTime           @default(now()) @map("created_at")
+  updated_at                 DateTime           @updatedAt @map("updated_at")
+  alamat                     Alamat?            @relation(fields: [id_alamat], references: [id], onDelete: Cascade)
+  skema_sertifikasi          SkemaSertifikasi[]
+  administrator              Administrator[]
+
+  @@map("tempat_uji_kompetensi")
+}
+
+model SkemaSertifikasi {
+  id                       String                   @id @default(uuid()) @map("id")
+  id_tempat_uji_kompetensi String                   @map("id_tempat_uji_kompetensi")
+  kode_skema_sertifikasi   String                   @unique @map("kode")
+  nama_skema_sertifikasi   String                   @map("nama")
+  created_at               DateTime                 @default(now()) @map("created_at")
+  updated_at               DateTime                 @updatedAt @map("updated_at")
+  tempat_uji_kompetensi    TempatUjiKompetensi      @relation(fields: [id_tempat_uji_kompetensi], references: [id], onDelete: Cascade)
+  unit_kompetensi          UnitKompetensi[]
+  persyaratan_dasar        PersyaratanDasar[]
+  asesor_skema_sertifikasi AsesorSkemaSertifikasi[]
+  asesi_skema_sertifikasi  AsesiSkemaSertifikasi[]
+
+  @@map("skema_sertifikasi")
+}
+
+model UnitKompetensi {
+  id                        String                    @id @default(uuid()) @map("id")
+  id_skema_sertifikasi      String                    @map("id_skema_sertifikasi")
+  kode_unit_kompetensi      String                    @unique @map("kode")
+  nama_unit_kompetensi      String                    @map("nama")
+  created_at                DateTime                  @default(now()) @map("created_at")
+  updated_at                DateTime                  @updatedAt @map("updated_at")
+  skema_sertifikasi         SkemaSertifikasi          @relation(fields: [id_skema_sertifikasi], references: [id], onDelete: Cascade)
+  aktivitas_unit_kompetensi AktivitasUnitKompetensi[]
+  pertanyaan_observasi      PertanyaanObservasi[]
+  pertanyaan_esai           PertanyaanEsai[]
+  pertanyaan_lisan          PertanyaanLisan[]
+  pertanyaan_tertulis       PertanyaanTertulis[]
+
+  @@map("unit_kompetensi")
+}
+
+model PersyaratanDasar {
+  id                      String                  @id @default(uuid()) @map("id")
+  id_skema_sertifikasi    String                  @map("id_skema_sertifikasi")
+  persyaratan_dasar       String                  @map("persyaratan_dasar")
+  created_at              DateTime                @default(now()) @map("created_at")
+  updated_at              DateTime                @updatedAt @map("updated_at")
+  skema_sertifikasi       SkemaSertifikasi        @relation(fields: [id_skema_sertifikasi], references: [id], onDelete: Cascade)
+  bukti_persyaratan_dasar BuktiPersyaratanDasar[]
+
+  @@map("persyaratan_dasar")
+}
+
+model AktivitasUnitKompetensi {
+  id                   String               @id @default(uuid()) @map("id")
+  id_unit_kompetensi   String               @map("id_unit_kompetensi")
+  elemen               String               @map("element")
+  created_at           DateTime             @default(now()) @map("created_at")
+  updated_at           DateTime             @updatedAt @map("updated_at")
+  unit_kompetensi      UnitKompetensi       @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  kriteria_unjuk_kerja KriteriaUnjukKerja[]
+
+  @@map("aktivitas_unit_kompetensi")
+}
+
+model KriteriaUnjukKerja {
+  id                           String                  @id @default(uuid()) @map("id")
+  id_aktivitas_unit_kompetensi String                  @map("id_aktivitas_unit_kompetensi")
+  kriteria                     String                  @map("kriteria_unjuk_kerja")
+  created_at                   DateTime                @default(now()) @map("created_at")
+  updated_at                   DateTime                @updatedAt @map("updated_at")
+  aktivitas_unit_kompetensi    AktivitasUnitKompetensi @relation(fields: [id_aktivitas_unit_kompetensi], references: [id], onDelete: Cascade)
+
+  @@map("kriteria_unjuk_kerja")
+}
+
+model PertanyaanObservasi {
+  id                 String         @id @default(uuid()) @map("id")
+  id_unit_kompetensi String         @map("id_unit_kompetensi")
+  pertanyaan         String         @map("pertanyaan")
+  created_at         DateTime       @default(now()) @map("created_at")
+  updated_at         DateTime       @updatedAt @map("updated_at")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+
+  @@map("pertanyaan_observasi")
+}
+
+model PertanyaanEsai {
+  id                 String         @id @default(uuid()) @map("id")
+  id_unit_kompetensi String         @map("id_unit_kompetensi")
+  pertanyaan         String         @map("pertanyaan")
+  jawaban            String         @map("jawaban")
+  created_at         DateTime       @default(now()) @map("created_at")
+  updated_at         DateTime       @updatedAt @map("updated_at")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+
+  @@map("pertanyaan_esai")
+}
+
+model PertanyaanLisan {
+  id                 String         @id @default(uuid()) @map("id")
+  id_unit_kompetensi String         @map("id_unit_kompetensi")
+  pertanyaan         String         @map("pertanyaan")
+  jawaban            String         @map("jawaban")
+  created_at         DateTime       @default(now()) @map("created_at")
+  updated_at         DateTime       @updatedAt @map("updated_at")
+  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+
+  @@map("pertanyaan_lisan")
+}
+
+model PertanyaanTertulis {
+  id                          String                      @id @default(uuid()) @map("id")
+  id_unit_kompetensi          String                      @map("id_unit_kompetensi")
+  pertanyaan                  String                      @map("pertanyaan")
+  created_at                  DateTime                    @default(now()) @map("created_at")
+  updated_at                  DateTime                    @updatedAt @map("updated_at")
+  unit_kompetensi             UnitKompetensi              @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  jawaban_pertanyaan_tertulis JawabanPertanyaanTertulis[]
+
+  @@map("pertanyaan_tertulis")
+}
+
+model JawabanPertanyaanTertulis {
+  id                     String             @id @default(uuid()) @map("id")
+  id_pertanyaan_tertulis String             @map("id_pertanyaan_tulis")
+  jawaban                String             @map("jawaban")
+  benar                  Boolean            @map("benar")
+  created_at             DateTime           @default(now()) @map("created_at")
+  updated_at             DateTime           @updatedAt @map("updated_at")
+  pertanyaan_tertulis    PertanyaanTertulis @relation(fields: [id_pertanyaan_tertulis], references: [id], onDelete: Cascade)
+
+  @@map("jawaban_pertanyaan_tertulis")
+}
+
+model TujuanAsesmen {
+  id                      String                 @id @default(uuid()) @map("id")
+  tujuan                  String                 @map("tujuan")
+  created_at              DateTime               @default(now()) @map("created_at")
+  updated_at              DateTime               @updatedAt @map("updated_at")
+  asesi_skema_sertifikasi AsesiSkemaSertifikasi?
+
+  @@map("tujuan_asesmen")
+}
+
+// Alamat
+model Provinsi {
+  id         String      @id @map("id")
+  nama       String      @map("nama")
+  value      String      @map("value")
+  created_at DateTime    @default(now()) @map("created_at")
+  updated_at DateTime    @updatedAt @map("updated_at")
+  kabupaten  Kabupaten[]
+
+  @@map("provinsi")
+}
+
+model Kabupaten {
+  id          String      @id @map("id")
+  nama        String      @map("nama")
+  value       String      @map("value")
+  id_provinsi String      @map("id_provinsi")
+  created_at  DateTime    @default(now()) @map("created_at")
+  updated_at  DateTime    @updatedAt @map("updated_at")
+  provinsi    Provinsi    @relation(fields: [id_provinsi], references: [id], onDelete: Cascade)
+  kecamatan   Kecamatan[]
+
+  @@map("kabupaten")
+}
+
+model Kecamatan {
+  id           String    @id @map("id")
+  nama         String    @map("nama")
+  value        String    @map("value")
+  id_kabupaten String    @map("id_kabupaten")
+  created_at   DateTime  @default(now()) @map("created_at")
+  updated_at   DateTime  @updatedAt @map("updated_at")
+  kabupaten    Kabupaten @relation(fields: [id_kabupaten], references: [id], onDelete: Cascade)
+  desa         Desa[]
+
+  @@map("kecamatan")
+}
+
+model Desa {
+  id           String    @id @map("id")
+  nama         String    @map("nama")
+  value        String    @map("value")
+  id_kecamatan String    @map("id_kecamatan")
+  created_at   DateTime  @default(now()) @map("created_at")
+  updated_at   DateTime  @updatedAt @map("updated_at")
+  kecamatan    Kecamatan @relation(fields: [id_kecamatan], references: [id], onDelete: Cascade)
+
+  @@map("desa")
+}
+
+// Enum
+enum Role {
+  Asesi
+  Asesor
+  Administrator
+}

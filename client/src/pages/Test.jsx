@@ -1,30 +1,47 @@
-import { InputFile } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+import * as React from "react";
+import { format } from "date-fns";
+import CalendarIcon from "../assets/icons/untitled-ui-icons/line/components/Calendar";
+import { id } from "date-fns/locale";
+import { cn } from "../utils/cn";
 import { Button } from "../components/ui/button";
-import Upload04 from "../assets/icons/untitled-ui-icons/line/components/Upload04";
-import File06 from "../assets/icons/untitled-ui-icons/line/components/File06";
-import { useState } from "react";
-import { Alert, AlertDescription } from "../components/ui/alert";
+import { Calendar } from "../components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../components/ui/popover";
 
-export const Test = () => {
-  const [file, setFile] = useState("");
-
-  const handleFile = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  // const image = URL.createObjectURL(file);
+export function Test() {
+  const [date, setDate] = React.useState();
 
   return (
-    <>
-      <div className="w-full bg-neutral-500">
-        <div className="mx-[auto] flex h-[100vh] max-w-[16rem] items-center justify-center">
-          <div className="min-w-[30rem] rounded-lg p-10">
-            <Label>Foto Profil</Label>
-            <InputFile />
-          </div>
-        </div>
-      </div>
-    </>
+    <div className="flex h-[100vh] items-center justify-center">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            custom="combobox"
+            className={cn(
+              "w-[280px] justify-between text-left font-normal",
+              !date && "text-muted-foreground"
+            )}
+          >
+            {date ? (
+              format(date, "PPP", { locale: id })
+            ) : (
+              <span>Pilih tanggal</span>
+            )}
+            <CalendarIcon className="mr-2 h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            initialFocus
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
   );
-};
+}

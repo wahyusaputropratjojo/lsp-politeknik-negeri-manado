@@ -84,34 +84,6 @@
   }
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  min-height: 100vh;
-  background-color: hsl(240, 4%, 95%);
-}
-
-img,
-picture,
-svg,
-video {
-  display: block;
-  max-width: 100%;
-}
-
 @font-face {
   font-family: "Aileron";
   src: url("../src/assets/fonts/aileron/aileron-regular-400.otf")
@@ -158,4 +130,42 @@ video {
     format("truetype");
   font-weight: 800;
   font-style: normal;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: hsl(240, 4%, 95%);
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }

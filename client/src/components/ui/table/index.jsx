@@ -5,7 +5,7 @@ export const Table = React.forwardRef(({ className, ...props }, ref) => (
   <div className="w-full overflow-auto">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn("w-full caption-bottom font-aileron text-sm", className)}
       {...props}
     />
   </div>
@@ -29,7 +29,7 @@ TableBody.displayName = "TableBody";
 export const TableFooter = React.forwardRef(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn("bg-primary font-medium text-primary-foreground", className)}
+    className={cn("bg-primary text-primary-foreground font-medium", className)}
     {...props}
   />
 ));
@@ -39,7 +39,7 @@ export const TableRow = React.forwardRef(({ className, ...props }, ref) => (
   <tr
     ref={ref}
     className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
       className
     )}
     {...props}
@@ -51,7 +51,7 @@ export const TableHead = React.forwardRef(({ className, ...props }, ref) => (
   <th
     ref={ref}
     className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      "text-muted-foreground h-12 px-4 text-left align-middle font-bold [&:has([role=checkbox])]:pr-0",
       className
     )}
     {...props}
@@ -71,7 +71,7 @@ TableCell.displayName = "TableCell";
 export const TableCaption = React.forwardRef(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn("mt-4 text-sm text-muted-foreground", className)}
+    className={cn("text-muted-foreground mt-4 text-sm", className)}
     {...props}
   />
 ));

@@ -14,6 +14,8 @@ export const buttonVariants = cva(
           "border-secondary-500 bg-secondary-500 text-white hover:bg-secondary-600 focus:border-secondary-600 focus:bg-secondary-600 focus:outline-none active:bg-secondary-700 disabled:border-secondary-200 disabled:bg-secondary-200 disabled:text-secondary-300",
         error:
           "border-error-50 bg-error-50 text-error-500 hover:border-error-100 hover:bg-error-100 focus:border-error-100 focus:bg-error-100 focus:outline-none active:border-error-200 active:bg-error-200 disabled:border-error-200 disabled:bg-error-200 disabled:text-error-300",
+        success:
+          "border-success-50 bg-success-50 text-success-500 hover:border-success-100 hover:bg-success-100 focus:border-success-100 focus:bg-success-100 focus:outline-none active:border-success-200 active:bg-success-200 disabled:border-success-200 disabled:bg-success-200 disabled:text-success-300",
         outline:
           "border-secondary-500 text-secondary-500 hover:bg-secondary-600 hover:text-white focus:border-secondary-600 focus:bg-secondary-600 focus:text-white focus:outline-none active:bg-secondary-700 active:text-white disabled:border-secondary-200 disabled:bg-secondary-200 disabled:text-secondary-300",
       },
@@ -27,6 +29,12 @@ export const buttonVariants = cva(
       content: {
         icon: "h-max w-max p-4",
       },
+      similar: {
+        "input-primary":
+          "border-secondary-300 bg-transparent px-4 font-aileron text-sm font-normal text-secondary-300 hover:border-secondary-400 hover:bg-transparent hover:text-secondary-400 focus:border-secondary-500 focus:bg-transparent focus:text-secondary-500 focus:outline-none active:border-secondary-500 active:bg-transparent active:text-secondary-500 disabled:border-secondary-200 disabled:bg-secondary-200 disabled:text-secondary-300",
+        "input-error":
+          "border-error-500 bg-transparent px-4 font-aileron text-sm font-normal text-secondary-300 hover:border-error-600 hover:bg-transparent hover:text-secondary-400 focus:border-error-700 focus:bg-transparent focus:text-secondary-500 focus:outline-none active:border-error-600 active:bg-transparent active:text-secondary-500 disabled:border-secondary-200 disabled:bg-secondary-200 disabled:text-secondary-300",
+      },
     },
     defaultVariants: {
       variant: "primary",
@@ -36,7 +44,10 @@ export const buttonVariants = cva(
 );
 
 export const Button = React.forwardRef(
-  ({ className, variant, size, content, asChild = false, ...props }, ref) => {
+  (
+    { className, variant, size, content, similar, asChild = false, ...props },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
@@ -45,6 +56,7 @@ export const Button = React.forwardRef(
             variant,
             size,
             content,
+            similar,
             className,
           })
         )}
