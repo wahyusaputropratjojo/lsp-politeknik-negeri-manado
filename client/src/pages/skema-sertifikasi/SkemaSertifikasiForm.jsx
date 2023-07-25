@@ -29,7 +29,7 @@ export const SkemaSertifikasiForm = () => {
     mutationFn: async (data) =>
       await axios.post(
         "/skema-sertifikasi/unit-kompetensi/aktivitas-unit-kompetensi/all",
-        data
+        data,
       ),
   });
 
@@ -38,7 +38,7 @@ export const SkemaSertifikasiForm = () => {
       data;
 
     const destructureUnitKompetensi = unit_kompetensi.map(
-      ({ id, ...rest }) => rest
+      ({ id, ...rest }) => rest,
     );
 
     mutate({
@@ -185,7 +185,6 @@ export const SkemaSertifikasiForm = () => {
           </Form>
           <DevTool control={form.control} />
         </article>
-        <footer></footer>
       </div>
     </>
   );

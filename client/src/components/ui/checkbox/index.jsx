@@ -7,8 +7,8 @@ export const Checkbox = React.forwardRef(({ className, ...props }, ref) => (
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      "border-primary focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground peer h-4 w-4 shrink-0 rounded-sm border border-secondary-300 focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50",
-      className
+      "focus-visible:ring-ring peer h-4 w-4 shrink-0 rounded-sm border border-secondary-500 focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary-500 data-[state=unchecked]:bg-secondary-500 data-[state=checked]:text-secondary-500",
+      className,
     )}
     {...props}
   >

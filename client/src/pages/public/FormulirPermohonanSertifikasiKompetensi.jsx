@@ -21,14 +21,13 @@ import { negara } from "../../data/negara";
 import Check from "../../assets/icons/untitled-ui-icons/line/components/Check";
 import ChevronSelectorVertical from "../../assets/icons/untitled-ui-icons/line/components/ChevronSelectorVertical";
 import CalendarIcon from "../../assets/icons/untitled-ui-icons/line/components/Calendar";
-import XCircle from "../../assets/icons/untitled-ui-icons/line/components/XCircle";
 import PlusSquare from "../../assets/icons/untitled-ui-icons/line/components/PlusSquare";
+import RefreshCw04 from "../../assets/icons/untitled-ui-icons/line/components/RefreshCw04";
+import XCircle from "../../assets/icons/untitled-ui-icons/line/components/XCircle";
 
 // Components
-import { Alert, AlertDescription } from "../../components/ui/alert";
 import { Button } from "../../components/ui/button";
 import { Calendar } from "../../components/ui/calendar";
-import { Checkbox } from "../../components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -64,7 +63,7 @@ import { Upload } from "../../components/ui/upload";
 
 export const FormulirPermohonanSertifikasiKompetensi = () => {
   const form = useForm({
-    // resolver: yupResolver(permohonanSertifikasiKompetensiSchema),
+    resolver: yupResolver(permohonanSertifikasiKompetensiSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -118,7 +117,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
   const [desaAlamatKantor, setDesaAlamatKantor] = useState([]);
   const [skemaSertifikasi, setSkemaSertifikasi] = useState([]);
   const [tujuanAsesmen, setTujuanAsesmen] = useState([]);
-  const [persyaratanDasar, setPersyaratanDasar] = useState([]);
+  const [persyaratanDasar, setPersyaratanDasar] = useState(null);
   const [idProvinsiAlamatRumah, setIdProvinsiAlamatRumah] = useState(null);
   const [idKabupatenAlamatRumah, setIdKabupatenAlamatRumah] = useState(null);
   const [idKecamatanAlamatRumah, setIdKecamatanAlamatRumah] = useState(null);
@@ -165,7 +164,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     queryFn: async () => {
       if (!idProvinsiAlamatRumah) return;
       return await axios.get(
-        `/indonesia/provinsi/${idProvinsiAlamatRumah}/kabupaten`
+        `/indonesia/provinsi/${idProvinsiAlamatRumah}/kabupaten`,
       );
     },
     onSuccess: (data) => {
@@ -182,7 +181,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     queryFn: async () => {
       if (!idKabupatenAlamatRumah) return;
       return await axios.get(
-        `/indonesia/provinsi/kabupaten/${idKabupatenAlamatRumah}/kecamatan`
+        `/indonesia/provinsi/kabupaten/${idKabupatenAlamatRumah}/kecamatan`,
       );
     },
     onSuccess: (data) => {
@@ -199,7 +198,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     queryFn: async () => {
       if (!idKecamatanAlamatRumah) return;
       return await axios.get(
-        `/indonesia/provinsi/kabupaten/kecamatan/${idKecamatanAlamatRumah}/desa`
+        `/indonesia/provinsi/kabupaten/kecamatan/${idKecamatanAlamatRumah}/desa`,
       );
     },
     onSuccess: (data) => {
@@ -229,7 +228,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     queryFn: async () => {
       if (!idProvinsiAlamatKantor) return;
       return await axios.get(
-        `/indonesia/provinsi/${idProvinsiAlamatKantor}/kabupaten`
+        `/indonesia/provinsi/${idProvinsiAlamatKantor}/kabupaten`,
       );
     },
     onSuccess: (data) => {
@@ -246,7 +245,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     queryFn: async () => {
       if (!idKabupatenAlamatKantor) return;
       return await axios.get(
-        `/indonesia/provinsi/kabupaten/${idKabupatenAlamatKantor}/kecamatan`
+        `/indonesia/provinsi/kabupaten/${idKabupatenAlamatKantor}/kecamatan`,
       );
     },
     onSuccess: (data) => {
@@ -263,7 +262,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     queryFn: async () => {
       if (!idKecamatanAlamatKantor) return;
       return await axios.get(
-        `/indonesia/provinsi/kabupaten/kecamatan/${idKecamatanAlamatKantor}/desa`
+        `/indonesia/provinsi/kabupaten/kecamatan/${idKecamatanAlamatKantor}/desa`,
       );
     },
     onSuccess: (data) => {
@@ -305,7 +304,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     queryKey: ["persyaratan-dasar", idSkemaSertifikasi],
     queryFn: async () => {
       return await axios.get(
-        `/skema-sertifikasi/${idSkemaSertifikasi}/persyaratan-dasar`
+        `/skema-sertifikasi/${idSkemaSertifikasi}/persyaratan-dasar`,
       );
     },
     onSuccess: (data) => {
@@ -317,7 +316,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     enabled: !!idSkemaSertifikasi,
   });
 
-  const { mutate } = useMutation({
+  const { isLoading, mutate } = useMutation({
     mutationFn: async (data) => {
       return await axios.post(`/asesi/register`, data, {
         headers: {
@@ -327,6 +326,10 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     },
     onSuccess: (data) => {
       console.log(data);
+      form.reset();
+      setPersyaratanDasar(null);
+      resetFotoProfilPreview();
+      alert("Pendaftaran Berhasil");
     },
     onError: (error) => {
       console.log(error);
@@ -362,7 +365,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     const processArrayEntries = (
       inputArray,
       propertyName,
-      customPropertyName
+      customPropertyName,
     ) => {
       const resultObject = {};
       for (const [index, valueInputArray] of inputArray.entries()) {
@@ -380,13 +383,13 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
     const persyaratanDasarFile = processArrayEntries(
       persyaratan_dasar,
       "bukti",
-      "persyaratan_dasar"
+      "persyaratan_dasar",
     );
 
     const portofolioFile = processArrayEntries(
       portofolio,
       "bukti",
-      "portofolio"
+      "portofolio",
     );
 
     mutate({
@@ -459,6 +462,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 type="email"
                                 variant={
                                   form.formState.errors?.email
@@ -480,6 +484,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 type="password"
                                 variant={
                                   form.formState.errors?.password
@@ -516,10 +521,14 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                               <FormControl>
                                 <Upload
                                   {...field}
+                                  disabled={isLoading}
                                   value={field.value?.fileName}
+                                  totalFile={
+                                    form.watch(`foto_profil`)?.length ?? 0
+                                  }
                                   onChange={(event) => {
                                     setFotoProfilPreview(event);
-                                    field.onChange(event.target.files[0]);
+                                    field.onChange(event.target.files);
                                   }}
                                   accept={"image/*"}
                                   variant={
@@ -542,7 +551,12 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             />
                             <button
                               type="button"
-                              className="absolute right-0 top-0 -translate-y-full translate-x-full rounded-lg bg-error-50 p-1 transition-colors hover:bg-error-100"
+                              className={cn(
+                                "absolute right-0 top-0 -translate-y-full translate-x-full rounded-lg bg-error-50 p-1 transition-colors hover:bg-error-100",
+                                {
+                                  hidden: isLoading,
+                                },
+                              )}
                               onClick={() => {
                                 form.setValue("foto_profil", null);
                                 resetFotoProfilPreview();
@@ -562,6 +576,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 variant={
                                   form.formState.errors?.nama_lengkap
                                     ? "error"
@@ -582,6 +597,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 type="text"
                                 inputMode="numeric"
                                 onKeyDown={restrictAlphabet}
@@ -605,6 +621,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 variant={
                                   form.formState.errors?.tempat_lahir
                                     ? "error"
@@ -626,6 +643,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <Button
+                                    disabled={isLoading}
                                     similar={
                                       form.formState.errors?.tanggal_lahir
                                         ? "input-error"
@@ -673,6 +691,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <Popover>
                               <PopoverTrigger asChild>
                                 <Button
+                                  disabled={isLoading}
                                   similar={
                                     form.formState.errors?.jenis_kelamin
                                       ? "input-error"
@@ -684,7 +703,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                   <p className="col-span-11 flex w-full items-start justify-self-start truncate">
                                     {field.value
                                       ? jenisKelamin.find(
-                                          (data) => data.value === field.value
+                                          (data) => data.value === field.value,
                                         )?.label
                                       : ""}
                                   </p>
@@ -704,7 +723,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                             form.setValue(
                                               "jenis_kelamin",
                                               value,
-                                              { shouldValidate: true }
+                                              { shouldValidate: true },
                                             );
                                           }}
                                         >
@@ -713,7 +732,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                               "mr-2 h-4 w-4",
                                               data.value === field.value
                                                 ? "opacity-100"
-                                                : "opacity-0"
+                                                : "opacity-0",
                                             )}
                                           />
                                           {data.label}
@@ -737,6 +756,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <Popover>
                               <PopoverTrigger asChild>
                                 <Button
+                                  disabled={isLoading}
                                   similar={
                                     form.formState.errors?.kebangsaan
                                       ? "input-error"
@@ -748,7 +768,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                   <p className="col-span-11 flex w-full items-start justify-self-start truncate">
                                     {field.value
                                       ? negara.find(
-                                          (data) => data.value === field.value
+                                          (data) => data.value === field.value,
                                         )?.nama
                                       : ""}
                                   </p>
@@ -779,7 +799,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                               "mr-2 h-4 w-4",
                                               data.value === field.value
                                                 ? "opacity-100"
-                                                : "opacity-0"
+                                                : "opacity-0",
                                             )}
                                           />
                                           {data.nama}
@@ -803,6 +823,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 type="tel"
                                 inputMode="numeric"
                                 onKeyDown={restrictAlphabet}
@@ -827,6 +848,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <Button
+                                    disabled={isLoading}
                                     similar={
                                       form.formState.errors
                                         ?.kualifikasi_pendidikan
@@ -839,7 +861,8 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                     <p className="col-span-11 flex w-full items-start justify-self-start truncate">
                                       {field.value
                                         ? kualifikasiPendidikan.find(
-                                            (data) => data.value === field.value
+                                            (data) =>
+                                              data.value === field.value,
                                           )?.label
                                         : ""}
                                     </p>
@@ -859,7 +882,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                               form.setValue(
                                                 "kualifikasi_pendidikan",
                                                 value,
-                                                { shouldValidate: true }
+                                                { shouldValidate: true },
                                               );
                                             }}
                                           >
@@ -868,7 +891,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 "mr-2 h-4 w-4",
                                                 data.value === field.value
                                                   ? "opacity-100"
-                                                  : "opacity-0"
+                                                  : "opacity-0",
                                               )}
                                             />
                                             {data.label}
@@ -898,6 +921,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
+                                      disabled={isLoading}
                                       similar={
                                         form.formState.errors?.alamat_rumah
                                           ?.provinsi
@@ -911,7 +935,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                         {field.value
                                           ? provinsiAlamatRumah.find(
                                               (data) =>
-                                                data.value === field.value
+                                                data.value === field.value,
                                             )?.nama
                                           : ""}
                                       </p>
@@ -935,22 +959,22 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 form.setValue(
                                                   "alamat_rumah.provinsi",
                                                   value,
-                                                  { shouldValidate: true }
+                                                  { shouldValidate: true },
                                                 );
                                                 form.setValue(
                                                   "alamat_rumah.kota_kabupaten",
-                                                  null
+                                                  null,
                                                 );
                                                 form.setValue(
                                                   "alamat_rumah.kecamatan",
-                                                  null
+                                                  null,
                                                 );
                                                 form.setValue(
                                                   "alamat_rumah.kelurahan_desa",
-                                                  null
+                                                  null,
                                                 );
                                                 setIdProvinsiAlamatRumah(
-                                                  data.id
+                                                  data.id,
                                                 );
                                                 setIdKabupatenAlamatRumah(null);
                                                 setIdKecamatanAlamatRumah(null);
@@ -961,7 +985,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                   "mr-2 h-4 w-4",
                                                   data.value === field.value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               {data.nama}
@@ -985,7 +1009,9 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
-                                      disabled={!idProvinsiAlamatRumah}
+                                      disabled={
+                                        !idProvinsiAlamatRumah || isLoading
+                                      }
                                       similar={
                                         form.formState.errors?.alamat_rumah
                                           ?.kota_kabupaten
@@ -999,7 +1025,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                         {field.value
                                           ? kabupatenAlamatRumah.find(
                                               (data) =>
-                                                data.value === field.value
+                                                data.value === field.value,
                                             )?.nama
                                           : ""}
                                       </p>
@@ -1023,18 +1049,18 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 form.setValue(
                                                   "alamat_rumah.kota_kabupaten",
                                                   value,
-                                                  { shouldValidate: true }
+                                                  { shouldValidate: true },
                                                 );
                                                 form.setValue(
                                                   "alamat_rumah.kelurahan_desa",
-                                                  null
+                                                  null,
                                                 );
                                                 form.setValue(
                                                   "alamat_rumah.kecamatan",
-                                                  null
+                                                  null,
                                                 );
                                                 setIdKabupatenAlamatRumah(
-                                                  data.id
+                                                  data.id,
                                                 );
                                                 setIdKecamatanAlamatRumah(null);
                                               }}
@@ -1044,7 +1070,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                   "mr-2 h-4 w-4",
                                                   data.value === field.value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               {data.nama}
@@ -1068,7 +1094,9 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
-                                      disabled={!idKabupatenAlamatRumah}
+                                      disabled={
+                                        !idKabupatenAlamatRumah || isLoading
+                                      }
                                       similar={
                                         form.formState.errors?.alamat_rumah
                                           ?.kecamatan
@@ -1082,7 +1110,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                         {field.value
                                           ? kecamatanAlamatRumah.find(
                                               (data) =>
-                                                data.value === field.value
+                                                data.value === field.value,
                                             )?.nama
                                           : ""}
                                       </p>
@@ -1106,14 +1134,14 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 form.setValue(
                                                   "alamat_rumah.kecamatan",
                                                   value,
-                                                  { shouldValidate: true }
+                                                  { shouldValidate: true },
                                                 );
                                                 form.setValue(
                                                   "alamat_rumah.kelurahan_desa",
-                                                  null
+                                                  null,
                                                 );
                                                 setIdKecamatanAlamatRumah(
-                                                  data.id
+                                                  data.id,
                                                 );
                                               }}
                                             >
@@ -1122,7 +1150,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                   "mr-2 h-4 w-4",
                                                   data.value === field.value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               {data.nama}
@@ -1146,7 +1174,9 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
-                                      disabled={!idKecamatanAlamatRumah}
+                                      disabled={
+                                        !idKecamatanAlamatRumah || isLoading
+                                      }
                                       similar={
                                         form.formState.errors?.alamat_rumah
                                           ?.kelurahan_desa
@@ -1160,7 +1190,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                         {field.value
                                           ? desaAlamatRumah.find(
                                               (data) =>
-                                                data.value === field.value
+                                                data.value === field.value,
                                             )?.nama
                                           : ""}
                                       </p>
@@ -1184,7 +1214,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 form.setValue(
                                                   "alamat_rumah.kelurahan_desa",
                                                   value,
-                                                  { shouldValidate: true }
+                                                  { shouldValidate: true },
                                                 );
                                               }}
                                             >
@@ -1193,7 +1223,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                   "mr-2 h-4 w-4",
                                                   data.value === field.value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               {data.nama}
@@ -1215,7 +1245,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                               <FormItem className="col-span-2">
                                 <FormLabel>Keterangan Lainnya</FormLabel>
                                 <FormControl>
-                                  <Textarea {...field} />
+                                  <Textarea {...field} disabled={isLoading} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -1241,6 +1271,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 variant={
                                   form.formState.errors
                                     ?.nama_institusi_perusahaan
@@ -1262,6 +1293,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 variant={
                                   form.formState.errors?.jabatan
                                     ? "error"
@@ -1282,6 +1314,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 type="tel"
                                 inputMode="numeric"
                                 onKeyDown={restrictAlphabet}
@@ -1305,6 +1338,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 variant={
                                   form.formState.errors?.email_kantor
                                     ? "error"
@@ -1325,6 +1359,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <FormControl>
                               <Input
                                 {...field}
+                                disabled={isLoading}
                                 type="tel"
                                 inputMode="numeric"
                                 onKeyDown={restrictAlphabet}
@@ -1353,6 +1388,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
+                                      disabled={isLoading}
                                       similar={
                                         form.formState.errors?.alamat_kantor
                                           ?.provinsi
@@ -1366,7 +1402,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                         {field.value
                                           ? provinsiAlamatKantor.find(
                                               (data) =>
-                                                data.value === field.value
+                                                data.value === field.value,
                                             )?.nama
                                           : ""}
                                       </p>
@@ -1390,28 +1426,28 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 form.setValue(
                                                   "alamat_kantor.provinsi",
                                                   value,
-                                                  { shouldValidate: true }
+                                                  { shouldValidate: true },
                                                 );
                                                 form.setValue(
                                                   "alamat_kantor.kota_kabupaten",
-                                                  null
+                                                  null,
                                                 );
                                                 form.setValue(
                                                   "alamat_kantor.kecamatan",
-                                                  null
+                                                  null,
                                                 );
                                                 form.setValue(
                                                   "alamat_kantor.kelurahan_desa",
-                                                  null
+                                                  null,
                                                 );
                                                 setIdProvinsiAlamatKantor(
-                                                  data.id
+                                                  data.id,
                                                 );
                                                 setIdKabupatenAlamatKantor(
-                                                  null
+                                                  null,
                                                 );
                                                 setIdKecamatanAlamatKantor(
-                                                  null
+                                                  null,
                                                 );
                                               }}
                                             >
@@ -1420,7 +1456,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                   "mr-2 h-4 w-4",
                                                   data.value === field.value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               {data.nama}
@@ -1444,7 +1480,9 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
-                                      disabled={!idProvinsiAlamatKantor}
+                                      disabled={
+                                        !idProvinsiAlamatKantor || isLoading
+                                      }
                                       similar={
                                         form.formState.errors?.alamat_kantor
                                           ?.kota_kabupaten
@@ -1458,7 +1496,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                         {field.value
                                           ? kabupatenAlamatKantor.find(
                                               (data) =>
-                                                data.value === field.value
+                                                data.value === field.value,
                                             )?.nama
                                           : ""}
                                       </p>
@@ -1482,21 +1520,21 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 form.setValue(
                                                   "alamat_kantor.kota_kabupaten",
                                                   value,
-                                                  { shouldValidate: true }
+                                                  { shouldValidate: true },
                                                 );
                                                 form.setValue(
                                                   "alamat_kantor.kelurahan_desa",
-                                                  null
+                                                  null,
                                                 );
                                                 form.setValue(
                                                   "alamat_kantor.kecamatan",
-                                                  null
+                                                  null,
                                                 );
                                                 setIdKabupatenAlamatKantor(
-                                                  data.id
+                                                  data.id,
                                                 );
                                                 setIdKecamatanAlamatKantor(
-                                                  null
+                                                  null,
                                                 );
                                               }}
                                             >
@@ -1505,7 +1543,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                   "mr-2 h-4 w-4",
                                                   data.value === field.value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               {data.nama}
@@ -1529,7 +1567,9 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
-                                      disabled={!idKabupatenAlamatKantor}
+                                      disabled={
+                                        !idKabupatenAlamatKantor || isLoading
+                                      }
                                       similar={
                                         form.formState.errors?.alamat_kantor
                                           ?.kecamatan
@@ -1543,7 +1583,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                         {field.value
                                           ? kecamatanAlamatKantor.find(
                                               (data) =>
-                                                data.value === field.value
+                                                data.value === field.value,
                                             )?.nama
                                           : ""}
                                       </p>
@@ -1567,14 +1607,14 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 form.setValue(
                                                   "alamat_kantor.kecamatan",
                                                   value,
-                                                  { shouldValidate: true }
+                                                  { shouldValidate: true },
                                                 );
                                                 form.setValue(
                                                   "alamat_kantor.kelurahan_desa",
-                                                  null
+                                                  null,
                                                 );
                                                 setIdKecamatanAlamatKantor(
-                                                  data.id
+                                                  data.id,
                                                 );
                                               }}
                                             >
@@ -1583,7 +1623,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                   "mr-2 h-4 w-4",
                                                   data.value === field.value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               {data.nama}
@@ -1607,7 +1647,9 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
-                                      disabled={!idKecamatanAlamatKantor}
+                                      disabled={
+                                        !idKecamatanAlamatKantor || isLoading
+                                      }
                                       similar={
                                         form.formState.errors?.alamat_kantor
                                           ?.kelurahan_desa
@@ -1621,7 +1663,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                         {field.value
                                           ? desaAlamatKantor.find(
                                               (data) =>
-                                                data.value === field.value
+                                                data.value === field.value,
                                             )?.nama
                                           : ""}
                                       </p>
@@ -1645,7 +1687,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                 form.setValue(
                                                   "alamat_kantor.kelurahan_desa",
                                                   value,
-                                                  { shouldValidate: true }
+                                                  { shouldValidate: true },
                                                 );
                                               }}
                                             >
@@ -1654,7 +1696,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                                   "mr-2 h-4 w-4",
                                                   data.value === field.value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               {data.nama}
@@ -1676,7 +1718,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                               <FormItem className="col-span-2">
                                 <FormLabel>Keterangan Lainnya</FormLabel>
                                 <FormControl>
-                                  <Textarea {...field} />
+                                  <Textarea {...field} disabled={isLoading} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -1702,6 +1744,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <Popover>
                               <PopoverTrigger asChild>
                                 <Button
+                                  disabled={isLoading}
                                   similar={
                                     form.formState.errors?.kebangsaan
                                       ? "input-error"
@@ -1713,7 +1756,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                   <p className="col-span-11 flex w-full items-start justify-self-start truncate">
                                     {field.value
                                       ? skemaSertifikasi.find(
-                                          (data) => data.id === field.value
+                                          (data) => data.id === field.value,
                                         )?.nama_skema_sertifikasi
                                       : ""}
                                   </p>
@@ -1732,11 +1775,11 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                           onSelect={(value) => {
                                             form.setValue(
                                               "skema_sertifikasi",
-                                              value
+                                              value,
                                             );
                                             form.setValue(
                                               "persyaratan_dasar",
-                                              null
+                                              null,
                                             );
                                             setIdSkemaSertifikasi(data.id);
                                           }}
@@ -1746,7 +1789,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                               "mr-2 h-4 w-4",
                                               data.id === field.value
                                                 ? "opacity-100"
-                                                : "opacity-0"
+                                                : "opacity-0",
                                             )}
                                           />
                                           {data.nama_skema_sertifikasi}
@@ -1770,6 +1813,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             <Popover>
                               <PopoverTrigger asChild>
                                 <Button
+                                  disabled={isLoading}
                                   similar={
                                     form.formState.errors?.kebangsaan
                                       ? "input-error"
@@ -1781,7 +1825,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                   <p className="col-span-11 flex w-full items-start justify-self-start truncate">
                                     {field.value
                                       ? tujuanAsesmen.find(
-                                          (data) => data.id === field.value
+                                          (data) => data.id === field.value,
                                         )?.tujuan
                                       : ""}
                                   </p>
@@ -1800,7 +1844,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                           onSelect={(value) => {
                                             form.setValue(
                                               "tujuan_asesmen",
-                                              value
+                                              value,
                                             );
                                           }}
                                         >
@@ -1809,7 +1853,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                               "mr-2 h-4 w-4",
                                               data.id === field.value
                                                 ? "opacity-100"
-                                                : "opacity-0"
+                                                : "opacity-0",
                                             )}
                                           />
                                           {data.tujuan}
@@ -1833,7 +1877,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                     Bagian 3: Bukti Kelengkapan Pemohon
                   </p>
                   <div className="flex flex-col gap-12">
-                    {persyaratanDasar.length > 0 && (
+                    {persyaratanDasar && (
                       <div className="flex flex-col gap-4">
                         <p className="font-aileron text-xl text-secondary-500">
                           Persyaratan Dasar
@@ -1846,7 +1890,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                             </TableRow>
                           </TableHeader>
                           <TableBody className="text-base">
-                            {persyaratanDasar.lenght !== 0 &&
+                            {persyaratanDasar &&
                               persyaratanDasar.map((data, index) => (
                                 <TableRow key={data.id}>
                                   <TableCell>
@@ -1862,21 +1906,22 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                                             <FormControl>
                                               <Upload
                                                 {...field}
+                                                disabled={isLoading}
                                                 value={field.value?.fileName}
                                                 size="xs"
                                                 totalFile={
                                                   form.watch(
-                                                    `persyaratan_dasar.${index}.bukti`
+                                                    `persyaratan_dasar.${index}.bukti`,
                                                   )?.length ?? 0
                                                 }
                                                 multiple
                                                 onChange={(event) => {
                                                   field.onChange(
-                                                    event.target.files
+                                                    event.target.files,
                                                   );
                                                   form.setValue(
                                                     `persyaratan_dasar.${index}.id_persyaratan_dasar`,
-                                                    data.id
+                                                    data.id,
                                                   );
                                                 }}
                                                 accept={"image/*"}
@@ -1899,12 +1944,20 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
                         Portofolio
                       </p>
                       <div>
-                        <Portofolio form={form} />
+                        <Portofolio form={form} isLoading={isLoading} />
                       </div>
                     </div>
                   </div>
                 </div>
-                <Button type="submit" size="lg">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  size="lg"
+                  className="gap-2"
+                >
+                  {isLoading && (
+                    <RefreshCw04 className="origin-center animate-spin" />
+                  )}
                   Selesai
                 </Button>
               </div>
@@ -1916,7 +1969,7 @@ export const FormulirPermohonanSertifikasiKompetensi = () => {
   );
 };
 
-const Portofolio = ({ form }) => {
+const Portofolio = ({ form, isLoading }) => {
   const [imageFiles, setImageFiles] = useState([]);
 
   const handleFileChange = (event) => {
@@ -1940,7 +1993,7 @@ const Portofolio = ({ form }) => {
               <FormItem className="col-span-8">
                 <FormLabel>Keterangan Portofolio</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea {...field} disabled={isLoading} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -1956,6 +2009,7 @@ const Portofolio = ({ form }) => {
                   <Upload
                     {...field}
                     multiple
+                    disabled={isLoading}
                     size="sm"
                     totalFile={
                       form.watch(`portofolio.${index}.bukti`)?.length ?? 0
@@ -1974,7 +2028,12 @@ const Portofolio = ({ form }) => {
           />
           <button
             type="button"
-            className="absolute -right-6 -top-1 rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100"
+            className={cn(
+              "absolute -right-6 -top-1 rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100",
+              {
+                hidden: isLoading,
+              },
+            )}
             onClick={() => remove(index)}
           >
             <XCircle />
@@ -1989,6 +2048,7 @@ const Portofolio = ({ form }) => {
       <div className="flex flex-col gap-4">{portofolioFields}</div>
       <Button
         type="button"
+        disabled={isLoading}
         className="col-span-1 col-start-10"
         onClick={() =>
           append({

@@ -104,7 +104,7 @@ export const FormDescription = React.forwardRef(
         {...props}
       />
     );
-  }
+  },
 );
 FormDescription.displayName = "FormDescription";
 
@@ -125,6 +125,6 @@ export const FormMessage = React.forwardRef(
         </AlertDescription>
       </Alert>
     );
-  }
+  },
 );
 FormMessage.displayName = "FormMessage";

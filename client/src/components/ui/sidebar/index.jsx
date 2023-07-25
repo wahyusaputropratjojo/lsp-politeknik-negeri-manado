@@ -36,6 +36,7 @@ import PoliteknikNegeriManado from "../../../assets/logo/components/PoliteknikNe
 import HomeLine from "../../../assets/icons/untitled-ui-icons/line/components/HomeLine";
 import Archive from "../../../assets/icons/untitled-ui-icons/line/components/Archive";
 import LayoutAlt04 from "../../../assets/icons/untitled-ui-icons/line/components/LayoutAlt04";
+import FileQuestion02 from "../../../assets/icons/untitled-ui-icons/line/components/FileQuestion02";
 import DotsVertical from "../../../assets/icons/untitled-ui-icons/line/components/DotsVertical";
 import User01 from "../../../assets/icons/untitled-ui-icons/line/components/User01";
 import LogIn02 from "../../../assets/icons/untitled-ui-icons/line/components/LogIn02";
@@ -44,6 +45,10 @@ import ChevronRight from "../../../assets/icons/untitled-ui-icons/line/component
 import ChevronLeft from "../../../assets/icons/untitled-ui-icons/line/components/ChevronLeft";
 import FileAttachment04 from "../../../assets/icons/untitled-ui-icons/line/components/FileAttachment04";
 import UserLeft01 from "../../../assets/icons/untitled-ui-icons/line/components/UserLeft01";
+import ImageUserDown from "../../../assets/icons/untitled-ui-icons/line/components/ImageUserDown";
+import CalendarCheck02 from "../../../assets/icons/untitled-ui-icons/line/components/CalendarCheck02";
+import UsersEdit from "../../../assets/icons/untitled-ui-icons/line/components/UsersEdit";
+import BookClosed from "../../../assets/icons/untitled-ui-icons/line/components/BookClosed";
 
 export const Sidebar = () => {
   const navigate = useNavigate();
@@ -75,6 +80,7 @@ export const Sidebar = () => {
   });
 
   const logOut = async () => {
+    navigate("/");
     navigate(0);
     mutate();
     setAuth({});
@@ -96,7 +102,7 @@ export const Sidebar = () => {
           "flex h-full w-72 flex-col gap-12 rounded-lg bg-white p-8",
           {
             "w-24 px-6 py-8": isMinimized,
-          }
+          },
         )}
       >
         <header
@@ -129,16 +135,39 @@ export const Sidebar = () => {
               <HomeLine className="text-lg" />
               {!isMinimized && <span>Beranda</span>}
             </Navigation>
-            {/* <Navigation to="/dashboard" isMinimized={isMinimized}>
-              <LayoutAlt04 className="text-lg" />
-              {!isMinimized && <span>Dashboard</span>}
-            </Navigation>
-            <Navigation to="/skema-sertifikasi" isMinimized={isMinimized}>
-              <Archive className="text-lg" />
-              {!isMinimized && <span>Skema Sertifikasi</span>}
-            </Navigation> */}
           </div>
-
+          {auth?.role === "Asesi" && (
+            <div>
+              <Navigation to="/status-pendaftaran" isMinimized={isMinimized}>
+                <FileQuestion02 className="text-lg" />
+                {!isMinimized && <span>Status Pendaftaran</span>}
+              </Navigation>
+              <Navigation to="/asesmen-mandiri" isMinimized={isMinimized}>
+                <ImageUserDown className="text-lg" />
+                {!isMinimized && <span>Asesmen Mandiri</span>}
+              </Navigation>
+              <Navigation to="/uji-kompetensi" isMinimized={isMinimized}>
+                <BookClosed className="text-lg" />
+                {!isMinimized && <span>Uji Kompetensi</span>}
+              </Navigation>
+            </div>
+          )}
+          {auth?.role === "Asesor" && (
+            <div>
+              <Navigation to="/jadwal-asesmen" isMinimized={isMinimized}>
+                <CalendarCheck02 className="text-lg" />
+                {!isMinimized && <span>Jadwal Asesmen</span>}
+              </Navigation>
+              {/* <Navigation to="/data-asesi" isMinimized={isMinimized}>
+                <FileAttachment04 className="text-lg" />
+                {!isMinimized && <span>Data Asesi</span>}
+              </Navigation> */}
+              <Navigation to="/evaluasi-asesi" isMinimized={isMinimized}>
+                <UsersEdit className="text-lg" />
+                {!isMinimized && <span>Evaluasi Asesi</span>}
+              </Navigation>
+            </div>
+          )}
           {auth?.role === "Administrator" && (
             <div>
               <Navigation

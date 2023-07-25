@@ -4,18 +4,22 @@ export const skemaSertifikasi = [
     id_tempat_uji_kompetensi: "5a23339f-59b3-44a7-91f0-6e89c37b00fb",
     kode_skema_sertifikasi: "SKM/0412/00019/2/2015/8",
     nama_skema_sertifikasi: "Food and Beverage Outlet Manager",
+    gambar:
+      "http://localhost:3000/uploads/food-and-baverage-outlet-manager.png",
   },
   {
     id: "a364d474-185c-405d-ad56-280d0432729e",
     id_tempat_uji_kompetensi: "cef8abc2-d243-47b1-9ca1-01d01438e959",
     kode_skema_sertifikasi: "SKM/0412/00004/3/2015/5",
     nama_skema_sertifikasi: "Memasang dan Merakit PHB",
+    gambar: "http://localhost:3000/uploads/memasang-dan-merakit-phb.png",
   },
   {
     id: "baba1dd6-0715-4776-85b2-afcf0f1d0abc",
     id_tempat_uji_kompetensi: "13fb1d59-aa74-45f1-af96-eaeba2b59dab",
     kode_skema_sertifikasi: "SKM/0412/00014/2/2015/7",
     nama_skema_sertifikasi: "Office Supervisor",
+    gambar: "http://localhost:3000/uploads/office-supervisor.png",
   },
   {
     id: "c16a1394-a1fd-473b-8129-88a5bd3d471f",
@@ -23,11 +27,14 @@ export const skemaSertifikasi = [
     kode_skema_sertifikasi: "SKM/0412/00003/3/2015/4",
     nama_skema_sertifikasi:
       "Welder SMAW Objek Pelat dan Pipa dengan Posisi Horizontal, Vertical dan Overhead",
+    gambar:
+      "http://localhost:3000/uploads/welder-smaw-objek-pelat-dan-pipa-dengan-posisi-horisontal-vertikal-&-overhead.png",
   },
   {
     id: "3f2e5536-e8cf-4db9-aa3d-c5d17b645576",
     id_tempat_uji_kompetensi: "d08956d4-c53e-44bf-a5c5-67a1e8972613",
     kode_skema_sertifikasi: "SKM/0412/00013/2/2015/6",
     nama_skema_sertifikasi: "Teknisi Akuntansi Madya",
+    gambar: "http://localhost:3000/uploads/teknisi-akuntansi-madya.png",
   },
 ];

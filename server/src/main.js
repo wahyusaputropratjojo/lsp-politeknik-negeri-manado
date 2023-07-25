@@ -18,6 +18,8 @@ import { route as skemaSertifikasiRoute } from "./routes/skemaSertifikasiRoute.j
 import { router as unitKompetensiRoute } from "./routes/unitKompetensiRoute.js";
 import { router as indonesiaAreaRoute } from "./routes/indonesiaAreaRoute.js";
 import { router as asesiRoute } from "./routes/asesiRoute.js";
+import { router as asesorRoute } from "./routes/asesorRoute.js";
+import { router as administratorRoute } from "./routes/administratorRoute.js";
 import { router as dataDiriRoute } from "./routes/dataDiriRoute.js";
 import { router as persyaratanDasarRoute } from "./routes/persyaratanDasarRoute.js";
 
@@ -39,6 +41,8 @@ app.use("/api/skema-sertifikasi", unitKompetensiRoute);
 app.use("/api/skema-sertifikasi", persyaratanDasarRoute);
 app.use("/api/indonesia", indonesiaAreaRoute);
 app.use("/api/asesi", asesiRoute);
+app.use("/api/asesor", asesorRoute);
+app.use("/api/administrator", administratorRoute);
 app.use("/api/data-diri", dataDiriRoute);
 
 app.use(errorHandler);

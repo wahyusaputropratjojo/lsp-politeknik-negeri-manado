@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from "../alert";
 import Upload04 from "../../../assets/icons/untitled-ui-icons/line/components/Upload04";
 
 export const uploadVariants = cva(
-  "flex flex-col items-center justify-center gap-2 rounded-lg border-2 transition-colors",
+  "flex flex-col items-center justify-center gap-2 rounded-lg border-2 transition-colors disabled:cursor-not-allowed disabled:border-secondary-100 disabled:bg-secondary-100 disabled:text-secondary-300",
   {
     variants: {
       variant: {
@@ -29,7 +29,7 @@ export const uploadVariants = cva(
 );
 
 export const Upload = React.forwardRef(
-  ({ className, variant, size, totalFile, ...props }, ref) => {
+  ({ className, variant, size, totalFile, disabled, ...props }, ref) => {
     const [fileCount, setFileCount] = React.useState();
 
     const inputFile = React.useRef();
@@ -49,6 +49,7 @@ export const Upload = React.forwardRef(
           ref={ref}
           type="button"
           onClick={handleClick}
+          disabled={disabled}
           className={cn(uploadVariants({ variant, size, className }))}
         >
           <Upload04 className="text-[2em]" />

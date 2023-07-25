@@ -5,7 +5,7 @@ export const Table = React.forwardRef(({ className, ...props }, ref) => (
   <div className="w-full overflow-auto">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom font-aileron text-sm", className)}
+      className={cn("w-full caption-bottom  font-aileron text-sm", className)}
       {...props}
     />
   </div>
@@ -40,7 +40,7 @@ export const TableRow = React.forwardRef(({ className, ...props }, ref) => (
     ref={ref}
     className={cn(
       "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
-      className
+      className,
     )}
     {...props}
   />
@@ -52,7 +52,7 @@ export const TableHead = React.forwardRef(({ className, ...props }, ref) => (
     ref={ref}
     className={cn(
       "text-muted-foreground h-12 px-4 text-left align-middle font-bold [&:has([role=checkbox])]:pr-0",
-      className
+      className,
     )}
     {...props}
   />

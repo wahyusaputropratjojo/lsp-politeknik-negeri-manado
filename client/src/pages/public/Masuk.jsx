@@ -8,16 +8,16 @@ import { DevTool } from "@hookform/devtools";
 import decodeJWT from "jwt-decode";
 
 // Utils
-import axios from "../utils/axios";
-import { loginSchema } from "../utils/yup";
+import axios from "../../utils/axios";
+import { loginSchema } from "../../utils/yup";
 
 // Context
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 // Components
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
+import { Alert, AlertDescription } from "../../components/ui/alert";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import {
   Form,
   FormControl,
@@ -25,11 +25,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../components/ui/form";
+} from "../../components/ui/form";
 
 // Assets
-import BNSP from "../assets/logo/components/BNSP";
-import LSP from "../assets/logo/components/LSP";
+import BNSP from "../../assets/logo/components/BNSP";
+import LSP from "../../assets/logo/components/LSP";
 
 export const Masuk = () => {
   const navigate = useNavigate();

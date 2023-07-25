@@ -15,15 +15,26 @@ import {
 import { DefaultLayout, ContentLayout, SidebarLayout } from "./layouts";
 
 // Pages
-import { Beranda } from "./pages/Beranda";
-import { Dashboard } from "./pages/Dashboard";
-import { Masuk } from "./pages/Masuk";
-import { Daftar } from "./pages/Daftar";
-import { Test } from "./pages/Test";
-import { Unauthorized } from "./pages/Unauthorized";
-import { TinjauPersyaratan } from "./pages/asesi/TinjauPersyaratan";
-import { PenentuanAsesor } from "./pages/asesi/PenentuanAsesor";
-import { FormulirPermohonanSertifikasiKompetensi } from "./pages/formulir";
+import {
+  Beranda,
+  Masuk,
+  Unauthorized,
+  FormulirPermohonanSertifikasiKompetensi,
+} from "./pages/public";
+import {
+  AsesmenMandiri,
+  FormulirAsesmenMandiriDetail,
+  StatusPendaftaran,
+  UjiKompetensi,
+  UjiKompetensiDetail,
+} from "./pages/auth/asesi";
+import {
+  DataAsesi,
+  EvaluasiAsesi,
+  EvaluasiAsesiDetail,
+  JadwalAsesmen,
+} from "./pages/auth/asesor";
+import { PenentuanAsesor, TinjauPersyaratan } from "./pages/auth/administrator";
 
 import {
   SkemaSertifikasiDashboard,
@@ -43,13 +54,20 @@ export const Router = createBrowserRouter(
       <Route element={<RefreshAuthentication />}>
         <Route element={<DefaultLayout />}>
           <Route path="masuk" element={<Masuk />} />
-          <Route path="daftar" element={<Daftar />} />
           <Route path="unauthorized" element={<Unauthorized />} />
         </Route>
         <Route element={<SidebarLayout />}>
           <Route index element={<Beranda />} />
           <Route element={<ContentLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="asesmen-mandiri">
+              <Route index element={<AsesmenMandiri />} />
+              <Route path=":id" element={<FormulirAsesmenMandiriDetail />} />
+            </Route>
+            <Route path="status-pendaftaran" element={<StatusPendaftaran />} />
+            <Route path="uji-kompetensi">
+              <Route index element={<UjiKompetensi />} />
+              <Route path=":id" element={<UjiKompetensiDetail />} />
+            </Route>
             <Route path="skema-sertifikasi">
               <Route index element={<SkemaSertifikasiDashboard />} />
               <Route path="buat" element={<SkemaSertifikasiForm />} />
@@ -62,6 +80,12 @@ export const Router = createBrowserRouter(
               />
               <Route path="penentuan-asesor" element={<PenentuanAsesor />} />
             </Route>
+            <Route path="jadwal-asesmen" element={<JadwalAsesmen />} />
+            <Route path="data-asesi" element={<DataAsesi />} />
+            <Route path="evaluasi-asesi">
+              <Route index element={<EvaluasiAsesi />} />
+              <Route path=":id" element={<EvaluasiAsesiDetail />} />
+            </Route>
             <Route
               path="formulir-permohonan-sertifikasi-kompetensi"
               element={<FormulirPermohonanSertifikasiKompetensi />}
@@ -69,6 +93,6 @@ export const Router = createBrowserRouter(
           </Route>
         </Route>
       </Route>
-    </Route>
-  )
+    </Route>,
+  ),
 );

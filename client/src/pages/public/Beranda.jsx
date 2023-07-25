@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "../components/ui/button";
+import { Button } from "../../components/ui/button";
 
-import PolteknikNegeriManado from "../assets/logo/components/PoliteknikNegeriManado";
+import PolteknikNegeriManado from "../../assets/logo/components/PoliteknikNegeriManado";
 
 export const Beranda = () => {
   const navigate = useNavigate();

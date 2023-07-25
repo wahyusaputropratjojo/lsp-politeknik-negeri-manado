@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-lg border-2 font-anek-latin font-semibold transition-colors disabled:pointer-events-none",
+  "inline-flex items-center justify-center rounded-lg border-2 font-anek-latin font-semibold transition-colors disabled:cursor-not-allowed",
   {
     variants: {
       variant: {
@@ -31,7 +31,7 @@ export const buttonVariants = cva(
       },
       similar: {
         "input-primary":
-          "border-secondary-300 bg-transparent px-4 font-aileron text-sm font-normal text-secondary-300 hover:border-secondary-400 hover:bg-transparent hover:text-secondary-400 focus:border-secondary-500 focus:bg-transparent focus:text-secondary-500 focus:outline-none active:border-secondary-500 active:bg-transparent active:text-secondary-500 disabled:border-secondary-200 disabled:bg-secondary-200 disabled:text-secondary-300",
+          "border-secondary-300 bg-transparent px-4 font-aileron text-sm font-normal text-secondary-300 hover:border-secondary-400 hover:bg-transparent hover:text-secondary-400 focus:border-secondary-500 focus:bg-transparent focus:text-secondary-500 focus:outline-none active:border-secondary-500 active:bg-transparent active:text-secondary-500 disabled:cursor-not-allowed disabled:border-secondary-100 disabled:bg-secondary-100 disabled:text-secondary-300",
         "input-error":
           "border-error-500 bg-transparent px-4 font-aileron text-sm font-normal text-secondary-300 hover:border-error-600 hover:bg-transparent hover:text-secondary-400 focus:border-error-700 focus:bg-transparent focus:text-secondary-500 focus:outline-none active:border-error-600 active:bg-transparent active:text-secondary-500 disabled:border-secondary-200 disabled:bg-secondary-200 disabled:text-secondary-300",
       },

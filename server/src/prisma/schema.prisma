@@ -29,35 +29,45 @@ model User {
 
 // Asesi
 model Asesi {
-  id                      String                 @id @default(uuid()) @map("id")
-  id_user                 String                 @unique @map("id_user")
-  id_data_diri            String                 @unique @map("id_data_diri")
-  id_data_pekerjaan       String                 @unique @map("id_data_pekerjaan")
-  created_at              DateTime               @default(now()) @map("created_at")
-  updated_at              DateTime               @updatedAt @map("updated_at")
-  user                    User                   @relation(fields: [id_user], references: [id], onDelete: Cascade)
-  data_diri               DataDiri               @relation(fields: [id_data_diri], references: [id], onDelete: Cascade)
-  data_pekerjaan          DataPekerjaan          @relation(fields: [id_data_pekerjaan], references: [id], onDelete: Cascade)
-  asesi_skema_sertifikasi AsesiSkemaSertifikasi?
-  asesor_asesi            AsesorAsesi[]
+  id                      String                  @id @default(uuid()) @map("id")
+  id_user                 String                  @unique @map("id_user")
+  id_data_diri            String                  @unique @map("id_data_diri")
+  id_data_pekerjaan       String                  @unique @map("id_data_pekerjaan")
+  created_at              DateTime                @default(now()) @map("created_at")
+  updated_at              DateTime                @updatedAt @map("updated_at")
+  user                    User                    @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  data_diri               DataDiri                @relation(fields: [id_data_diri], references: [id], onDelete: Cascade)
+  data_pekerjaan          DataPekerjaan           @relation(fields: [id_data_pekerjaan], references: [id], onDelete: Cascade)
+  asesi_skema_sertifikasi AsesiSkemaSertifikasi[]
 
   @@map("asesi")
 }
 
 model AsesiSkemaSertifikasi {
-  id                      String                  @id @default(uuid()) @map("id")
-  id_asesi                String                  @unique @map("id_asesi")
-  id_skema_sertifikasi    String                  @unique @map("id_skema")
-  id_tujuan_asesmen       String                  @unique @map("id_tujuan_asesmen")
-  created_at              DateTime                @default(now()) @map("created_at")
-  updated_at              DateTime                @updatedAt @map("updated_at")
-  asesi                   Asesi                   @relation(fields: [id_asesi], references: [id], onDelete: Cascade)
-  skema_sertifikasi       SkemaSertifikasi        @relation(fields: [id_skema_sertifikasi], references: [id], onDelete: Cascade)
-  tujuan_asesmen          TujuanAsesmen           @relation(fields: [id_tujuan_asesmen], references: [id], onDelete: Cascade)
-  bukti_persyaratan_dasar BuktiPersyaratanDasar[]
-  portofolio              Portofolio[]
+  id                         String                  @id @default(uuid()) @map("id")
+  id_asesi                   String                  @map("id_asesi")
+  id_skema_sertifikasi       String                  @map("id_skema")
+  id_tujuan_asesmen          String                  @map("id_tujuan_asesmen")
+  is_verifikasi_berkas       Boolean                 @default(false) @map("is_verifikasi_berkas")
+  is_punya_asesor            Boolean                 @default(false) @map("is_punya_asesor")
+  is_asesmen_mandiri         Boolean                 @default(false) @map("is_asesmen_mandiri")
+  is_asesmen_mandiri_selesai Boolean                 @default(false) @map("is_asesmen_mandiri_selesai")
+  is_metode_pengujian        Boolean                 @default(false) @map("is_metode_pengujian")
+  is_demonstrasi             Boolean                 @default(false) @map("is_demonstrasi")
+  is_pertanyaan_tertulis     Boolean                 @default(false) @map("is_pertanyaan_tertulis")
+  is_pertanyaan_lisan        Boolean                 @default(false) @map("is_pertanyaan_lisan")
+  is_portofolio              Boolean                 @default(false) @map("is_portofolio")
+  created_at                 DateTime                @default(now()) @map("created_at")
+  updated_at                 DateTime                @updatedAt @map("updated_at")
+  asesi                      Asesi                   @relation(fields: [id_asesi], references: [id], onDelete: Cascade)
+  skema_sertifikasi          SkemaSertifikasi        @relation(fields: [id_skema_sertifikasi], references: [id], onDelete: Cascade)
+  tujuan_asesmen             TujuanAsesmen           @relation(fields: [id_tujuan_asesmen], references: [id], onDelete: Cascade)
+  bukti_persyaratan_dasar    BuktiPersyaratanDasar[]
+  portofolio                 Portofolio[]
+  asesor_asesi               AsesorAsesi[]
+  asesmen_mandiri            AsesmenMandiri[]
 
-  @@map("asesi_skema")
+  @@map("asesi_skema_sertifikasi")
 }
 
 model Portofolio {
@@ -107,41 +117,40 @@ model FileBuktiPersyaratanDasar {
   @@map("file_bukti_persyaratan_dasar")
 }
 
+model AsesmenMandiri {
+  id                           String                  @id @default(uuid()) @map("id")
+  id_asesi_skema_sertifikasi   String                  @map("id_asesi_skema_sertifikasi")
+  id_aktivitas_unit_kompetensi String                  @map("id_aktivitas_unit_kompetensi")
+  is_kompeten                  Boolean                 @default(false) @map("is_kompeten")
+  aktivitas_unit_kompetensi    AktivitasUnitKompetensi @relation(fields: [id_aktivitas_unit_kompetensi], references: [id])
+  asesi_skema_sertifikasi      AsesiSkemaSertifikasi   @relation(fields: [id_asesi_skema_sertifikasi], references: [id])
+}
+
 // Asesor
 model Asesor {
-  id                       String                   @id @default(uuid()) @map("id")
-  id_user                  String                   @unique @map("id_user")
-  id_data_diri             String?                  @unique @map("id_data_diri")
-  created_at               DateTime                 @default(now()) @map("created_at")
-  updated_at               DateTime                 @updatedAt @map("updated_at")
-  user                     User                     @relation(fields: [id_user], references: [id], onDelete: Cascade)
-  data_diri                DataDiri?                @relation(fields: [id_data_diri], references: [id])
-  asesor_skema_sertifikasi AsesorSkemaSertifikasi[]
+  id                       String              @id @default(uuid()) @map("id")
+  id_user                  String              @unique @map("id_user")
+  id_data_diri             String?             @unique @map("id_data_diri")
+  id_tempat_uji_kompetensi String              @map("id_tempat_uji_kompetensi")
+  created_at               DateTime            @default(now()) @map("created_at")
+  updated_at               DateTime            @updatedAt @map("updated_at")
+  user                     User                @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  data_diri                DataDiri?           @relation(fields: [id_data_diri], references: [id], onDelete: Cascade)
   asesor_asesi             AsesorAsesi[]
+  tempat_uji_kompetensi    TempatUjiKompetensi @relation(fields: [id_tempat_uji_kompetensi], references: [id], onDelete: Cascade)
 
   @@map("asesor")
 }
 
-model AsesorSkemaSertifikasi {
-  id         String           @id @default(uuid()) @map("id")
-  id_asesor  String           @unique @map("id_asesor")
-  id_skema   String           @unique @map("id_skema")
-  created_at DateTime         @default(now()) @map("created_at")
-  updated_at DateTime         @updatedAt @map("updated_at")
-  asesor     Asesor           @relation(fields: [id_asesor], references: [id], onDelete: Cascade)
-  skema      SkemaSertifikasi @relation(fields: [id_skema], references: [id], onDelete: Cascade)
-
-  @@map("asesor_skema")
-}
-
 model AsesorAsesi {
-  id         String   @id @default(uuid()) @map("id")
-  id_asesor  String   @unique @map("id_asesor")
-  id_asesi   String   @unique @map("id_asesi")
-  created_at DateTime @default(now()) @map("created_at")
-  updated_at DateTime @updatedAt @map("updated_at")
-  asesor     Asesor   @relation(fields: [id_asesor], references: [id], onDelete: Cascade)
-  asesi      Asesi    @relation(fields: [id_asesi], references: [id], onDelete: Cascade)
+  id                         String                @id @default(uuid()) @map("id")
+  id_asesor                  String                @map("id_asesor")
+  id_asesi_skema_sertifikasi String                @map("id_asesi_skema_sertifikasi")
+  tanggal_pelaksanaan        DateTime              @map("tanggal_pelaksanaan")
+  created_at                 DateTime              @default(now()) @map("created_at")
+  updated_at                 DateTime              @updatedAt @map("updated_at")
+  asesor                     Asesor                @relation(fields: [id_asesor], references: [id], onDelete: Cascade)
+  asesi_skema_sertifikasi    AsesiSkemaSertifikasi @relation(fields: [id_asesi_skema_sertifikasi], references: [id])
 
   @@map("asesor_asesi")
 }
@@ -150,13 +159,13 @@ model AsesorAsesi {
 model Administrator {
   id                       String              @id @default(uuid()) @map("id")
   id_user                  String              @unique @map("id_user")
-  id_tempat_uji_kompetensi String              @unique @map("id_tempat_uji_kompetensi")
+  id_tempat_uji_kompetensi String              @map("id_tempat_uji_kompetensi")
   created_at               DateTime            @default(now()) @map("created_at")
   updated_at               DateTime            @updatedAt @map("updated_at")
   user                     User                @relation(fields: [id_user], references: [id], onDelete: Cascade)
   tempat_uji_kompetensi    TempatUjiKompetensi @relation(fields: [id_tempat_uji_kompetensi], references: [id], onDelete: Cascade)
 
-  @@map("admin")
+  @@map("administrator")
 }
 
 // All Role
@@ -244,22 +253,23 @@ model TempatUjiKompetensi {
   updated_at                 DateTime           @updatedAt @map("updated_at")
   alamat                     Alamat?            @relation(fields: [id_alamat], references: [id], onDelete: Cascade)
   skema_sertifikasi          SkemaSertifikasi[]
+  asesor                     Asesor[]
   administrator              Administrator[]
 
   @@map("tempat_uji_kompetensi")
 }
 
 model SkemaSertifikasi {
-  id                       String                   @id @default(uuid()) @map("id")
-  id_tempat_uji_kompetensi String                   @map("id_tempat_uji_kompetensi")
-  kode_skema_sertifikasi   String                   @unique @map("kode")
-  nama_skema_sertifikasi   String                   @map("nama")
-  created_at               DateTime                 @default(now()) @map("created_at")
-  updated_at               DateTime                 @updatedAt @map("updated_at")
-  tempat_uji_kompetensi    TempatUjiKompetensi      @relation(fields: [id_tempat_uji_kompetensi], references: [id], onDelete: Cascade)
+  id                       String                  @id @default(uuid()) @map("id")
+  id_tempat_uji_kompetensi String                  @map("id_tempat_uji_kompetensi")
+  kode_skema_sertifikasi   String                  @unique @map("kode")
+  nama_skema_sertifikasi   String                  @map("nama")
+  gambar                   String                  @map("gambar")
+  created_at               DateTime                @default(now()) @map("created_at")
+  updated_at               DateTime                @updatedAt @map("updated_at")
+  tempat_uji_kompetensi    TempatUjiKompetensi     @relation(fields: [id_tempat_uji_kompetensi], references: [id], onDelete: Cascade)
   unit_kompetensi          UnitKompetensi[]
   persyaratan_dasar        PersyaratanDasar[]
-  asesor_skema_sertifikasi AsesorSkemaSertifikasi[]
   asesi_skema_sertifikasi  AsesiSkemaSertifikasi[]
 
   @@map("skema_sertifikasi")
@@ -302,6 +312,7 @@ model AktivitasUnitKompetensi {
   updated_at           DateTime             @updatedAt @map("updated_at")
   unit_kompetensi      UnitKompetensi       @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
   kriteria_unjuk_kerja KriteriaUnjukKerja[]
+  asesmen_mandiri      AsesmenMandiri[]
 
   @@map("aktivitas_unit_kompetensi")
 }
@@ -377,11 +388,11 @@ model JawabanPertanyaanTertulis {
 }
 
 model TujuanAsesmen {
-  id                      String                 @id @default(uuid()) @map("id")
-  tujuan                  String                 @map("tujuan")
-  created_at              DateTime               @default(now()) @map("created_at")
-  updated_at              DateTime               @updatedAt @map("updated_at")
-  asesi_skema_sertifikasi AsesiSkemaSertifikasi?
+  id                      String                  @id @default(uuid()) @map("id")
+  tujuan                  String                  @map("tujuan")
+  created_at              DateTime                @default(now()) @map("created_at")
+  updated_at              DateTime                @updatedAt @map("updated_at")
+  asesi_skema_sertifikasi AsesiSkemaSertifikasi[]
 
   @@map("tujuan_asesmen")
 }
