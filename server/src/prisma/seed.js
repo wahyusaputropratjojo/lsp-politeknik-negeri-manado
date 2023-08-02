@@ -35,6 +35,18 @@ import {
 
 import { kriteriaUnjukKerja } from "./data-seeding/kriteriaUnjukKerja.js";
 
+import { tugasPraktikDemonstrasi } from "./data-seeding/tugas-praktik-demonstrasi/tugasPraktikDemonstrasi.js";
+import { langkahKerjaTugasPraktikDemonstrasi } from "./data-seeding/tugas-praktik-demonstrasi/langkahKerjaTugasPraktikDemonstrasi.js";
+import { instruksiKerjaTugasPraktikDemonstrasi } from "./data-seeding/tugas-praktik-demonstrasi/instruksiKerjaTugasPraktikDemonstrasi.js";
+
+import { pertanyaanTertulisEsai } from "./data-seeding/pertanyaan-tertulis-esai/pertanyaanTertulisEsai.js";
+
+import { pertanyaanTertulisPilihanGanda } from "./data-seeding/pertanyaan-tertulis-pilihan-ganda/pertanyaanTertulisPilihanGanda.js";
+import { jawabanPertanyaanTertulisPilihanGanda } from "./data-seeding/pertanyaan-tertulis-pilihan-ganda/jawabanPertanyaanTertulisPilihanGanda.js";
+
+import { pertanyaanLisan } from "./data-seeding/pertanyaan-lisan/pertanyaanLisan.js";
+import { pertanyaanObservasi } from "./data-seeding/pertanyaan-observasi/pertanyaanObservasi.js";
+
 const prisma = new PrismaClient();
 
 const main = async () => {
@@ -124,6 +136,46 @@ const main = async () => {
 
   await prisma.kriteriaUnjukKerja.createMany({
     data: kriteriaUnjukKerja,
+    skipDuplicates: true,
+  });
+
+  await prisma.tugasPraktikDemonstrasi.createMany({
+    data: tugasPraktikDemonstrasi,
+    skipDuplicates: true,
+  });
+
+  await prisma.langkahKerjaTugasPraktikDemonstrasi.createMany({
+    data: langkahKerjaTugasPraktikDemonstrasi,
+    skipDuplicates: true,
+  });
+
+  await prisma.instruksiKerjaTugasPraktikDemonstrasi.createMany({
+    data: instruksiKerjaTugasPraktikDemonstrasi,
+    skipDuplicates: true,
+  });
+
+  await prisma.pertanyaanTertulisEsai.createMany({
+    data: pertanyaanTertulisEsai,
+    skipDuplicates: true,
+  });
+
+  await prisma.pertanyaanTertulisPilihanGanda.createMany({
+    data: pertanyaanTertulisPilihanGanda,
+    skipDuplicates: true,
+  });
+
+  await prisma.jawabanPertanyaanTertulisPilihanGanda.createMany({
+    data: jawabanPertanyaanTertulisPilihanGanda,
+    skipDuplicates: true,
+  });
+
+  await prisma.pertanyaanLisan.createMany({
+    data: pertanyaanLisan,
+    skipDuplicates: true,
+  });
+
+  await prisma.pertanyaanObservasi.createMany({
+    data: pertanyaanObservasi,
     skipDuplicates: true,
   });
 };

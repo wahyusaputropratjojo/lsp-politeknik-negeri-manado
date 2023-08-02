@@ -45,7 +45,7 @@ export const listAsesiByTempatUjiKompetensi = asyncHandler(async (req, res) => {
                         data_diri: {
                           select: {
                             id: true,
-                            foto_profil: true,
+                            url_profil_user: true,
                             jenis_kelamin: true,
                             kebangsaan: true,
                             kualifikasi_pendidikan: true,

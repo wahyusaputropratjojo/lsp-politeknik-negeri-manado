@@ -26,7 +26,7 @@ export const JadwalAsesmen = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-8">
         <div>
           <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
             Jadwal Asesmen
@@ -38,26 +38,21 @@ export const JadwalAsesmen = () => {
             jadwalAsesmen.map((value) => {
               const {
                 id,
-                asesi_skema_sertifikasi: asesiSkemaSertifikasi,
+                asesi_skema_sertifikasi: {
+                  asesi: {
+                    data_diri: { url_profil_user: urlProfilUser },
+                    user: { nama_lengkap: namaLengkap },
+                  },
+                  skema_sertifikasi: {
+                    nama_skema_sertifikasi: namaSkemaSertifikasi,
+                    tempat_uji_kompetensi: {
+                      tempat_uji_kompetensi: tempatUjiKompetensi,
+                    },
+                  },
+                  tujuan_asesmen: { tujuan },
+                },
                 tanggal_pelaksanaan,
               } = value;
-              const {
-                asesi,
-                skema_sertifikasi: skemaSertifikasi,
-                tujuan_asesmen: tujuanAsesmen,
-              } = asesiSkemaSertifikasi;
-              const { data_diri: dataDiri, user } = asesi;
-              const {
-                nama_skema_sertifikasi: namaSkemaSertifikasi,
-                tempat_uji_kompetensi: tempatUjiKompetensi,
-              } = skemaSertifikasi;
-              const { tujuan } = tujuanAsesmen;
-              const { nama_lengkap: namaLengkap } = user;
-              const { foto_profil: fotoProfil } = dataDiri;
-
-              const { tempat_uji_kompetensi: TUK } = tempatUjiKompetensi;
-
-              console.log(asesiSkemaSertifikasi);
 
               const date = new Date(tanggal_pelaksanaan);
               const tanggalPelaksanaan = date.toLocaleDateString("id-ID", {
@@ -68,13 +63,13 @@ export const JadwalAsesmen = () => {
 
               return (
                 <div key={id} className="flex flex-col gap-2">
-                  <p className="w-max rounded-lg bg-white p-2 text-sm font-bold">
+                  <p className="w-max rounded-lg bg-white p-2 text-sm font-bold shadow-lg">
                     {tanggalPelaksanaan}
                   </p>
-                  <div className="flex items-center gap-6 rounded-lg bg-white p-6">
+                  <div className="flex items-center gap-6 rounded-lg bg-white p-6 shadow-lg">
                     <div>
                       <img
-                        src={fotoProfil}
+                        src={urlProfilUser}
                         alt="Foto Profil Asesi"
                         className="aspect-square w-24 rounded-lg object-cover"
                       />
@@ -104,7 +99,7 @@ export const JadwalAsesmen = () => {
                         <p className="text-xs font-semibold leading-none">
                           Tempat Uji Kompetensi
                         </p>
-                        <p className="text-sm">{TUK}</p>
+                        <p className="text-sm">{tempatUjiKompetensi}</p>
                       </div>
                     </div>
                   </div>

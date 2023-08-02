@@ -1,76 +1,83 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
+import { cn } from "../../../utils/cn";
 import axios from "../../../utils/axios";
 
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../../../components/ui/accordion";
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "../../../components/ui/alert-dialog";
 import { Button } from "../../../components/ui/button";
-import { Checkbox } from "../../../components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../../components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "../../../components/ui/form";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../../components/ui/table";
 
 import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/components/AnnotationAlert";
 import CheckCircle from "../../../assets/icons/untitled-ui-icons/line/components/CheckCircle";
+import PencilLine from "../../../assets/icons/untitled-ui-icons/line/components/PencilLine";
+import InfoCircle from "../../../assets/icons/untitled-ui-icons/line/components/InfoCircle";
+import { is } from "date-fns/locale";
 
 export const UjiKompetensiDetail = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [skemaSertifikasiData, setSkemaSertifikasiData] = useState(null);
+  const idAsesiSkemaSertifikasi = location?.state?.id_asesi_skema_sertifikasi;
+
+  const [skemaSertifikasiData, setSkemaSertifikasiData] = useState();
+  const [statusSkemaSertifikasiAsesi, setStatusSkemaSertifikasiAsesi] = useState();
+  const [isAlertDialogOpenComponentOne, setIsAlertDialogOpenComponentOne] = useState(false);
+  const [isAlertDialogOpenComponentTwo, setIsAlertDialogOpenComponentTwo] = useState(false);
+  const [isAlertDialogOpenComponentThree, setIsAlertDialogOpenComponentThree] = useState(false);
 
   const { isLoading, isSuccess } = useQuery({
-    queryKey: ["aktivitas-unit-kompetensi", id],
+    queryKey: ["aktivitas-unit-kompetensi", idAsesiSkemaSertifikasi],
     queryFn: async () => {
       return await axios.get(
-        `/asesi/skema-sertifikasi/${id}/aktivitas-unit-kompetensi`,
+        `/asesi/skema-sertifikasi/${idAsesiSkemaSertifikasi}/aktivitas-unit-kompetensi`,
       );
     },
     onSuccess: (data) => {
       setSkemaSertifikasiData(data.data.data);
     },
+    enabled: !!idAsesiSkemaSertifikasi,
   });
 
-  if (skemaSertifikasiData) {
+  useQuery({
+    queryKey: ["status-skema-sertifikasi-asesi", idAsesiSkemaSertifikasi],
+    queryFn: async () => {
+      return await axios.get(`/asesi/skema-sertifikasi/${idAsesiSkemaSertifikasi}/status`);
+    },
+    onSuccess: (data) => {
+      setStatusSkemaSertifikasiAsesi(data.data.data);
+    },
+  });
+
+  if (!!skemaSertifikasiData && !!statusSkemaSertifikasiAsesi && !!idAsesiSkemaSertifikasi) {
     const {
-      tujuan_asesmen: tujuanAsesmen,
-      skema_sertifikasi: skemaSertifikasi,
+      tujuan_asesmen: { tujuan },
+      skema_sertifikasi: {
+        url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
+        nama_skema_sertifikasi: namaSkemaSertifikasi,
+      },
     } = skemaSertifikasiData;
 
-    const { tujuan } = tujuanAsesmen;
+    const {
+      is_pertanyaan_tertulis_esai_selesai: isPertanyaanTertulisEsaiSelesai,
+      is_pertanyaan_tertulis_pilihan_ganda_selesai: isPertanyaanTertulisPilihanGandaSelesai,
+      is_pertanyaan_tertulis: isPertanyaanTertulis,
+      is_praktik_demonstrasi_selesai: isPraktikDemonstrasiSelesai,
+      is_praktik_demonstrasi: isPraktikDemonstrasi,
+    } = statusSkemaSertifikasiAsesi;
 
-    const { gambar, nama_skema_sertifikasi: namaSkemaSertifikasi } =
-      skemaSertifikasi;
+    console.log(isPertanyaanTertulisEsaiSelesai);
 
     return (
       <section className="flex flex-col gap-8">
@@ -80,35 +87,280 @@ export const UjiKompetensiDetail = () => {
           </h1>
           <p>Uji Kompetensi</p>
         </div>
-        <div className="relative">
-          <div className="relative top-16 z-10 -mt-16 ml-6 w-max rounded-lg bg-white px-6 pt-6">
+        <div className="flex flex-col gap-4">
+          <div>
             <img
-              src={gambar}
+              src={urlProfilSkemaSertifikasi}
               alt="Gambar Skema Sertifikasi"
-              className="aspect-square w-40 rounded-lg bg-white object-cover"
+              className="aspect-square w-64 rounded-lg bg-white object-cover p-6 shadow-lg"
             />
           </div>
-          <div className="bottom-16 flex w-full gap-6 rounded-lg bg-white p-12 pt-6">
-            <div className="mt-16 flex w-9/12 flex-col gap-2">
-              <div className="flex flex-col gap-2">
-                <div>
-                  <p className="text-xs font-bold leading-none">
-                    Skema Sertifikasi
-                  </p>
-                  <p className="text-sm">{namaSkemaSertifikasi}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-bold leading-none">
-                    Tujuan Asesmen
-                  </p>
-                  <p className="text-sm">{tujuan}</p>
-                </div>
-              </div>
-              <div>Pertanyaan Tertulis</div>
+          <div className="flex gap-12 rounded-lg bg-white p-6 shadow-lg">
+            <div>
+              <p className="text-xs font-bold leading-none">Skema Sertifikasi</p>
+              <p className="text-sm">{namaSkemaSertifikasi}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold leading-none">Tujuan Asesmen</p>
+              <p className="text-sm">{tujuan}</p>
+            </div>
+          </div>
+          <div className="bottom-16 flex w-full gap-6">
+            <div className="flex w-full flex-col gap-4">
+              {!!isPraktikDemonstrasi && (
+                <>
+                  <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                    <div className="flex items-center gap-6">
+                      {!isPraktikDemonstrasiSelesai && (
+                        <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
+                          <InfoCircle className="text-2xl" />
+                        </div>
+                      )}
+                      {!!isPraktikDemonstrasiSelesai && (
+                        <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
+                          <CheckCircle className="text-2xl" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-xs font-bold leading-none">FR.IA.02</p>
+                        <p className="text-base">Tugas Praktek Demonstrasi</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <Button
+                        size="xs"
+                        onClick={() => {
+                          navigate(`tugas-praktek-demonstrasi`, {
+                            state: {
+                              ...location.state,
+                              id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                            },
+                          });
+                        }}>
+                        Kerjakan
+                      </Button>
+                      {/* <AlertDialog
+                        open={isAlertDialogOpenComponentOne}
+                        onOpenChange={setIsAlertDialogOpenComponentOne}>
+                        <AlertDialogTrigger asChild>
+                          <Button size="xs">Kerjakan</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              <div className="flex flex-col items-center gap-2">
+                                <AnnotationAlert className="text-5xl text-secondary-500" />
+                                <p className="font-anek-latin text-xl">Tugas Praktek Demonstrasi</p>
+                              </div>
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              <p className="py-4 text-sm">
+                                Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan ada
+                                kesempatan untuk mengulanginya. Apakah Anda yakin?
+                              </p>
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <div className="flex w-full gap-4">
+                              <AlertDialogCancel asChild>
+                                <Button size="sm" variant="outline-error" className="w-full">
+                                  Batalkan
+                                </Button>
+                              </AlertDialogCancel>
+                              <AlertDialogAction asChild>
+                                <Button
+                                  size="sm"
+                                  className="w-full"
+                                  onClick={() => {
+                                    navigate(`tugas-praktek-demonstrasi`, {
+                                      state: {
+                                        ...location.state,
+                                        id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                        is_disabled: true,
+                                      },
+                                    });
+                                  }}>
+                                  Konfirmasi
+                                </Button>
+                              </AlertDialogAction>
+                            </div>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog> */}
+                    </div>
+                  </div>
+                </>
+              )}
+              {!!isPertanyaanTertulis && (
+                <>
+                  <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                    <div className="flex items-center gap-6">
+                      {!isPertanyaanTertulisPilihanGandaSelesai && (
+                        <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
+                          <InfoCircle className="text-2xl" />
+                        </div>
+                      )}
+                      {!!isPertanyaanTertulisPilihanGandaSelesai && (
+                        <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
+                          <CheckCircle className="text-2xl" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-xs font-bold leading-none">FR.IA.05</p>
+                        <p className="text-base">Pertanyaan Tertulis Pilihan Ganda</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      {!isPertanyaanTertulisPilihanGandaSelesai && (
+                        <AlertDialog
+                          open={isAlertDialogOpenComponentTwo}
+                          onOpenChange={setIsAlertDialogOpenComponentTwo}>
+                          <AlertDialogTrigger asChild>
+                            <Button size="xs">Kerjakan</Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                <div className="flex flex-col items-center gap-2">
+                                  <AnnotationAlert className="text-5xl text-secondary-500" />
+                                  <p className="font-anek-latin text-xl">
+                                    Pertanyaan Tertulis Pilihan Ganda
+                                  </p>
+                                </div>
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                <p className="py-4 text-sm">
+                                  Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan ada
+                                  kesempatan untuk mengulanginya. Apakah Anda yakin?
+                                </p>
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <div className="flex w-full gap-4">
+                                <AlertDialogCancel asChild>
+                                  <Button size="sm" variant="outline-error" className="w-full">
+                                    Batalkan
+                                  </Button>
+                                </AlertDialogCancel>
+                                <AlertDialogAction asChild>
+                                  <Button
+                                    size="sm"
+                                    className="w-full"
+                                    onClick={() => {
+                                      navigate(`pertanyaan-tertulis-pilihan-ganda`, {
+                                        state: {
+                                          ...location.state,
+                                          id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                          is_disabled: true,
+                                        },
+                                      });
+                                    }}>
+                                    Konfirmasi
+                                  </Button>
+                                </AlertDialogAction>
+                              </div>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                      {!!isPertanyaanTertulisPilihanGandaSelesai && (
+                        <>
+                          <div className="flex gap-2">
+                            <Button size="xs">Lihat Hasil</Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                    <div className="flex items-center gap-6">
+                      {!isPertanyaanTertulisEsaiSelesai && (
+                        <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
+                          <InfoCircle className="text-2xl" />
+                        </div>
+                      )}
+                      {!!isPertanyaanTertulisEsaiSelesai && (
+                        <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
+                          <CheckCircle className="text-2xl" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-xs font-bold leading-none">FR.IA.06</p>
+                        <p className="text-base">Pertanyaan Tertulis Esai</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      {!isPertanyaanTertulisEsaiSelesai && (
+                        <>
+                          <AlertDialog
+                            open={isAlertDialogOpenComponentThree}
+                            onOpenChange={setIsAlertDialogOpenComponentThree}>
+                            <AlertDialogTrigger asChild>
+                              <Button size="xs">Kerjakan</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  <div className="flex flex-col items-center gap-2">
+                                    <AnnotationAlert className="text-5xl text-secondary-500" />
+                                    <p className="font-anek-latin text-xl">
+                                      Pertanyaan Tertulis Esai
+                                    </p>
+                                  </div>
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  <p className="py-4 text-sm">
+                                    Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan
+                                    ada kesempatan untuk mengulanginya. Apakah Anda yakin?
+                                  </p>
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <div className="flex w-full gap-4">
+                                  <AlertDialogCancel asChild>
+                                    <Button size="sm" variant="outline-error" className="w-full">
+                                      Batalkan
+                                    </Button>
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction asChild>
+                                    <Button
+                                      size="sm"
+                                      className="w-full"
+                                      onClick={() => {
+                                        navigate(`pertanyaan-tertulis-esai`, {
+                                          state: {
+                                            ...location.state,
+                                            id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                            is_disabled: true,
+                                          },
+                                        });
+                                      }}>
+                                      Konfirmasi
+                                    </Button>
+                                  </AlertDialogAction>
+                                </div>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </>
+                      )}
+                      {!!isPertanyaanTertulisEsaiSelesai && (
+                        <>
+                          <div className="flex gap-2">
+                            <Button size="xs">Lihat Hasil</Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       </section>
     );
+  } else if (!idAsesiSkemaSertifikasi) {
+    return <Navigate to="/uji-kompetensi" />;
   }
 };

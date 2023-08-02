@@ -5,7 +5,7 @@ export const Table = React.forwardRef(({ className, ...props }, ref) => (
   <div className="w-full overflow-auto">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom  font-aileron text-sm", className)}
+      className={cn("w-full caption-bottom border-secondary-100 font-aileron text-sm", className)}
       {...props}
     />
   </div>
@@ -13,16 +13,12 @@ export const Table = React.forwardRef(({ className, ...props }, ref) => (
 Table.displayName = "Table";
 
 export const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <thead ref={ref} className={cn("border-secondary-300 [&_tr]:border-b-2", className)} {...props} />
 ));
 TableHeader.displayName = "TableHeader";
 
 export const TableBody = React.forwardRef(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
-    {...props}
-  />
+  <tbody ref={ref} className={cn("[&_tr:last-child]:border-0", className)} {...props} />
 ));
 TableBody.displayName = "TableBody";
 
@@ -39,7 +35,7 @@ export const TableRow = React.forwardRef(({ className, ...props }, ref) => (
   <tr
     ref={ref}
     className={cn(
-      "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+      "border-b-2 border-secondary-100 transition-colors hover:bg-secondary-50 data-[state=selected]:bg-secondary-300",
       className,
     )}
     {...props}
@@ -51,7 +47,7 @@ export const TableHead = React.forwardRef(({ className, ...props }, ref) => (
   <th
     ref={ref}
     className={cn(
-      "text-muted-foreground h-12 px-4 text-left align-middle font-bold [&:has([role=checkbox])]:pr-0",
+      "p-6 text-center align-middle font-bold text-secondary-500 [&:has([role=checkbox])]:pr-0",
       className,
     )}
     {...props}
@@ -62,17 +58,13 @@ TableHead.displayName = "TableHead";
 export const TableCell = React.forwardRef(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+    className={cn("p-6 align-middle [&:has([role=checkbox])]:pr-0", className)}
     {...props}
   />
 ));
 TableCell.displayName = "TableCell";
 
 export const TableCaption = React.forwardRef(({ className, ...props }, ref) => (
-  <caption
-    ref={ref}
-    className={cn("text-muted-foreground mt-4 text-sm", className)}
-    {...props}
-  />
+  <caption ref={ref} className={cn("text-muted-foreground mt-4 text-sm", className)} {...props} />
 ));
 TableCaption.displayName = "TableCaption";

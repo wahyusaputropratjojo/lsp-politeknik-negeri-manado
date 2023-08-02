@@ -19,23 +19,25 @@ import LSP from "../../assets/logo/components/LSP";
 export const Authentication = () => {
   const { auth } = useContext(AuthContext);
   const location = useLocation();
+  const accessToken = auth?.access_token;
 
-  return auth?.access_token ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/masuk" state={{ from: location }} replace />
-  );
+  if (!!accessToken) {
+    return <Outlet />;
+  } else {
+    return <Navigate to="/masuk" state={{ from: location }} replace />;
+  }
 };
 
 export const Authorization = ({ allowedRoles }) => {
   const { auth } = useContext(AuthContext);
   const location = useLocation();
+  const role = auth?.role;
 
-  return allowedRoles.includes(auth?.role) ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/unauthorized" state={{ from: location }} replace />
-  );
+  if (allowedRoles.includes(role)) {
+    return <Outlet />;
+  } else {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
 };
 
 export const RefreshAuthentication = () => {
@@ -51,12 +53,11 @@ export const RefreshAuthentication = () => {
     onSuccess: (data) => {
       const verify = () => {
         const { access_token } = data.data.data;
-        const { id, email, role } = decodeJWT(access_token);
-        setAuth({ id, email, role, access_token });
+        const { id, nama_lengkap, email, role } = decodeJWT(access_token);
+        setAuth({ id, nama_lengkap, email, role, access_token });
       };
       !auth?.access_token && verify();
     },
-    onError: (error) => {},
     onSettled: () => {
       setTimeout(() => setIsLoading(false), 1000);
     },
@@ -68,18 +69,16 @@ export const RefreshAuthentication = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  return (
-    <>
-      {isLoading ? (
-        <div className="w-[100vw flex h-[100vh] items-center justify-center">
-          <div className="flex flex-col gap-8">
-            <LSP className="h-20" />
-            <Progress value={progress} className="w-96 bg-secondary-100" />
-          </div>
+  if (isLoading) {
+    return (
+      <div className="flex h-[100vh] items-center justify-center">
+        <div className="flex flex-col gap-8">
+          <LSP className="h-20" />
+          <Progress value={progress} className="w-96 bg-secondary-100" />
         </div>
-      ) : (
-        <Outlet />
-      )}
-    </>
-  );
+      </div>
+    );
+  } else {
+    return <Outlet />;
+  }
 };

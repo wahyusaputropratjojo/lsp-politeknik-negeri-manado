@@ -72,7 +72,7 @@ export const registerAsesi = asyncHandler(async (req, res) => {
 
     const linkFiles = await generateLinkArray(files, req);
 
-    const foto_profil = await getSingleFileLink(linkFiles, "foto_profil");
+    const url_profil_user = await getSingleFileLink(linkFiles, "profil_user");
 
     const emailAvailability = await prisma.user.findUnique({
       where: {
@@ -104,7 +104,7 @@ export const registerAsesi = asyncHandler(async (req, res) => {
         kebangsaan,
         nomor_telepon,
         kualifikasi_pendidikan,
-        foto_profil,
+        url_profil_user,
         alamat: {
           create: {
             provinsi: alamat_rumah.provinsi,
@@ -172,7 +172,7 @@ export const registerAsesi = asyncHandler(async (req, res) => {
             for (const valueLink of link) {
               await prisma.fileBuktiPersyaratanDasar.create({
                 data: {
-                  file: valueLink,
+                  url_file_bukti_persyaratan_dasar: valueLink,
                   id_bukti_persyaratan_dasar: buktiPersyaratanDasar.id,
                 },
               });
@@ -204,7 +204,7 @@ export const registerAsesi = asyncHandler(async (req, res) => {
             for (const valueLink of link) {
               await prisma.filePortofolio.create({
                 data: {
-                  file: valueLink,
+                  url_file_portofolio: valueLink,
                   id_portofolio: portofolio.id,
                 },
               });
@@ -255,7 +255,7 @@ export const getStatusPendaftaran = asyncHandler(async (req, res) => {
                 },
                 skema_sertifikasi: {
                   select: {
-                    gambar: true,
+                    url_profil_skema_sertifikasi: true,
                     kode_skema_sertifikasi: true,
                     nama_skema_sertifikasi: true,
                     tempat_uji_kompetensi: {
@@ -336,6 +336,49 @@ export const getSkemaSertifikasiAsesi = asyncHandler(async (req, res) => {
   }
 });
 
+export const getStatusSkemaSertifikasiAsesi = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const statusAsesiSkemaSertifikasi =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          is_asesmen_mandiri_selesai: true,
+          is_asesmen_mandiri: true,
+          is_metode_pengujian: true,
+          is_pertanyaan_lisan_selesai: true,
+          is_pertanyaan_lisan: true,
+          is_pertanyaan_tertulis_esai_selesai: true,
+          is_pertanyaan_tertulis_pilihan_ganda_selesai: true,
+          is_pertanyaan_tertulis: true,
+          is_portofolio_selesai: true,
+          is_portofolio: true,
+          is_praktik_demonstrasi_selesai: true,
+          is_praktik_demonstrasi: true,
+          is_punya_asesor: true,
+          is_verifikasi_berkas: true,
+        },
+      });
+
+    if (!statusAsesiSkemaSertifikasi) {
+      res.status(404);
+      throw new Error("Status Skema Setifikasi Asesi tidak ditemukan");
+    }
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      message: "Data Skema Sertifikasi Asesi berhasil didapatkan",
+      data: statusAsesiSkemaSertifikasi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const listSkemaSertifikasiAsesi = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -356,7 +399,7 @@ export const listSkemaSertifikasiAsesi = asyncHandler(async (req, res) => {
                     id: true,
                     kode_skema_sertifikasi: true,
                     nama_skema_sertifikasi: true,
-                    gambar: true,
+                    url_profil_skema_sertifikasi: true,
                   },
                 },
                 tujuan_asesmen: {
@@ -415,7 +458,7 @@ export const listAktivitasUnitKompetensiUntukAsesmenMandiri = asyncHandler(
                 id: true,
                 kode_skema_sertifikasi: true,
                 nama_skema_sertifikasi: true,
-                gambar: true,
+                url_profil_skema_sertifikasi: true,
                 unit_kompetensi: {
                   orderBy: {
                     kode_unit_kompetensi: "asc",
@@ -431,7 +474,7 @@ export const listAktivitasUnitKompetensiUntukAsesmenMandiri = asyncHandler(
                         kriteria_unjuk_kerja: {
                           select: {
                             id: true,
-                            kriteria: true,
+                            kriteria_unjuk_kerja: true,
                           },
                         },
                       },
@@ -487,7 +530,13 @@ export const createAsesmenMandiri = asyncHandler(async (req, res) => {
 export const updateAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const { is_asesmen_mandiri_selesai } = await req.body;
+  const {
+    is_asesmen_mandiri_selesai,
+    is_pertanyaan_lisan_selesai,
+    is_pertanyaan_tertulis_esai_selesai,
+    is_pertanyaan_tertulis_pilihan_ganda_selesai,
+    is_praktik_demonstrasi_selesai,
+  } = await req.body;
 
   try {
     const asesiSkemaSertifikasi = await prisma.asesiSkemaSertifikasi.update({
@@ -496,10 +545,14 @@ export const updateAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
       },
       data: {
         is_asesmen_mandiri_selesai,
+        is_pertanyaan_lisan_selesai,
+        is_pertanyaan_tertulis_esai_selesai,
+        is_pertanyaan_tertulis_pilihan_ganda_selesai,
+        is_praktik_demonstrasi_selesai,
       },
     });
 
-    res.status(201).json({
+    res.status(200).json({
       code: 200,
       status: "OK",
       message: "Data Asesi Skema Sertifikasi telah diperbarui",
@@ -514,3 +567,240 @@ export const updateAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
     });
   }
 });
+
+export const listTugasPraktikDemonstrasi = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const tugasPraktikDemonstrasi =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          skema_sertifikasi: {
+            select: {
+              id: true,
+              kode_skema_sertifikasi: true,
+              nama_skema_sertifikasi: true,
+              unit_kompetensi: {
+                orderBy: {
+                  kode_unit_kompetensi: "asc",
+                },
+                select: {
+                  id: true,
+                  kode_unit_kompetensi: true,
+                  nama_unit_kompetensi: true,
+                  tugas_praktik_demonstrasi: {
+                    select: {
+                      id: true,
+                      skenario: true,
+                      langkah_kerja_tugas_praktik_demonstrasi: {
+                        select: {
+                          id: true,
+                          langkah_kerja: true,
+                          instruksi_kerja_tugas_praktik_demonstrasi: {
+                            select: {
+                              id: true,
+                              instruksi_kerja: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      message: "Data Tugas Praktik Demonstrasi berhasil didapatkan",
+      data: tugasPraktikDemonstrasi,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      code: 500,
+      status: "Error",
+      message: "Terjadi kesalahan",
+    });
+  }
+});
+
+export const listPertanyaanTertulisEsai = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pertanyaanTertulisEsai =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          skema_sertifikasi: {
+            select: {
+              id: true,
+              kode_skema_sertifikasi: true,
+              nama_skema_sertifikasi: true,
+              unit_kompetensi: {
+                orderBy: {
+                  kode_unit_kompetensi: "asc",
+                },
+                select: {
+                  id: true,
+                  kode_unit_kompetensi: true,
+                  nama_unit_kompetensi: true,
+                  pertanyaan_tertulis_esai: {
+                    select: {
+                      id: true,
+                      pertanyaan: true,
+                      jawaban: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      message: "Data Pertanyaan Tertulis Esai berhasil didapatkan",
+      data: pertanyaanTertulisEsai,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      code: 500,
+      status: "Error",
+      message: "Terjadi kesalahan",
+    });
+  }
+});
+
+export const listPertanyaanTertulisPilihanGanda = asyncHandler(
+  async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const pertanyaanTertulisPilihanGanda =
+        await prisma.asesiSkemaSertifikasi.findUnique({
+          where: {
+            id,
+          },
+          select: {
+            id: true,
+            skema_sertifikasi: {
+              select: {
+                id: true,
+                kode_skema_sertifikasi: true,
+                nama_skema_sertifikasi: true,
+                unit_kompetensi: {
+                  orderBy: {
+                    kode_unit_kompetensi: "asc",
+                  },
+                  select: {
+                    id: true,
+                    kode_unit_kompetensi: true,
+                    nama_unit_kompetensi: true,
+                    pertanyaan_tertulis_pilihan_ganda: {
+                      select: {
+                        id: true,
+                        pertanyaan: true,
+                        jawaban_pertanyaan_tertulis_pilihan_ganda: {
+                          select: {
+                            id: true,
+                            jawaban: true,
+                            is_benar: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+
+      res.status(200).json({
+        code: 200,
+        status: "OK",
+        message: "Data Pertanyaan Tertulis Pilihan Ganda berhasil didapatkan",
+        data: pertanyaanTertulisPilihanGanda,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        code: 500,
+        status: "Error",
+        message: "Terjadi kesalahan",
+      });
+    }
+  },
+);
+
+export const createJawabanPertanyaanTertulisPilihanGanda = asyncHandler(
+  async (req, res) => {
+    const { jawaban } = req.body;
+
+    try {
+      await prisma.asesiJawabanPertanyaanTertulisPilihanGanda.createMany({
+        data: jawaban,
+        skipDuplicates: true,
+      });
+
+      res.status(200).json({
+        code: 201,
+        status: "OK",
+        message: "Jawaban Pertanyaan Tertulis Pilihan Ganda Berhasil dibuat",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        code: 500,
+        status: "Error",
+        message: "Terjadi kesalahan",
+      });
+    }
+  },
+);
+
+export const createJawabanPertanyaanTertulisEsai = async (req, res, next) => {
+  const { jawaban } = req.body;
+
+  console.log(jawaban);
+
+  try {
+    if (!!jawaban && jawaban.length > 0) {
+      await prisma.asesiJawabanPertanyaanTertulisEsai.createMany({
+        data: jawaban,
+        skipDuplicates: true,
+      });
+
+      res.status(201).json({
+        code: 201,
+        status: "Created",
+        message: "Jawaban Pertanyaan Tertulis Esai berhasil dibuat",
+      });
+    } else {
+      res.status(200).json({
+        code: 200,
+        status: "OK",
+        message: "Tidak ada jawaban yang dibuat",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};

@@ -17,19 +17,18 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
 } from "../../../components/ui/dialog";
 import {
-  Form,
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormField,
-} from "../../../components/ui/form";
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "../../../components/ui/alert-dialog";
 
 import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/components/AnnotationAlert";
 
@@ -37,7 +36,7 @@ export const TinjauPersyaratan = () => {
   const { auth } = useContext(AuthContext);
   const [asesiSkemaSertifikasi, setAsesiSkemaSertifikasi] = useState(null);
   const [idAsesiSkemaSertifikasi, setIdAsesiSkemaSertifikasi] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { id: id_user } = auth;
 
@@ -70,7 +69,7 @@ export const TinjauPersyaratan = () => {
       setIdAsesiSkemaSertifikasi(null);
     },
     onSettled: () => {
-      setOpenDialog(false);
+      setIsOpenDialog(false);
     },
   });
 
@@ -105,7 +104,7 @@ export const TinjauPersyaratan = () => {
                         {filteredAsesiSkemaSertifikasi.map((value) => {
                           const {
                             id,
-                            id_asesi,
+                            id_asesi: idAsesi,
                             asesi,
                             bukti_persyaratan_dasar: buktiPersyaratanDasar,
                             portofolio,
@@ -134,14 +133,14 @@ export const TinjauPersyaratan = () => {
                               type="single"
                               collapsible
                               className="w-full rounded-lg bg-white p-6"
-                              key={id_asesi}
+                              key={idAsesi}
                             >
                               <AccordionItem value="item-1">
                                 <AccordionTrigger>
                                   <div className="flex w-full items-center gap-6">
                                     <div>
                                       <img
-                                        src={asesi.data_diri.foto_profil}
+                                        src={asesi.data_diri.url_profil_user}
                                         alt="File Bukti Persyaratan"
                                         className="aspect-square w-24 rounded-lg object-cover"
                                       />
@@ -474,7 +473,7 @@ export const TinjauPersyaratan = () => {
                                                                   >
                                                                     <img
                                                                       src={
-                                                                        value.file
+                                                                        value.url_file_bukti_persyaratan_dasar
                                                                       }
                                                                       alt="File Bukti Persyaratan"
                                                                       className="aspect-[3/4] w-20 cursor-pointer rounded-lg border-2 border-secondary-200 object-cover p-1"
@@ -483,7 +482,7 @@ export const TinjauPersyaratan = () => {
                                                                   <DialogContent className="sm:max-w-[30rem]">
                                                                     <img
                                                                       src={
-                                                                        value.file
+                                                                        value.url_file_bukti_persyaratan_dasar
                                                                       }
                                                                       alt="File Bukti Persyaratan"
                                                                       className="cursor-pointer rounded-lg object-cover"
@@ -547,7 +546,7 @@ export const TinjauPersyaratan = () => {
                                                                   >
                                                                     <img
                                                                       src={
-                                                                        value.file
+                                                                        value.url_file_portofolio
                                                                       }
                                                                       alt="File Portofolio"
                                                                       className="aspect-[3/4] w-20 cursor-pointer rounded-lg border-2 border-secondary-200 object-cover p-1"
@@ -556,7 +555,7 @@ export const TinjauPersyaratan = () => {
                                                                   <DialogContent className="sm:max-w-[30rem]">
                                                                     <img
                                                                       src={
-                                                                        value.file
+                                                                        value.url_file_portofolio
                                                                       }
                                                                       alt="File Portofolio"
                                                                       className="cursor-pointer rounded-lg object-cover"
@@ -578,26 +577,26 @@ export const TinjauPersyaratan = () => {
                                       </Accordion>
                                     </div>
                                     <div>
-                                      <Dialog
-                                        open={openDialog}
-                                        onOpenChange={setOpenDialog}
+                                      <AlertDialog
+                                        open={isDialogOpen}
+                                        onOpenChange={setIsDialogOpen}
                                       >
-                                        <DialogTrigger asChild>
+                                        <AlertDialogTrigger asChild>
                                           <Button className="w-full">
                                             Setujui
                                           </Button>
-                                        </DialogTrigger>
-                                        <DialogContent className="w-96 bg-white">
-                                          <DialogHeader>
-                                            <DialogTitle>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>
                                               <div className="flex flex-col items-center gap-2">
                                                 <AnnotationAlert className="text-5xl text-secondary-500" />
                                                 <p className="font-anek-latin text-xl">
-                                                  Tinjau Persyaratan
+                                                  Tinjau Asesmen
                                                 </p>
                                               </div>
-                                            </DialogTitle>
-                                            <DialogDescription>
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
                                               <p className="py-4 text-sm">
                                                 Harap diingat bahwa setelah
                                                 tindakan ini dilakukan, tidak
@@ -605,28 +604,39 @@ export const TinjauPersyaratan = () => {
                                                 mengulanginya. Apakah Anda
                                                 yakin?
                                               </p>
-                                            </DialogDescription>
-                                          </DialogHeader>
-                                          <DialogFooter>
-                                            <div className="w-full">
-                                              <Button
-                                                size="sm"
-                                                type="submit"
-                                                onClick={async () => {
-                                                  setIdAsesiSkemaSertifikasi(
-                                                    id,
-                                                  );
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <div className="flex w-full gap-4">
+                                              <AlertDialogCancel asChild>
+                                                <Button
+                                                  size="sm"
+                                                  variant="outline-error"
+                                                  className="w-full"
+                                                >
+                                                  Batalkan
+                                                </Button>
+                                              </AlertDialogCancel>
+                                              <AlertDialogAction asChild>
+                                                <Button
+                                                  size="sm"
+                                                  type="submit"
+                                                  onClick={async () => {
+                                                    setIdAsesiSkemaSertifikasi(
+                                                      id,
+                                                    );
 
-                                                  mutate();
-                                                }}
-                                                className="w-full"
-                                              >
-                                                Konfirmasi
-                                              </Button>
+                                                    mutate();
+                                                  }}
+                                                  className="w-full"
+                                                >
+                                                  Konfirmasi
+                                                </Button>
+                                              </AlertDialogAction>
                                             </div>
-                                          </DialogFooter>
-                                        </DialogContent>
-                                      </Dialog>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
                                     </div>
                                   </div>
                                 </AccordionContent>

@@ -10,21 +10,19 @@ export const getSkemaSertifikasi = asyncHandler(async (req, res) => {
     where: {
       id,
     },
-    include: {
+    select: {
+      id: true,
+      kode_skema_sertifikasi: true,
+      nama_skema_sertifikasi: true,
+      url_profil_skema_sertifikasi: true,
       unit_kompetensi: {
-        include: {
-          aktivitas_unit_kompetensi: {
-            include: {
-              kriteria_unjuk_kerja: true,
-            },
-          },
-          pertanyaan_tertulis: {
-            include: {
-              jawaban_pertanyaan_tertulis: true,
-            },
-          },
-          pertanyaan_esai: true,
-          pertanyaan_lisan: true,
+        orderBy: {
+          kode_unit_kompetensi: "asc",
+        },
+        select: {
+          id: true,
+          kode_unit_kompetensi: true,
+          nama_unit_kompetensi: true,
         },
       },
     },
@@ -34,9 +32,7 @@ export const getSkemaSertifikasi = asyncHandler(async (req, res) => {
     code: 200,
     status: "OK",
     message: "Berhasil mendapatkan data skema sertifikasi",
-    data: {
-      ...skemaSertifikasi,
-    },
+    data: skemaSertifikasi,
   });
 });
 
@@ -44,6 +40,12 @@ export const listSkemaSertifikasi = asyncHandler(async (req, res) => {
   const skemaSertifikasi = await prisma.skemaSertifikasi.findMany({
     orderBy: {
       nama_skema_sertifikasi: "asc",
+    },
+    select: {
+      id: true,
+      kode_skema_sertifikasi: true,
+      nama_skema_sertifikasi: true,
+      url_profil_skema_sertifikasi: true,
     },
   });
 

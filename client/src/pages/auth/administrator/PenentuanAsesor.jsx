@@ -17,6 +17,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../../../components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../../../components/ui/alert-dialog";
 import { Button } from "../../../components/ui/button";
 import { Calendar } from "../../../components/ui/calendar";
 import {
@@ -24,15 +35,6 @@ import {
   CommandGroup,
   CommandItem,
 } from "../../../components/ui/command";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-} from "../../../components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -126,7 +128,7 @@ export const PenentuanAsesor = () => {
                                 <div className="flex w-full items-center gap-6">
                                   <div>
                                     <img
-                                      src={asesi.data_diri.foto_profil}
+                                      src={asesi.data_diri.url_profil_user}
                                       alt="File Bukti Persyaratan"
                                       className="aspect-square w-24 rounded-lg object-cover"
                                     />
@@ -187,7 +189,7 @@ export const PenentuanAsesor = () => {
 
 const PenentuanAsesorForm = ({ id }) => {
   const [idAsesiSkemaSertifikasi, setIdAsesiSkemaSertifikasi] = useState(id);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const form = useForm({
     resolver: yupResolver(penentuanAsesor),
@@ -241,22 +243,26 @@ const PenentuanAsesorForm = ({ id }) => {
   });
 
   const onSubmit = (data) => {
-    const { id_asesor, tanggal_pelaksanaan } = data;
+    try {
+      const { id_asesor, tanggal_pelaksanaan } = data;
 
-    console.log({
-      ...data,
-      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-    });
+      console.log({
+        ...data,
+        id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+      });
 
-    mutateAsesorAsesi({
-      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-      id_asesor,
-      tanggal_pelaksanaan,
-    });
+      mutateAsesorAsesi({
+        id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+        id_asesor,
+        tanggal_pelaksanaan,
+      });
 
-    mutateAsesiSkemaSertifikasi();
-
-    setOpenDialog(false);
+      mutateAsesiSkemaSertifikasi();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDialogOpen(false);
+    }
   };
 
   return (
@@ -372,39 +378,50 @@ const PenentuanAsesorForm = ({ id }) => {
               )}
             />
           </div>
-          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-            <DialogTrigger asChild>
+          <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <AlertDialogTrigger asChild>
               <Button className="w-full">Simpan</Button>
-            </DialogTrigger>
-            <DialogContent className="w-96 bg-white">
-              <DialogHeader>
-                <DialogTitle>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
                   <div className="flex flex-col items-center gap-2">
                     <AnnotationAlert className="text-5xl text-secondary-500" />
                     <p className="font-anek-latin text-xl">Penentuan Asesor</p>
                   </div>
-                </DialogTitle>
-                <DialogDescription>
-                  <p className="sm py-4">
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  <p className="py-4 text-sm">
                     Harap diingat bahwa setelah tindakan ini dilakukan, tidak
                     akan ada kesempatan untuk mengulanginya. Apakah Anda yakin?
                   </p>
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <div className="w-full">
-                  <Button
-                    size="sm"
-                    type="submit"
-                    onClick={form.handleSubmit(onSubmit)}
-                    className="w-full"
-                  >
-                    Konfirmasi
-                  </Button>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <div className="flex w-full gap-4">
+                  <AlertDialogCancel asChild>
+                    <Button
+                      size="sm"
+                      variant="outline-error"
+                      className="w-full"
+                    >
+                      Batalkan
+                    </Button>
+                  </AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button
+                      size="sm"
+                      type="submit"
+                      onClick={form.handleSubmit(onSubmit)}
+                      className="w-full"
+                    >
+                      Konfirmasi
+                    </Button>
+                  </AlertDialogAction>
                 </div>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </form>
     </Form>

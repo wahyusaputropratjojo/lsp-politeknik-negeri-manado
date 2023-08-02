@@ -1,5 +1,5 @@
+import { RootLayout } from "./RootLayout";
 import { SidebarLayout } from "./SidebarLayout";
 import { ContentLayout } from "./ContentLayout";
-import { DefaultLayout } from "./DefaultLayout";
 
-export { SidebarLayout, ContentLayout, DefaultLayout };
+export { RootLayout, SidebarLayout, ContentLayout };

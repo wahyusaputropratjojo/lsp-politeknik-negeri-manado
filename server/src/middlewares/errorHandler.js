@@ -65,9 +65,5 @@ export const errorHandler = (error, req, res, next) => {
         message: error.message,
       });
       break;
-    default:
-      console.log("");
-      console.log("OK 👍");
-      break;
   }
 };

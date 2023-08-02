@@ -80,6 +80,7 @@ export const login = asyncHandler(async (req, res) => {
   if (user && (await bcrypt.compare(password, user.password))) {
     const payload = {
       id: user.id,
+      nama_lengkap: user.nama_lengkap,
       email: user.email,
       role: user.role,
     };
@@ -168,6 +169,7 @@ export const accessTokenRefresh = asyncHandler(async (req, res) => {
 
   const payload = {
     id: decoded.id,
+    nama_lengkap: decoded.nama_lengkap,
     email: decoded.email,
     role: decoded.role,
   };

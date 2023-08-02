@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-lg border-2 font-anek-latin font-semibold transition-colors disabled:cursor-not-allowed",
+  "inline-flex items-center justify-center rounded-lg border-2 font-aileron font-bold transition-colors disabled:cursor-not-allowed",
   {
     variants: {
       variant: {
@@ -18,6 +18,8 @@ export const buttonVariants = cva(
           "border-success-50 bg-success-50 text-success-500 hover:border-success-100 hover:bg-success-100 focus:border-success-100 focus:bg-success-100 focus:outline-none active:border-success-200 active:bg-success-200 disabled:border-success-200 disabled:bg-success-200 disabled:text-success-300",
         outline:
           "border-secondary-500 text-secondary-500 hover:bg-secondary-600 hover:text-white focus:border-secondary-600 focus:bg-secondary-600 focus:text-white focus:outline-none active:bg-secondary-700 active:text-white disabled:border-secondary-200 disabled:bg-secondary-200 disabled:text-secondary-300",
+        "outline-error":
+          "border-error-500 text-error-500 hover:border-error-50 hover:bg-error-50 hover:text-error-500 focus:border-error-100 focus:bg-error-100 focus:text-error-500 focus:outline-none active:bg-error-100 active:text-error-500 disabled:border-secondary-200 disabled:bg-secondary-200 disabled:text-secondary-300",
       },
       size: {
         xs: "h-10 px-4 text-sm",
@@ -40,13 +42,13 @@ export const buttonVariants = cva(
       variant: "primary",
       size: "md",
     },
-  }
+  },
 );
 
 export const Button = React.forwardRef(
   (
     { className, variant, size, content, similar, asChild = false, ...props },
-    ref
+    ref,
   ) => {
     const Comp = asChild ? Slot : "button";
     return (
@@ -58,12 +60,12 @@ export const Button = React.forwardRef(
             content,
             similar,
             className,
-          })
+          }),
         )}
         ref={ref}
         {...props}
       />
     );
-  }
+  },
 );
 Button.displayName = "Button";

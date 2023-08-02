@@ -54,7 +54,7 @@ export const listAsesi = asyncHandler(async (req, res) => {
                         id: true,
                         data_diri: {
                           select: {
-                            foto_profil: true,
+                            url_profil_user: true,
                           },
                         },
                         user: {
@@ -94,14 +94,14 @@ export const updateAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const {
-    sudah_punya_asesor,
-    sudah_verifikasi_berkas,
     is_asesmen_mandiri,
     is_metode_pengujian,
-    is_demonstrasi,
-    is_pertanyaan_tertulis,
     is_pertanyaan_lisan,
+    is_pertanyaan_tertulis,
     is_portofolio,
+    is_praktik_demonstrasi,
+    is_punya_asesor,
+    is_verifikasi_berkas,
   } = await req.body;
 
   try {
@@ -110,14 +110,14 @@ export const updateAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
         id,
       },
       data: {
-        sudah_punya_asesor,
-        sudah_verifikasi_berkas,
         is_asesmen_mandiri,
         is_metode_pengujian,
-        is_demonstrasi,
-        is_pertanyaan_tertulis,
         is_pertanyaan_lisan,
+        is_pertanyaan_tertulis,
         is_portofolio,
+        is_praktik_demonstrasi,
+        is_punya_asesor,
+        is_verifikasi_berkas,
       },
     });
 
@@ -149,7 +149,7 @@ export const getAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
         select: {
           id: true,
           is_asesmen_mandiri: true,
-          is_demonstrasi: true,
+          is_praktik_demonstrasi: true,
           is_metode_pengujian: true,
           is_pertanyaan_lisan: true,
           is_pertanyaan_tertulis: true,
@@ -159,9 +159,82 @@ export const getAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
           skema_sertifikasi: {
             select: {
               id: true,
-              gambar: true,
+              url_profil_skema_sertifikasi: true,
               kode_skema_sertifikasi: true,
               nama_skema_sertifikasi: true,
+              unit_kompetensi: {
+                orderBy: {
+                  kode_unit_kompetensi: "asc",
+                },
+                select: {
+                  id: true,
+                  kode_unit_kompetensi: true,
+                  nama_unit_kompetensi: true,
+                  pertanyaan_lisan: {
+                    select: {
+                      id: true,
+                      pertanyaan: true,
+                      jawaban: true,
+                    },
+                  },
+                  pertanyaan_tertulis_pilihan_ganda: {
+                    select: {
+                      id: true,
+                      pertanyaan: true,
+                      jawaban_pertanyaan_tertulis_pilihan_ganda: {
+                        select: {
+                          id: true,
+                          jawaban: true,
+                          is_benar: true,
+                        },
+                      },
+                    },
+                  },
+                  pertanyaan_tertulis_esai: {
+                    select: {
+                      id: true,
+                      pertanyaan: true,
+                      jawaban: true,
+                    },
+                  },
+                  pertanyaan_observasi: {
+                    select: {
+                      id: true,
+                      pertanyaan: true,
+                    },
+                  },
+                  aktivitas_unit_kompetensi: {
+                    select: {
+                      id: true,
+                      elemen: true,
+                      kriteria_unjuk_kerja: {
+                        select: {
+                          id: true,
+                          kriteria_unjuk_kerja: true,
+                        },
+                      },
+                    },
+                  },
+                  tugas_praktik_demonstrasi: {
+                    select: {
+                      id: true,
+                      skenario: true,
+                      langkah_kerja_tugas_praktik_demonstrasi: {
+                        select: {
+                          id: true,
+                          langkah_kerja: true,
+                          instruksi_kerja_tugas_praktik_demonstrasi: {
+                            select: {
+                              id: true,
+                              instruksi_kerja: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
           tujuan_asesmen: {
@@ -177,7 +250,7 @@ export const getAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
               file_portofolio: {
                 select: {
                   id: true,
-                  file: true,
+                  url_file_portofolio: true,
                 },
               },
             },
@@ -188,6 +261,7 @@ export const getAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
               user: {
                 select: {
                   nama_lengkap: true,
+                  email: true,
                 },
               },
               data_diri: {
@@ -201,7 +275,7 @@ export const getAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
                       keterangan_lainnya: true,
                     },
                   },
-                  foto_profil: true,
+                  url_profil_user: true,
                   jenis_kelamin: true,
                   kebangsaan: true,
                   kualifikasi_pendidikan: true,

@@ -26,8 +26,6 @@ export const UjiKompetensi = () => {
     },
   });
 
-  console.log(asesiSkemaSertifikasi);
-
   return (
     <section className="flex flex-col gap-8">
       <div>
@@ -46,17 +44,23 @@ export const UjiKompetensi = () => {
                 is_punya_asesor: isPunyaAsesor,
                 is_verifikasi_berkas: isVerifikasiBerkas,
                 is_asesmen_mandiri_selesai: isAsesmenMandiriSelesai,
-                skema_sertifikasi: skemaSertifikasi,
+                skema_sertifikasi: {
+                  url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
+                  nama_skema_sertifikasi: namaSkemaSertifikasi,
+                },
                 tujuan_asesmen: tujuanAsesmen,
               } = value;
 
               if (isVerifikasiBerkas && isPunyaAsesor && isAsesmenMandiri) {
                 return (
-                  <div className="flex flex-col gap-6 rounded-lg bg-white p-6">
+                  <div
+                    key={id}
+                    className="flex flex-col gap-6 rounded-lg bg-white p-6 shadow-lg"
+                  >
                     <div className="flex gap-6">
                       <div>
                         <img
-                          src={skemaSertifikasi.gambar}
+                          src={urlProfilSkemaSertifikasi}
                           alt="Foto Profil"
                           className="aspect-square w-24 rounded-lg object-cover"
                         />
@@ -67,9 +71,7 @@ export const UjiKompetensi = () => {
                             <p className="text-xs font-bold leading-none">
                               Skema Sertifikasi
                             </p>
-                            <p className="text-sm">
-                              {skemaSertifikasi.nama_skema_sertifikasi}
-                            </p>
+                            <p className="text-sm">{namaSkemaSertifikasi}</p>
                           </div>
                           <div>
                             <p className="text-xs font-bold leading-none">
@@ -90,7 +92,11 @@ export const UjiKompetensi = () => {
                         size="sm"
                         className="w-full"
                         onClick={() => {
-                          navigate(`/uji-kompetensi/${id}`);
+                          navigate(`/uji-kompetensi/skema-sertifikasi`, {
+                            state: {
+                              id_asesi_skema_sertifikasi: id,
+                            },
+                          });
                         }}
                       >
                         Uji Kompetensi

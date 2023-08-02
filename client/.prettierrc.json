@@ -1,4 +1,8 @@
 {
   "plugins": ["prettier-plugin-tailwindcss"],
-  "tailwindFunctions": ["cva", "cn"]
+  "tailwindFunctions": ["cva", "cn"],
+  "printWidth": 100,
+  "bracketSpacing": true,
+  "bracketSameLine": true,
+  "arrowParens": "always"
 }

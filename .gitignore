@@ -83,6 +83,6 @@ dist-ssr
 /server/*.sln
 /server/*.sw?
 
-/server/prisma/migrations/
+/server/src/prisma/migrations/
 
 /server/*.txt

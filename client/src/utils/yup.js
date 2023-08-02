@@ -36,7 +36,9 @@ export const permohonanSertifikasiKompetensiSchema = yup.object().shape({
   nama_lengkap: yup.string().required("Nama Lengkap tidak boleh kosong!"),
   nik: yup.string().required("NIK tidak boleh kosong!"),
   tempat_lahir: yup.string().required("Tempat Lahir tidak boleh kosong!"),
-  tanggal_lahir: yup.date().required("Tanggal Lahir tidak boleh kosong!"),
+  tanggal_lahir: yup
+    .date("Tanggal Lahir tidak boleh kosong!")
+    .required("Tanggal Lahir tidak boleh kosong!"),
   jenis_kelamin: yup.string().required("Jenis Kelamin tidak boleh kosong!"),
   kebangsaan: yup.string().required("Kebangsaan tidak boleh kosong!"),
   nomor_telepon: yup.string().required("Nomor Telepon tidak boleh kosong!"),
@@ -67,7 +69,7 @@ export const permohonanSertifikasiKompetensiSchema = yup.object().shape({
     kecamatan: yup.string().required("Kecamatan tidak boleh kosong!"),
     kelurahan_desa: yup.string().required("Kelurahan/Desa tidak boleh kosong!"),
   }),
-  foto_profil: yup.mixed().required("Foto Profil tidak boleh kosong!"),
+  profil_user: yup.mixed().required("Foto Profil tidak boleh kosong!"),
   skema_sertifikasi: yup
     .string()
     .required("Skema Sertifikasi tidak boleh kosong!"),

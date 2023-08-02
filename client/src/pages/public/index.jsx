@@ -1,11 +1,15 @@
 import { Beranda } from "./Beranda";
 import { Masuk } from "./Masuk";
 import { Unauthorized } from "./Unauthorized";
-import { FormulirPermohonanSertifikasiKompetensi } from "./FormulirPermohonanSertifikasiKompetensi";
+import { Pendaftaran } from "./Pendaftaran";
+import { SkemaSertifikasi } from "./SkemaSertifikasi";
+import { SkemaSertifikasiDetail } from "./SkemaSertifikasiDetail";
 
 export {
   Beranda,
   Masuk,
   Unauthorized,
-  FormulirPermohonanSertifikasiKompetensi,
+  Pendaftaran,
+  SkemaSertifikasi,
+  SkemaSertifikasiDetail,
 };

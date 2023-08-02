@@ -1,7 +1,7 @@
 // Packages
 import { useState, useContext } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { NavLink, useNavigate, redirect } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Context
 import { AuthContext } from "../../../context/AuthContext";
@@ -12,66 +12,52 @@ import axios from "../../../utils/axios";
 
 // Components
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
-import { Badge } from "../badge";
 import { Button } from "../button";
-import { Navigation } from "./Navigation";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from "../dropdown-menu";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../hover-card";
+import { Navigation } from "./Navigation";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../tooltip";
 
 // Assets
-import LSP from "../../../assets/logo/components/LSP";
-import PoliteknikNegeriManado from "../../../assets/logo/components/PoliteknikNegeriManado";
-import HomeLine from "../../../assets/icons/untitled-ui-icons/line/components/HomeLine";
-import Archive from "../../../assets/icons/untitled-ui-icons/line/components/Archive";
-import LayoutAlt04 from "../../../assets/icons/untitled-ui-icons/line/components/LayoutAlt04";
-import FileQuestion02 from "../../../assets/icons/untitled-ui-icons/line/components/FileQuestion02";
-import DotsVertical from "../../../assets/icons/untitled-ui-icons/line/components/DotsVertical";
-import User01 from "../../../assets/icons/untitled-ui-icons/line/components/User01";
-import LogIn02 from "../../../assets/icons/untitled-ui-icons/line/components/LogIn02";
-import LogOut02 from "../../../assets/icons/untitled-ui-icons/line/components/LogOut02";
-import ChevronRight from "../../../assets/icons/untitled-ui-icons/line/components/ChevronRight";
-import ChevronLeft from "../../../assets/icons/untitled-ui-icons/line/components/ChevronLeft";
-import FileAttachment04 from "../../../assets/icons/untitled-ui-icons/line/components/FileAttachment04";
-import UserLeft01 from "../../../assets/icons/untitled-ui-icons/line/components/UserLeft01";
-import ImageUserDown from "../../../assets/icons/untitled-ui-icons/line/components/ImageUserDown";
-import CalendarCheck02 from "../../../assets/icons/untitled-ui-icons/line/components/CalendarCheck02";
-import UsersEdit from "../../../assets/icons/untitled-ui-icons/line/components/UsersEdit";
-import BookClosed from "../../../assets/icons/untitled-ui-icons/line/components/BookClosed";
+import { LSP, PoliteknikNegeriManado } from "../../../assets/logo/components";
+import {
+  BookClosed,
+  CalendarCheck02,
+  ChevronRight,
+  DotsVertical,
+  FileAttachment04,
+  FileQuestion02,
+  HomeLine,
+  ImageUserPlus,
+  ImageUserDown,
+  LogIn02,
+  LogOut02,
+  User01,
+  UserLeft01,
+  UsersEdit,
+  LayoutAlt02,
+} from "./Icons";
+import { is } from "date-fns/locale";
 
 export const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { auth, setAuth } = useContext(AuthContext);
-  const [nama, setNama] = useState("");
-  const [role, setRole] = useState("");
+
+  const namaLengkap = auth?.nama_lengkap;
+  const role = auth?.role;
+  const isDisabled = location?.state?.is_disabled;
+  const isAsesi = auth?.role === "Asesi";
+  const isAsesor = auth?.role === "Asesor";
+  const isAdministrator = auth?.role === "Administrator";
+
   const [visible, setVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(true);
-
-  useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      if (auth) return await axios.get(`/user/${auth?.id}`);
-    },
-    onSuccess: (data) => {
-      const { role } = data.data.data;
-      const { nama_lengkap } = data.data.data;
-
-      setNama(nama_lengkap);
-      setRole(role);
-    },
-    enabled: !!auth,
-  });
 
   const { mutate } = useMutation({
     mutationFn: () => {
@@ -79,11 +65,9 @@ export const Sidebar = () => {
     },
   });
 
-  const logOut = async () => {
-    navigate("/");
-    navigate(0);
+  const logOut = () => {
     mutate();
-    setAuth({});
+    setAuth(null);
   };
 
   const profileMenu = (e) => {
@@ -99,92 +83,284 @@ export const Sidebar = () => {
     <>
       <section
         className={cn(
-          "flex h-full w-72 flex-col gap-12 rounded-lg bg-white p-8",
+          "relative z-[100] flex h-full w-72 flex-col gap-12 rounded-lg bg-white p-8 shadow-lg",
           {
             "w-24 px-6 py-8": isMinimized,
           },
-        )}
-      >
+        )}>
         <header
           className={cn("flex", {
             "justify-center": isMinimized,
-          })}
-        >
-          {!isMinimized && (
-            <button
-              onClick={() => {
-                navigate("/");
-              }}
-            >
-              <LSP className="h-10" />
-            </button>
-          )}
-          {isMinimized && (
-            <button
-              onClick={() => {
-                navigate("/");
-              }}
-            >
-              <PoliteknikNegeriManado className="h-10" />
-            </button>
-          )}
+          })}>
+          {!isMinimized && <LSP className="h-10" />}
+          {isMinimized && <PoliteknikNegeriManado className="h-10" />}
         </header>
-        <nav className="flex h-full max-h-full flex-col gap-4">
-          <div>
-            <Navigation to="/" isMinimized={isMinimized}>
-              <HomeLine className="text-lg" />
-              {!isMinimized && <span>Beranda</span>}
-            </Navigation>
-          </div>
-          {auth?.role === "Asesi" && (
-            <div>
-              <Navigation to="/status-pendaftaran" isMinimized={isMinimized}>
-                <FileQuestion02 className="text-lg" />
-                {!isMinimized && <span>Status Pendaftaran</span>}
-              </Navigation>
-              <Navigation to="/asesmen-mandiri" isMinimized={isMinimized}>
-                <ImageUserDown className="text-lg" />
-                {!isMinimized && <span>Asesmen Mandiri</span>}
-              </Navigation>
-              <Navigation to="/uji-kompetensi" isMinimized={isMinimized}>
-                <BookClosed className="text-lg" />
-                {!isMinimized && <span>Uji Kompetensi</span>}
-              </Navigation>
-            </div>
+        <nav className="flex h-full max-h-full flex-col gap-1 bg-white">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Navigation to="/" isMinimized={isMinimized} isDisabled={isDisabled}>
+                  <HomeLine className="text-lg" />
+                  {!isMinimized && <span>Beranda</span>}
+                </Navigation>
+              </TooltipTrigger>
+              <TooltipContent
+                sideOffset={24}
+                side="right"
+                className={cn(
+                  "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                  {
+                    hidden: !isMinimized,
+                  },
+                )}>
+                <div>
+                  <p className="font-aileron text-sm font-semibold">Beranda</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Navigation
+                  to="/skema-sertifikasi"
+                  isMinimized={isMinimized}
+                  isDisabled={isDisabled}>
+                  <LayoutAlt02 className="text-lg" />
+                  {!isMinimized && <span>Skema Sertifikasi</span>}
+                </Navigation>
+              </TooltipTrigger>
+              <TooltipContent
+                sideOffset={24}
+                side="right"
+                className={cn(
+                  "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                  {
+                    hidden: !isMinimized,
+                  },
+                )}>
+                <div>
+                  <p className="font-aileron text-sm font-semibold">Skema Sertifikasi</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className={cn({ hidden: isAsesor || isAdministrator })}>
+                <Navigation to="/pendaftaran" isMinimized={isMinimized} isDisabled={isDisabled}>
+                  <ImageUserPlus className="text-lg" />
+                  {!isMinimized && <span>Pendaftaran</span>}
+                </Navigation>
+              </TooltipTrigger>
+              <TooltipContent
+                sideOffset={24}
+                side="right"
+                className={cn(
+                  "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                  {
+                    hidden: !isMinimized,
+                  },
+                )}>
+                <div>
+                  <p className="font-aileron text-sm font-semibold">Pendaftaran</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {isAsesi && (
+            <>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/status-pendaftaran"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <FileQuestion02 className="text-lg" />
+                      {!isMinimized && <span>Status Pendaftaran</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Status Pendaftaran</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/asesmen-mandiri"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <ImageUserDown className="text-lg" />
+                      {!isMinimized && <span>Asesmen Mandiri</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Asesmen Mandiri</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/uji-kompetensi"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <BookClosed className="text-lg" />
+                      {!isMinimized && <span>Uji Kompetensi</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Uji Kompetensi</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
           )}
-          {auth?.role === "Asesor" && (
-            <div>
-              <Navigation to="/jadwal-asesmen" isMinimized={isMinimized}>
-                <CalendarCheck02 className="text-lg" />
-                {!isMinimized && <span>Jadwal Asesmen</span>}
-              </Navigation>
-              {/* <Navigation to="/data-asesi" isMinimized={isMinimized}>
-                <FileAttachment04 className="text-lg" />
-                {!isMinimized && <span>Data Asesi</span>}
-              </Navigation> */}
-              <Navigation to="/evaluasi-asesi" isMinimized={isMinimized}>
-                <UsersEdit className="text-lg" />
-                {!isMinimized && <span>Evaluasi Asesi</span>}
-              </Navigation>
-            </div>
+          {isAsesor && (
+            <>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/jadwal-asesmen"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <CalendarCheck02 className="text-lg" />
+                      {!isMinimized && <span>Jadwal Asesmen</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Jadwal Asesmen</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/evaluasi-asesi"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <UsersEdit className="text-lg" />
+                      {!isMinimized && <span>Evaluasi Asesi</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Evaluasi Asesi</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
           )}
-          {auth?.role === "Administrator" && (
-            <div>
-              <Navigation
-                to="/manajemen-asesi/tinjau-persyaratan"
-                isMinimized={isMinimized}
-              >
-                <FileAttachment04 className="text-lg" />
-                {!isMinimized && <span>Tinjau Persyaratan</span>}
-              </Navigation>
-              <Navigation
-                to="/manajemen-asesi/penentuan-asesor"
-                isMinimized={isMinimized}
-              >
-                <UserLeft01 className="text-lg" />
-                {!isMinimized && <span>Penentuan Asesor</span>}
-              </Navigation>
-            </div>
+          {isAdministrator && (
+            <>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/tinjau-persyaratan"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <FileAttachment04 className="text-lg" />
+                      {!isMinimized && <span>Tinjau Persyaratan</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Tinjau Persyaratan</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/penentuan-asesor"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <UserLeft01 className="text-lg" />
+                      {!isMinimized && <span>Penentuan Asesor</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Penentuan Asesor</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
           )}
         </nav>
         <footer className="flex flex-col gap-4">
@@ -200,16 +376,31 @@ export const Sidebar = () => {
                 <div className="flex items-center justify-between gap-2">
                   <div className="w-36">
                     <p className="truncate font-anek-latin text-lg font-semibold text-secondary-500">
-                      {nama}
+                      {namaLengkap}
                     </p>
-                    <p className="font-aileron text-xs font-normal text-secondary-500">
-                      {role}
-                    </p>
+                    <p className="font-aileron text-xs font-normal text-secondary-500">{role}</p>
                   </div>
                   <div>
-                    <button onClick={profileMenu}>
-                      <DotsVertical className="text-lg" />
-                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <button>
+                          <DotsVertical className="text-lg" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      {!isDisabled && (
+                        <DropdownMenuContent
+                          side="right"
+                          sideOffset={40}
+                          className="border-none shadow-none">
+                          <DropdownMenuItem>
+                            <Button size="sm" variant="error" className="gap-2" onClick={logOut}>
+                              <LogOut02 />
+                              Keluar
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      )}
+                    </DropdownMenu>
                   </div>
                 </div>
               )}
@@ -217,33 +408,26 @@ export const Sidebar = () => {
           ) : (
             <Button
               className="items-center gap-2"
+              size="sm"
               content={isMinimized && "icon"}
-              onClick={() => navigate("/masuk")}
-            >
+              onClick={() => navigate("/masuk")}>
               <LogIn02 className="p-0 text-lg" />
               <span hidden={isMinimized}>Masuk</span>
             </Button>
           )}
         </footer>
-      </section>
-      <div className="absolute -right-2 top-0 flex h-8 w-8 translate-x-full rounded-lg bg-white">
-        <button className="flex h-full w-full items-center justify-center">
-          {!isMinimized && (
-            <ChevronLeft onClick={handleMinimized} className="text-xl" />
-          )}
-          {isMinimized && (
-            <ChevronRight onClick={handleMinimized} className="text-xl" />
-          )}
-        </button>
-      </div>
-      {visible && (
-        <div className="absolute -right-4 bottom-0 z-50 flex h-min translate-x-full flex-col gap-2 rounded-lg bg-white p-4">
-          <Button size="sm" variant="error" className="gap-2" onClick={logOut}>
-            <LogOut02 />
-            Keluar
-          </Button>
+        <div className="absolute right-0 top-12 flex h-16 w-6 translate-x-full rounded-e-lg bg-primary-500 shadow-lg transition-colors hover:bg-primary-600">
+          <button
+            className="flex h-full w-full items-center justify-center"
+            onClick={handleMinimized}>
+            <ChevronRight
+              className={cn("text-xl text-secondary-500 transition-all duration-300 ease-in-out", {
+                "rotate-180": !isMinimized,
+              })}
+            />
+          </button>
         </div>
-      )}
+      </section>
     </>
   );
 };

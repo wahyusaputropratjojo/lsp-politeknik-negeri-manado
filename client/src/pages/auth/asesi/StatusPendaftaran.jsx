@@ -25,7 +25,7 @@ export const StatusPendaftaran = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-8">
         <div>
           <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
             Status Pendaftaran
@@ -40,23 +40,21 @@ export const StatusPendaftaran = () => {
               const {
                 id,
                 asesor_asesi: asesorAsesi,
-                skema_sertifikasi: skemaSertifikasi,
+                skema_sertifikasi: {
+                  url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
+                  nama_skema_sertifikasi: namaSkemaSertifikasi,
+                  tempat_uji_kompetensi: tempatUjiKompetensi,
+                },
                 is_punya_asesor: isPunyaAsesor,
                 is_verifikasi_berkas: isVerifikasiBerkas,
                 tujuan_asesmen: tujuanAsesmen,
               } = value;
 
-              const {
-                gambar,
-                nama_skema_sertifikasi: namaSkemaSertifikasi,
-                tempat_uji_kompetensi: tempatUjiKompetensi,
-              } = skemaSertifikasi;
-
               const { tempat_uji_kompetensi: tempat } = tempatUjiKompetensi;
 
               const { tujuan } = tujuanAsesmen;
 
-              const date = new Date(asesorAsesi[0].tanggal_pelaksanaan);
+              const date = new Date(asesorAsesi[0]?.tanggal_pelaksanaan);
               const tanggalPelaksanaan = date.toLocaleDateString("id-ID", {
                 day: "numeric",
                 month: "long",
@@ -66,11 +64,11 @@ export const StatusPendaftaran = () => {
               return (
                 <div
                   key={id}
-                  className="col-span-1 flex gap-6 rounded-lg bg-white p-6"
+                  className="col-span-1 flex gap-6 rounded-lg bg-white p-6 shadow-lg"
                 >
                   <div>
                     <img
-                      src={gambar}
+                      src={urlProfilSkemaSertifikasi}
                       alt="Gambar Skema Sertifikasi"
                       className="aspect-square w-24 rounded-lg object-cover"
                     />
