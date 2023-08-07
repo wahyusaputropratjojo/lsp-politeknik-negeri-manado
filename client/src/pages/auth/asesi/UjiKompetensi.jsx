@@ -16,7 +16,7 @@ export const UjiKompetensi = () => {
 
   const [asesiSkemaSertifikasi, setAsesiSkemaSertifikasi] = useState();
 
-  const { isLoading } = useQuery({
+  useQuery({
     queryKey: ["asesi-skema-sertifikasi"],
     queryFn: async () => {
       return await axios.get(`/asesi/${auth.id}/skema-sertifikasi`);
@@ -36,7 +36,7 @@ export const UjiKompetensi = () => {
       </div>
       <div>
         <div className="grid grid-cols-1 gap-8">
-          {asesiSkemaSertifikasi &&
+          {!!asesiSkemaSertifikasi &&
             asesiSkemaSertifikasi.map((value) => {
               const {
                 id,
@@ -44,6 +44,7 @@ export const UjiKompetensi = () => {
                 is_punya_asesor: isPunyaAsesor,
                 is_verifikasi_berkas: isVerifikasiBerkas,
                 is_asesmen_mandiri_selesai: isAsesmenMandiriSelesai,
+                is_evaluasi_asesi_selesai: isEvaluasiAsesiSelesai,
                 skema_sertifikasi: {
                   url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
                   nama_skema_sertifikasi: namaSkemaSertifikasi,
@@ -53,10 +54,7 @@ export const UjiKompetensi = () => {
 
               if (isVerifikasiBerkas && isPunyaAsesor && isAsesmenMandiri) {
                 return (
-                  <div
-                    key={id}
-                    className="flex flex-col gap-6 rounded-lg bg-white p-6 shadow-lg"
-                  >
+                  <div key={id} className="flex flex-col gap-6 rounded-lg bg-white p-6 shadow-lg">
                     <div className="flex gap-6">
                       <div>
                         <img
@@ -66,42 +64,45 @@ export const UjiKompetensi = () => {
                         />
                       </div>
                       <div className="flex w-full items-center justify-between">
-                        <div className="grid grid-rows-2 items-center gap-x-12 gap-y-4">
+                        <div className="grid grid-flow-col grid-rows-2 items-center gap-x-12 gap-y-4">
                           <div>
-                            <p className="text-xs font-bold leading-none">
-                              Skema Sertifikasi
-                            </p>
+                            <p className="text-xs font-bold leading-none">Skema Sertifikasi</p>
                             <p className="text-sm">{namaSkemaSertifikasi}</p>
                           </div>
                           <div>
-                            <p className="text-xs font-bold leading-none">
-                              Tujuan Asesmen
-                            </p>
+                            <p className="text-xs font-bold leading-none">Tujuan Asesmen</p>
                             <p className="text-sm">{tujuanAsesmen.tujuan}</p>
                           </div>
+                          {!!isEvaluasiAsesiSelesai && (
+                            <div>
+                              <p className="text-xs font-bold leading-none">Status</p>
+                              <p className="text-sm">Kompeten</p>
+                            </div>
+                          )}
                         </div>
-                        {/* {isAsesmenMandiriSelesai && (
+                        {!!isEvaluasiAsesiSelesai && (
                           <div className="flex h-full items-center rounded-lg bg-success-500 p-4">
                             <CheckCircle className="text-2xl text-white" />
                           </div>
-                        )} */}
+                        )}
                       </div>
                     </div>
-                    <div className="flex">
-                      <Button
-                        size="sm"
-                        className="w-full"
-                        onClick={() => {
-                          navigate(`/uji-kompetensi/skema-sertifikasi`, {
-                            state: {
-                              id_asesi_skema_sertifikasi: id,
-                            },
-                          });
-                        }}
-                      >
-                        Uji Kompetensi
-                      </Button>
-                    </div>
+                    {!isEvaluasiAsesiSelesai && (
+                      <div className="flex">
+                        <Button
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            navigate(`/uji-kompetensi/skema-sertifikasi`, {
+                              state: {
+                                id_asesi_skema_sertifikasi: id,
+                              },
+                            });
+                          }}>
+                          Uji Kompetensi
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 );
               }

@@ -24,6 +24,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "../../../co
 import { RadioGroup, RadioGroupItemButton } from "../../../components/ui/radio-group";
 
 import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/components/AnnotationAlert";
+import { is } from "date-fns/locale";
 
 export const PertanyaanTertulisPilihanGanda = () => {
   const navigate = useNavigate();
@@ -32,10 +33,24 @@ export const PertanyaanTertulisPilihanGanda = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [pertanyaanTertulisPilihanGandaData, setPertanyaanTertulisPilihanGandaData] = useState();
+  const [statusAsesiSkemaSertifikasiData, setStatusAsesiSkemaSertifikasiData] = useState();
+
+  const isPertanyaanTertulisPilihanGandaSelesai =
+    statusAsesiSkemaSertifikasiData?.is_pertanyaan_tertulis_pilihan_ganda_selesai;
 
   const form = useForm({
     defaultValues: {
       jawaban: [],
+    },
+  });
+
+  useQuery({
+    queryKey: ["asesi-skema-sertifikasi", idAsesiSkemaSertifikasi],
+    queryFn: async () => {
+      return await axios.get(`/asesi/skema-sertifikasi/${idAsesiSkemaSertifikasi}/status`);
+    },
+    onSuccess: (data) => {
+      setStatusAsesiSkemaSertifikasiData(data.data.data);
     },
   });
 
@@ -103,7 +118,6 @@ export const PertanyaanTertulisPilihanGanda = () => {
       mutateJawabanPertanyaanTertulisPilihanGanda({
         jawaban,
       });
-
       mutateUpdateAsesiSkemaSertifikasi({
         is_pertanyaan_tertulis_pilihan_ganda_selesai: true,
       });
@@ -204,11 +218,16 @@ export const PertanyaanTertulisPilihanGanda = () => {
                                             <FormItem className="space-y-3">
                                               <FormControl>
                                                 <RadioGroup onValueChange={field.onChange}>
-                                                  <div className="grid grid-rows-4 gap-4">
+                                                  <div className="grid grid-cols-2 gap-4">
                                                     {!!jawabanPertanyaanTertulisPilihanGanda &&
                                                       jawabanPertanyaanTertulisPilihanGanda.map(
                                                         (value, index) => {
-                                                          const { id, jawaban } = value;
+                                                          const {
+                                                            id,
+                                                            jawaban,
+                                                            is_benar,
+                                                            asesi_jawaban_pertanyaan_tertulis_pilihan_ganda,
+                                                          } = value;
 
                                                           const alphabetIndex = index % 26;
                                                           const alphabetCharacter =
@@ -217,11 +236,44 @@ export const PertanyaanTertulisPilihanGanda = () => {
                                                           return (
                                                             <FormItem key={id}>
                                                               <FormControl>
-                                                                <RadioGroupItemButton value={id}>
-                                                                  <div className="flex items-center gap-4">
+                                                                <RadioGroupItemButton
+                                                                  disabled={
+                                                                    isPertanyaanTertulisPilihanGandaSelesai
+                                                                  }
+                                                                  value={id}
+                                                                  className={cn(
+                                                                    {
+                                                                      "hover:bg-transparent":
+                                                                        isPertanyaanTertulisPilihanGandaSelesai,
+                                                                    },
+                                                                    {
+                                                                      "border-error-500 bg-error-50 hover:bg-error-50":
+                                                                        isPertanyaanTertulisPilihanGandaSelesai &&
+                                                                        asesi_jawaban_pertanyaan_tertulis_pilihan_ganda[0]
+                                                                          ?.is_benar,
+                                                                    },
+                                                                    {
+                                                                      "border-success-500 bg-success-50 hover:bg-success-50":
+                                                                        isPertanyaanTertulisPilihanGandaSelesai &&
+                                                                        is_benar,
+                                                                    },
+                                                                  )}>
+                                                                  <div className="flex items-center gap-4 ">
                                                                     <p
-                                                                      className="group-data-[state=unchecked] :border-secondary-100 flex h-min w-max rounded-lg border-2 px-4 font-aileron text-base
-                                                                        font-bold transition-colors group-data-[state=checked]:border-secondary-100 group-data-[state=checked]:bg-primary-500">
+                                                                      className={cn(
+                                                                        "flex h-min w-max rounded-lg border-2 px-4 font-aileron text-base font-bold transition-colors group-data-[state=checked]:border-secondary-100 group-data-[state=unchecked]:border-secondary-100 group-data-[state=checked]:bg-primary-500",
+                                                                        {
+                                                                          "bg-error-500 text-white group-data-[state=unchecked]:border-error-500":
+                                                                            isPertanyaanTertulisPilihanGandaSelesai &&
+                                                                            asesi_jawaban_pertanyaan_tertulis_pilihan_ganda[0]
+                                                                              ?.is_benar,
+                                                                        },
+                                                                        {
+                                                                          "bg-success-500 text-white group-data-[state=unchecked]:border-success-500":
+                                                                            isPertanyaanTertulisPilihanGandaSelesai &&
+                                                                            is_benar,
+                                                                        },
+                                                                      )}>
                                                                       {alphabetCharacter}
                                                                     </p>
                                                                     <p className="font-aileron text-base">
@@ -241,46 +293,6 @@ export const PertanyaanTertulisPilihanGanda = () => {
                                             </FormItem>
                                           )}
                                         />
-                                        {/* <RadioGroup>
-                                            <div className="grid grid-rows-4 gap-4">
-                                              {!!jawabanPertanyaanTertulisPilihanGanda &&
-                                                jawabanPertanyaanTertulisPilihanGanda.map(
-                                                  (value, index) => {
-                                                    const { id, jawaban } =
-                                                      value;
-
-                                                    const alphabetIndex =
-                                                      index % 26;
-                                                    const alphabetCharacter =
-                                                      String.fromCharCode(
-                                                        65 + alphabetIndex,
-                                                      );
-
-                                                    return (
-                                                      <>
-                                                        <RadioGroupItemButton
-                                                          value={id}
-                                                        >
-                                                          <div className="flex items-center gap-4">
-                                                            <p
-                                                              className="flex h-min w-max rounded-lg border-2 px-4 font-aileron text-base font-bold transition-colors
-                                                          group-data-[state=checked]:border-secondary-100 group-data-[state=unchecked]:border-secondary-100 group-data-[state=checked]:bg-primary-500"
-                                                            >
-                                                              {
-                                                                alphabetCharacter
-                                                              }
-                                                            </p>
-                                                            <p className="font-aileron text-base">
-                                                              {jawaban}
-                                                            </p>
-                                                          </div>
-                                                        </RadioGroupItemButton>
-                                                      </>
-                                                    );
-                                                  },
-                                                )}
-                                            </div>
-                                          </RadioGroup> */}
                                       </div>
                                     </div>
                                   );
@@ -292,53 +304,55 @@ export const PertanyaanTertulisPilihanGanda = () => {
                   </div>
                 </Form>
               </div>
-              <div className="w-full rounded-lg bg-white p-6 shadow-lg">
-                <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <AlertDialogTrigger className={cn(buttonVariants(), "w-full")}>
-                    Selesai
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        <div className="flex flex-col items-center gap-2">
-                          <AnnotationAlert className="text-5xl text-secondary-500" />
-                          <p className="font-anek-latin text-xl">
-                            Pertanyaan Tertulis Pilihan Ganda
-                          </p>
+              {!isPertanyaanTertulisPilihanGandaSelesai && (
+                <div className="w-full rounded-lg bg-white p-6 shadow-lg">
+                  <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <AlertDialogTrigger className={cn(buttonVariants(), "w-full")}>
+                      Selesai
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          <div className="flex flex-col items-center gap-2">
+                            <AnnotationAlert className="text-5xl text-secondary-500" />
+                            <p className="font-anek-latin text-xl">
+                              Pertanyaan Tertulis Pilihan Ganda
+                            </p>
+                          </div>
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="py-4 text-sm">
+                          Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan ada
+                          kesempatan untuk mengulanginya. Apakah Anda yakin?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <div className="flex w-full gap-4">
+                          <AlertDialogCancel
+                            className={cn(
+                              buttonVariants({
+                                size: "sm",
+                                variant: "outline-error",
+                              }),
+                              "w-full",
+                            )}>
+                            Batalkan
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className={cn(
+                              buttonVariants({
+                                size: "sm",
+                              }),
+                              "w-full",
+                            )}
+                            onClick={form.handleSubmit(onSubmit)}>
+                            Konfirmasi
+                          </AlertDialogAction>
                         </div>
-                      </AlertDialogTitle>
-                      <AlertDialogDescription className="py-4 text-sm">
-                        Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan ada
-                        kesempatan untuk mengulanginya. Apakah Anda yakin?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <div className="flex w-full gap-4">
-                        <AlertDialogCancel
-                          className={cn(
-                            buttonVariants({
-                              size: "sm",
-                              variant: "outline-error",
-                            }),
-                            "w-full",
-                          )}>
-                          Batalkan
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                          className={cn(
-                            buttonVariants({
-                              size: "sm",
-                            }),
-                            "w-full",
-                          )}
-                          onClick={form.handleSubmit(onSubmit)}>
-                          Konfirmasi
-                        </AlertDialogAction>
-                      </div>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              )}
             </div>
           </div>
         </div>

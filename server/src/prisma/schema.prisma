@@ -11,17 +11,18 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid()) @map("id")
-  nama_lengkap  String         @map("nama_lengkap")
-  email         String         @unique @map("email")
-  password      String         @map("password")
-  role          Role           @default(Asesi) @map("role")
-  created_at    DateTime       @default(now()) @map("created_at")
-  updated_at    DateTime       @updatedAt @map("updated_at")
-  auth          Auth[]
-  asesi         Asesi?
-  asesor        Asesor?
-  administrator Administrator?
+  id              String         @id @default(uuid()) @map("id")
+  nama_lengkap    String         @map("nama_lengkap")
+  email           String         @unique @map("email")
+  password        String         @map("password")
+  url_profil_user String?        @map("url_profil_user")
+  role            Role           @default(Asesi) @map("role")
+  created_at      DateTime       @default(now()) @map("created_at")
+  updated_at      DateTime       @updatedAt @map("updated_at")
+  auth            Auth[]
+  asesi           Asesi?
+  asesor          Asesor?
+  administrator   Administrator?
 
   @@map("user")
 }
@@ -47,20 +48,25 @@ model AsesiSkemaSertifikasi {
   id_asesi                                        String                                       @map("id_asesi")
   id_skema_sertifikasi                            String                                       @map("id_skema_sertifikasi")
   id_tujuan_asesmen                               String                                       @map("id_tujuan_asesmen")
-  is_verifikasi_berkas                            Boolean                                      @default(false) @map("is_verifikasi_berkas")
-  is_punya_asesor                                 Boolean                                      @default(false) @map("is_punya_asesor")
   is_asesmen_mandiri                              Boolean                                      @default(false) @map("is_asesmen_mandiri")
   is_asesmen_mandiri_selesai                      Boolean                                      @default(false) @map("is_asesmen_mandiri_selesai")
   is_metode_pengujian                             Boolean                                      @default(false) @map("is_metode_pengujian")
-  is_praktik_demonstrasi                          Boolean                                      @default(false) @map("is_praktik_demonstrasi")
-  is_praktik_demonstrasi_selesai                  Boolean                                      @default(false) @map("is_praktik_demonstrasi_selesai")
-  is_pertanyaan_tertulis                          Boolean                                      @default(false) @map("is_pertanyaan_tertulis")
-  is_pertanyaan_tertulis_pilihan_ganda_selesai    Boolean                                      @default(false) @map("is_pertanyaan_tertulis_pilihan_ganda_selesai")
-  is_pertanyaan_tertulis_esai_selesai             Boolean                                      @default(false) @map("is_pertanyaan_tertulis_esai_selesai")
+  is_observasi_aktivitas_tempat_kerja_selesai     Boolean                                      @default(false) @map("is_observasi_aktivitas_tempat_kerja_selesai")
   is_pertanyaan_lisan                             Boolean                                      @default(false) @map("is_pertanyaan_lisan")
   is_pertanyaan_lisan_selesai                     Boolean                                      @default(false) @map("is_pertanyaan_lisan_selesai")
+  is_pertanyaan_observasi_selesai                 Boolean                                      @default(false) @map("is_pertanyaan_observasi_selesai")
+  is_pertanyaan_tertulis                          Boolean                                      @default(false) @map("is_pertanyaan_tertulis")
+  is_pertanyaan_tertulis_esai_selesai             Boolean                                      @default(false) @map("is_pertanyaan_tertulis_esai_selesai")
+  is_evaluasi_pertanyaan_tertulis_esai_selesai    Boolean                                      @default(false) @map("is_evaluasi_pertanyaan_tertulis_esai_selesai")
+  is_pertanyaan_tertulis_pilihan_ganda_selesai    Boolean                                      @default(false) @map("is_pertanyaan_tertulis_pilihan_ganda_selesai")
   is_portofolio                                   Boolean                                      @default(false) @map("is_portofolio")
-  is_portofolio_selesai                           Boolean                                      @default(false) @map("is_portofolio_selesai")
+  is_praktik_demonstrasi                          Boolean                                      @default(false) @map("is_praktik_demonstrasi")
+  is_praktik_demonstrasi_selesai                  Boolean                                      @default(false) @map("is_praktik_demonstrasi_selesai")
+  is_punya_asesor                                 Boolean                                      @default(false) @map("is_punya_asesor")
+  is_proyek_terkait_pekerjaan_selesai             Boolean                                      @default(false) @map("is_proyek_terkait_pekerjaan_selesai")
+  is_verifikasi_berkas                            Boolean                                      @default(false) @map("is_verifikasi_berkas")
+  is_verifikasi_portofolio_selesai                Boolean                                      @default(false) @map("is_verifikasi_portofolio_selesai")
+  is_evaluasi_asesi_selesai                       Boolean                                      @default(false) @map("is_evaluasi_asesi_selesai")
   created_at                                      DateTime                                     @default(now()) @map("created_at")
   updated_at                                      DateTime                                     @updatedAt @map("updated_at")
   asesi                                           Asesi                                        @relation(fields: [id_asesi], references: [id], onDelete: Cascade)
@@ -72,18 +78,23 @@ model AsesiSkemaSertifikasi {
   asesmen_mandiri                                 AsesmenMandiri[]
   asesi_jawaban_pertanyaan_tertulis_pilihan_ganda AsesiJawabanPertanyaanTertulisPilihanGanda[]
   asesi_jawaban_pertanyaan_tertulis_esai          AsesiJawabanPertanyaanTertulisEsai[]
+  asesor_observasi_aktivitas_tempat_kerja         AsesorObservasiAktivitasTempatKerja[]
+  asesor_pertanyaan_observasi                     AsesorPertanyaanObservasi[]
+  asesor_pertanyaan_lisan                         AsesorPertanyaanLisan[]
+  asesor_proyek_terkait_pekerjaan                 AsesorProyekTerkaitPekerjaan[]
 
   @@map("asesi_skema_sertifikasi")
 }
 
 model Portofolio {
-  id                         String                @id @default(uuid()) @map("id")
-  id_asesi_skema_sertifikasi String                @map("id_asesi_skema_sertifikasi")
-  keterangan                 String                @map("keterangan") @db.Text
-  created_at                 DateTime              @default(now()) @map("created_at")
-  updated_at                 DateTime              @updatedAt @map("updated_at")
-  file_portofolio            FilePortofolio[]
-  asesi_skema_sertifikasi    AsesiSkemaSertifikasi @relation(fields: [id_asesi_skema_sertifikasi], references: [id])
+  id                           String                       @id @default(uuid()) @map("id")
+  id_asesi_skema_sertifikasi   String                       @map("id_asesi_skema_sertifikasi")
+  keterangan                   String                       @map("keterangan") @db.Text
+  created_at                   DateTime                     @default(now()) @map("created_at")
+  updated_at                   DateTime                     @updatedAt @map("updated_at")
+  file_portofolio              FilePortofolio[]
+  asesor_verifikasi_portofolio AsesorVerifikasiPortofolio[]
+  asesi_skema_sertifikasi      AsesiSkemaSertifikasi        @relation(fields: [id_asesi_skema_sertifikasi], references: [id])
 
   @@map("portofolio")
 }
@@ -152,6 +163,7 @@ model AsesiJawabanPertanyaanTertulisEsai {
   id_pertanyaan_tertulis_esai String                  @map("id_pertanyaan_tertulis_esai")
   id_asesi_skema_sertifikasi  String                  @map("id_asesi_skema_sertifikasi")
   jawaban                     String                  @map("jawaban") @db.Text
+  is_kompeten                 Boolean                 @default(false) @map("is_kompeten")
   created_at                  DateTime                @default(now()) @map("created_at")
   updated_at                  DateTime                @updatedAt @map("updated_at")
   pertanyaan_tertulis_esai    PertanyaanTertulisEsai? @relation(fields: [id_pertanyaan_tertulis_esai], references: [id], onDelete: Cascade)
@@ -189,6 +201,73 @@ model AsesorAsesi {
   @@map("asesor_asesi")
 }
 
+model AsesorObservasiAktivitasTempatKerja {
+  id                           String                   @id @default(uuid()) @map("id")
+  id_asesi_skema_sertifikasi   String                   @map("id_asesi_skema_sertifikasi")
+  id_aktivitas_unit_kompetensi String                   @map("id_aktivitas_unit_kompetensi")
+  is_kompeten                  Boolean                  @default(false) @map("is_kompeten")
+  created_at                   DateTime                 @default(now()) @map("created_at")
+  updated_at                   DateTime                 @updatedAt @map("updated_at")
+  asesi_skema_sertifikasi      AsesiSkemaSertifikasi?   @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
+  aktivitas_unit_kompetensi    AktivitasUnitKompetensi? @relation(fields: [id_aktivitas_unit_kompetensi], references: [id], onDelete: Cascade)
+
+  @@map("asesor_observasi_aktivitas_tempat_kerja")
+}
+
+model AsesorPertanyaanObservasi {
+  id                         String                 @id @default(uuid()) @map("id")
+  id_asesi_skema_sertifikasi String                 @map("id_asesi_skema_sertifikasi")
+  id_pertanyaan_observasi    String                 @map("id_pertanyaan_observasi")
+  is_kompeten                Boolean                @default(false) @map("is_kompeten")
+  created_at                 DateTime               @default(now()) @map("created_at")
+  updated_at                 DateTime               @updatedAt @map("updated_at")
+  asesi_skema_sertifikasi    AsesiSkemaSertifikasi? @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
+  pertanyaan_observasi       PertanyaanObservasi?   @relation(fields: [id_pertanyaan_observasi], references: [id], onDelete: Cascade)
+
+  @@map("asesor_pertanyaan_observasi")
+}
+
+model AsesorPertanyaanLisan {
+  id                         String                 @id @default(uuid()) @map("id")
+  id_asesi_skema_sertifikasi String                 @map("id_asesi_skema_sertifikasi")
+  id_pertanyaan_lisan        String                 @map("id_pertanyaan_lisan")
+  jawaban_asesi              String                 @map("jawaban_asesi") @db.Text
+  is_kompeten                Boolean                @default(false) @map("is_kompeten")
+  created_at                 DateTime               @default(now()) @map("created_at")
+  updated_at                 DateTime               @updatedAt @map("updated_at")
+  asesi_skema_sertifikasi    AsesiSkemaSertifikasi? @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
+  pertanyaan_lisan           PertanyaanLisan?       @relation(fields: [id_pertanyaan_lisan], references: [id], onDelete: Cascade)
+
+  @@map("asesor_pertanyaan_lisan")
+}
+
+model AsesorVerifikasiPortofolio {
+  id            String      @id @default(uuid()) @map("id")
+  id_portofolio String      @map("id_portofolio")
+  is_valid      Boolean     @default(false) @map("is_valid")
+  is_asli       Boolean     @default(false) @map("is_asli")
+  is_terkini    Boolean     @default(false) @map("is_terkini")
+  is_memadai    Boolean     @default(false) @map("is_memadai")
+  created_at    DateTime    @default(now()) @map("created_at")
+  updated_at    DateTime    @updatedAt @map("updated_at")
+  portofolio    Portofolio? @relation(fields: [id_portofolio], references: [id], onDelete: Cascade)
+
+  @@map("asesor_verifikasi_portofolio")
+}
+
+model AsesorProyekTerkaitPekerjaan {
+  id                          String                  @id @default(uuid()) @map("id")
+  id_asesi_skema_sertifikasi  String                  @map("id_asesi_skema_sertifikasi")
+  id_proyek_terkait_pekerjaan String                  @map("id_proyek_terkait_pekerjaan")
+  umpan_balik_asesi           String                  @map("umpan_balik_asesi") @db.Text
+  created_at                  DateTime                @default(now()) @map("created_at")
+  updated_at                  DateTime                @updatedAt @map("updated_at")
+  asesi_skema_sertifikasi     AsesiSkemaSertifikasi?  @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
+  proyek_terkait_pekerjaan    ProyekTerkaitPekerjaan? @relation(fields: [id_proyek_terkait_pekerjaan], references: [id], onDelete: Cascade)
+
+  @@map("asesor_proyek_terkait_pekerjaan")
+}
+
 // Administrator
 model Administrator {
   id                       String              @id @default(uuid()) @map("id")
@@ -204,21 +283,23 @@ model Administrator {
 
 // All Role
 model DataDiri {
-  id                     String   @id @default(uuid()) @map("id")
-  id_alamat              String   @unique @map("id_alamat")
-  nik                    String   @map("nik")
-  tempat_lahir           String   @map("tempat_lahir")
-  tanggal_lahir          DateTime @map("tanggal_lahir")
-  jenis_kelamin          String   @map("jenis_kelamin")
-  kebangsaan             String   @map("kebangsaan")
-  nomor_telepon          String   @map("nomor_telepon")
-  kualifikasi_pendidikan String   @map("kualifikasi_pendidikan")
-  url_profil_user        String   @map("url_profil_user")
-  created_at             DateTime @default(now()) @map("created_at")
-  updated_at             DateTime @updatedAt @map("updated_at")
-  alamat                 Alamat   @relation(fields: [id_alamat], references: [id], onDelete: Cascade)
-  asesi                  Asesi?
-  asesor                 Asesor?
+  id                        String                 @id @default(uuid()) @map("id")
+  id_alamat                 String                 @unique @map("id_alamat")
+  id_jenis_kelamin          String                 @map("id_jenis_kelamin")
+  id_kebangsaan             String                 @map("id_kebangsaan")
+  id_kualifikasi_pendidikan String                 @map("id_kualifikasi_pendidikan")
+  nik                       String                 @map("nik")
+  nomor_telepon             String                 @map("nomor_telepon")
+  tanggal_lahir             DateTime               @map("tanggal_lahir")
+  tempat_lahir              String                 @map("tempat_lahir")
+  created_at                DateTime               @default(now()) @map("created_at")
+  updated_at                DateTime               @updatedAt @map("updated_at")
+  alamat                    Alamat                 @relation(fields: [id_alamat], references: [id], onDelete: Cascade)
+  negara                    Negara?                @relation(fields: [id_kebangsaan], references: [id], onDelete: Cascade)
+  jenis_kelamin             JenisKelamin?          @relation(fields: [id_jenis_kelamin], references: [id], onDelete: Cascade)
+  kualifikasi_pendidikan    KualifikasiPendidikan? @relation(fields: [id_kualifikasi_pendidikan], references: [id], onDelete: Cascade)
+  asesi                     Asesi?
+  asesor                    Asesor?
 
   @@map("data_diri")
 }
@@ -241,16 +322,20 @@ model DataPekerjaan {
 
 model Alamat {
   id                    String               @id @default(uuid()) @map("id")
-  provinsi              String               @map("provinsi")
-  kota_kabupaten        String               @map("kota_kabupaten")
-  kecamatan             String               @map("kecamatan")
-  kelurahan_desa        String               @map("kelurahan_desa")
+  id_provinsi           String               @map("id_provinsi")
+  id_kota_kabupaten     String               @map("id_kota_kabupaten")
+  id_kecamatan          String               @map("id_kecamatan")
+  id_kelurahan_desa     String               @map("id_kelurahan_desa")
   keterangan_lainnya    String               @map("keterangan_lainnya") @db.Text
   created_at            DateTime             @default(now()) @map("created_at")
   updated_at            DateTime             @updatedAt @map("updated_at")
   data_pekerjaan        DataPekerjaan?
   data_diri             DataDiri?
   tempat_uji_kompetensi TempatUjiKompetensi?
+  provinsi              Provinsi             @relation(fields: [id_provinsi], references: [id], onDelete: Cascade)
+  kota_kabupaten        KotaKabupaten        @relation(fields: [id_kota_kabupaten], references: [id], onDelete: Cascade)
+  kecamatan             Kecamatan            @relation(fields: [id_kecamatan], references: [id], onDelete: Cascade)
+  kelurahan_desa        KelurahanDesa        @relation(fields: [id_kelurahan_desa], references: [id], onDelete: Cascade)
 
   @@map("alamat")
 }
@@ -312,6 +397,7 @@ model UnitKompetensi {
   pertanyaan_tertulis_esai          PertanyaanTertulisEsai[]
   pertanyaan_lisan                  PertanyaanLisan[]
   pertanyaan_tertulis_pilihan_ganda PertanyaanTertulisPilihanGanda[]
+  proyek_terkait_pekerjaan          ProyekTerkaitPekerjaan[]
 
   @@map("unit_kompetensi")
 }
@@ -329,14 +415,15 @@ model PersyaratanDasar {
 }
 
 model AktivitasUnitKompetensi {
-  id                   String               @id @default(uuid()) @map("id")
-  id_unit_kompetensi   String               @map("id_unit_kompetensi")
-  elemen               String               @map("elemen") @db.Text
-  created_at           DateTime             @default(now()) @map("created_at")
-  updated_at           DateTime             @updatedAt @map("updated_at")
-  unit_kompetensi      UnitKompetensi       @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
-  kriteria_unjuk_kerja KriteriaUnjukKerja[]
-  asesmen_mandiri      AsesmenMandiri[]
+  id                                      String                                @id @default(uuid()) @map("id")
+  id_unit_kompetensi                      String                                @map("id_unit_kompetensi")
+  elemen                                  String                                @map("elemen") @db.Text
+  created_at                              DateTime                              @default(now()) @map("created_at")
+  updated_at                              DateTime                              @updatedAt @map("updated_at")
+  unit_kompetensi                         UnitKompetensi                        @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  kriteria_unjuk_kerja                    KriteriaUnjukKerja[]
+  asesmen_mandiri                         AsesmenMandiri[]
+  asesor_observasi_aktivitas_tempat_kerja AsesorObservasiAktivitasTempatKerja[]
 
   @@map("aktivitas_unit_kompetensi")
 }
@@ -388,12 +475,13 @@ model InstruksiKerjaTugasPraktikDemonstrasi {
 }
 
 model PertanyaanObservasi {
-  id                 String         @id @default(uuid()) @map("id")
-  id_unit_kompetensi String         @map("id_unit_kompetensi")
-  pertanyaan         String         @map("pertanyaan") @db.Text
-  created_at         DateTime       @default(now()) @map("created_at")
-  updated_at         DateTime       @updatedAt @map("updated_at")
-  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  id                          String                      @id @default(uuid()) @map("id")
+  id_unit_kompetensi          String                      @map("id_unit_kompetensi")
+  pertanyaan                  String                      @map("pertanyaan") @db.Text
+  created_at                  DateTime                    @default(now()) @map("created_at")
+  updated_at                  DateTime                    @updatedAt @map("updated_at")
+  unit_kompetensi             UnitKompetensi              @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  asesor_pertanyaan_observasi AsesorPertanyaanObservasi[]
 
   @@map("pertanyaan_observasi")
 }
@@ -412,13 +500,14 @@ model PertanyaanTertulisEsai {
 }
 
 model PertanyaanLisan {
-  id                 String         @id @default(uuid()) @map("id")
-  id_unit_kompetensi String         @map("id_unit_kompetensi")
-  pertanyaan         String         @map("pertanyaan") @db.Text
-  jawaban            String         @map("jawaban") @db.Text
-  created_at         DateTime       @default(now()) @map("created_at")
-  updated_at         DateTime       @updatedAt @map("updated_at")
-  unit_kompetensi    UnitKompetensi @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  id                      String                  @id @default(uuid()) @map("id")
+  id_unit_kompetensi      String                  @map("id_unit_kompetensi")
+  pertanyaan              String                  @map("pertanyaan") @db.Text
+  jawaban                 String                  @map("jawaban") @db.Text
+  created_at              DateTime                @default(now()) @map("created_at")
+  updated_at              DateTime                @updatedAt @map("updated_at")
+  unit_kompetensi         UnitKompetensi          @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  asesor_pertanyaan_lisan AsesorPertanyaanLisan[]
 
   @@map("pertanyaan_lisan")
 }
@@ -458,54 +547,90 @@ model TujuanAsesmen {
   @@map("tujuan_asesmen")
 }
 
-// Alamat
+model ProyekTerkaitPekerjaan {
+  id                              String                         @id @default(uuid()) @map("id")
+  id_unit_kompetensi              String                         @map("id_unit_kompetensi")
+  persiapan                       String                         @map("persiapan") @db.Text
+  demonstrasi                     String                         @map("demonstrasi") @db.Text
+  created_at                      DateTime                       @default(now()) @map("created_at")
+  updated_at                      DateTime                       @updatedAt @map("updated_at")
+  unit_kompetensi                 UnitKompetensi?                @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  asesor_proyek_terkait_pekerjaan AsesorProyekTerkaitPekerjaan[]
+
+  @@map("proyek_terkait_pekerjaan")
+}
+
+model KualifikasiPendidikan {
+  id                     String     @id @default(uuid()) @map("id")
+  kualifikasi_pendidikan String     @map("kualifikasi_pendidikan")
+  data_diri              DataDiri[]
+
+  @@map("kualifikasi_pendidikan")
+}
+
+model JenisKelamin {
+  id            String     @id @default(uuid()) @map("id")
+  jenis_kelamin String     @map("jenis_kelamin")
+  data_diri     DataDiri[]
+
+  @@map("jenis_kelamin")
+}
+
+model Negara {
+  id         String     @id @map("id")
+  nama       String     @map("nama")
+  kebangsaan DataDiri[]
+
+  @@map("negara")
+}
+
 model Provinsi {
-  id         String      @id @map("id")
-  nama       String      @map("nama")
-  value      String      @map("value")
-  created_at DateTime    @default(now()) @map("created_at")
-  updated_at DateTime    @updatedAt @map("updated_at")
-  kabupaten  Kabupaten[]
+  id             String          @id @map("id")
+  nama           String          @map("nama")
+  created_at     DateTime        @default(now()) @map("created_at")
+  updated_at     DateTime        @updatedAt @map("updated_at")
+  kota_kabupaten KotaKabupaten[]
+  alamat         Alamat[]
 
   @@map("provinsi")
 }
 
-model Kabupaten {
+model KotaKabupaten {
   id          String      @id @map("id")
-  nama        String      @map("nama")
-  value       String      @map("value")
   id_provinsi String      @map("id_provinsi")
+  nama        String      @map("nama")
   created_at  DateTime    @default(now()) @map("created_at")
   updated_at  DateTime    @updatedAt @map("updated_at")
   provinsi    Provinsi    @relation(fields: [id_provinsi], references: [id], onDelete: Cascade)
   kecamatan   Kecamatan[]
+  alamat      Alamat[]
 
-  @@map("kabupaten")
+  @@map("kota_kabupaten")
 }
 
 model Kecamatan {
-  id           String    @id @map("id")
-  nama         String    @map("nama")
-  value        String    @map("value")
-  id_kabupaten String    @map("id_kabupaten")
-  created_at   DateTime  @default(now()) @map("created_at")
-  updated_at   DateTime  @updatedAt @map("updated_at")
-  kabupaten    Kabupaten @relation(fields: [id_kabupaten], references: [id], onDelete: Cascade)
-  desa         Desa[]
+  id                String          @id @map("id")
+  id_kota_kabupaten String          @map("id_kota_kabupaten")
+  nama              String          @map("nama")
+  created_at        DateTime        @default(now()) @map("created_at")
+  updated_at        DateTime        @updatedAt @map("updated_at")
+  kota_kabupaten    KotaKabupaten   @relation(fields: [id_kota_kabupaten], references: [id], onDelete: Cascade)
+  kelurahan_desa    KelurahanDesa[]
+  alamat            Alamat[]
 
   @@map("kecamatan")
 }
 
-model Desa {
+model KelurahanDesa {
   id           String    @id @map("id")
-  nama         String    @map("nama")
-  value        String    @map("value")
   id_kecamatan String    @map("id_kecamatan")
+  nama         String    @map("nama")
   created_at   DateTime  @default(now()) @map("created_at")
   updated_at   DateTime  @updatedAt @map("updated_at")
   kecamatan    Kecamatan @relation(fields: [id_kecamatan], references: [id], onDelete: Cascade)
+  alamat       Alamat[]
 
-  @@map("desa")
+  @@map("kelurahan_desa")
 }
 
 // Enum

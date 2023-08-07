@@ -14,10 +14,10 @@ export const router = express.Router();
 
 router.route("/provinsi").get(listProvinsi);
 router.route("/provinsi/:id").get(getProvinsi);
-router.route("/provinsi/:id/kabupaten").get(listKabupatenByProvinsiID);
+router.route("/provinsi/:id/kota-kabupaten").get(listKabupatenByProvinsiID);
 router
-  .route("/provinsi/kabupaten/:id/kecamatan")
+  .route("/provinsi/kota-kabupaten/:id/kecamatan")
   .get(listKecamatanByKabupatenID);
 router
-  .route("/provinsi/kabupaten/kecamatan/:id/desa")
+  .route("/provinsi/kota-kabupaten/kecamatan/:id/kelurahan-desa")
   .get(listDesaByKecamatanID);

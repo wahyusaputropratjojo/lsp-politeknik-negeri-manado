@@ -11,10 +11,9 @@ import {
 
 export const router = express.Router();
 
-router
-  .route("/:id/unit-kompetensi")
-  .get(listUnitKompetensi)
-  .post(createUnitKompetensi);
+router.post("/unit-kompetensi", createUnitKompetensi);
+
+router.route("/:id/unit-kompetensi").get(listUnitKompetensi);
 
 router
   .route("/unit-kompetensi/:id")

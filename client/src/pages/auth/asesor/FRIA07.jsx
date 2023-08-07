@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import axios from "../../../utils/axios";
 import { cn } from "../../../utils/cn";
+
+import { useToast } from "../../../hooks/useToast";
 
 import {
   AlertDialog,
@@ -19,7 +21,7 @@ import {
 } from "../../../components/ui/alert-dialog";
 import { Button, buttonVariants } from "../../../components/ui/button";
 import { Checkbox } from "../../../components/ui/checkbox";
-import { Form, FormControl, FormField, FormItem } from "../../../components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../../../components/ui/form";
 import {
   Table,
   TableBody,
@@ -29,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
+import { Textarea } from "../../../components/ui/textarea";
 
 import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/components/AnnotationAlert";
 
@@ -36,6 +39,7 @@ export const FRIA07 = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const form = useForm();
+  const { toast } = useToast();
 
   const idAsesiSkemaSertifikasi = location?.state?.id_asesi_skema_sertifikasi;
 
@@ -52,10 +56,42 @@ export const FRIA07 = () => {
     },
   });
 
+  const { mutate } = useMutation({
+    mutationFn: async (data) => {
+      await axios.post(
+        "/asesor/tempat-uji-kompetensi/skema-sertifikasi/asesi/pertanyaan-lisan",
+        data,
+      );
+    },
+    onSuccess: () => {
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Pertanyaan lisan berhasil diisi",
+      });
+
+      navigate("/evaluasi-asesi/asesi", {
+        state: {
+          id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+          is_refetch: true,
+        },
+      });
+    },
+  });
+
   const onSubmit = (data) => {
+    const pertanyaan_lisan = []
+      .concat(...data?.pertanyaan_lisan)
+      .filter((value) => value !== undefined);
+
     try {
-      console.log(data);
+      mutate({
+        id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+        is_pertanyaan_lisan_selesai: true,
+        pertanyaan_lisan,
+      });
     } catch (error) {
+      console.error(error);
     } finally {
       setIsDialogOpen(false);
     }
@@ -101,7 +137,9 @@ export const FRIA07 = () => {
                               <TableRow>
                                 <TableHead className="h-20 min-w-[4rem] text-base">No</TableHead>
                                 <TableHead className="h-20 w-4/12 text-base">Pertanyaan</TableHead>
-                                <TableHead className="h-20 w-8/12 text-base">Jawaban</TableHead>
+                                <TableHead className="h-20 w-8/12 text-base">
+                                  Kunci Jawaban
+                                </TableHead>
                                 <TableHead className="h-20 min-w-[6rem] text-center text-base">
                                   <div className="flex flex-col items-center gap-2">
                                     <p>K</p>
@@ -110,14 +148,14 @@ export const FRIA07 = () => {
                                         if (value === true) {
                                           for (const [index] of pertanyaanLisan.entries()) {
                                             form.setValue(
-                                              `data.${indexUnitKompetensi}.${index}.is_kompeten`,
+                                              `pertanyaan_lisan.${indexUnitKompetensi}.${index}.is_kompeten`,
                                               true,
                                             );
                                           }
                                         } else if (value === false) {
                                           for (const [index] of pertanyaanLisan.entries()) {
                                             form.setValue(
-                                              `data.${indexUnitKompetensi}.${index}.is_kompeten`,
+                                              `pertanyaan_lisan.${indexUnitKompetensi}.${index}.is_kompeten`,
                                               false,
                                             );
                                           }
@@ -133,21 +171,59 @@ export const FRIA07 = () => {
                                 pertanyaanLisan.map((value, indexPertanyaanLisan) => {
                                   const { id, pertanyaan, jawaban } = value;
 
+                                  form.setValue(
+                                    `pertanyaan_lisan.${indexUnitKompetensi}.${indexPertanyaanLisan}.id_asesi_skema_sertifikasi`,
+                                    idAsesiSkemaSertifikasi,
+                                  );
+
+                                  form.setValue(
+                                    `pertanyaan_lisan.${indexUnitKompetensi}.${indexPertanyaanLisan}.id_pertanyaan_lisan`,
+                                    id,
+                                  );
+
+                                  form.register(
+                                    `pertanyaan_lisan.${indexUnitKompetensi}.${indexPertanyaanLisan}.is_kompeten`,
+                                    { value: false },
+                                  );
+
+                                  form.register(
+                                    `pertanyaan_lisan.${indexUnitKompetensi}.${indexPertanyaanLisan}.jawaban_asesi`,
+                                    { value: "" },
+                                  );
+
                                   return (
                                     <TableRow key={id}>
-                                      <TableCell className="text-base">
+                                      <TableCell className="text-center align-top text-base">
                                         {indexPertanyaanLisan + 1}.
                                       </TableCell>
-                                      <TableCell className="text-base">{pertanyaan}</TableCell>
-                                      <TableCell className="text-base">
-                                        <p className="rounded-lg border-2 border-success-500 bg-success-50 p-6">
-                                          {jawaban}
-                                        </p>
+                                      <TableCell className="align-top text-base">
+                                        {pertanyaan}
+                                      </TableCell>
+                                      <TableCell className="align-top text-base">
+                                        <div className="flex flex-col gap-4">
+                                          <p className="rounded-lg border-2 border-success-500 bg-success-50 p-6">
+                                            {jawaban}
+                                          </p>
+                                          <div>
+                                            <FormField
+                                              control={form.control}
+                                              name={`pertanyaan_lisan.${indexUnitKompetensi}.${indexPertanyaanLisan}.jawaban_asesi`}
+                                              render={({ field }) => (
+                                                <FormItem className="flex">
+                                                  <FormLabel>Jawaban Asesi</FormLabel>
+                                                  <FormControl>
+                                                    <Textarea {...field} />
+                                                  </FormControl>
+                                                </FormItem>
+                                              )}
+                                            />
+                                          </div>
+                                        </div>
                                       </TableCell>
                                       <TableCell>
                                         <FormField
                                           control={form.control}
-                                          name={`data.${indexUnitKompetensi}.${indexPertanyaanLisan}.is_kompeten`}
+                                          name={`pertanyaan_lisan.${indexUnitKompetensi}.${indexPertanyaanLisan}.is_kompeten`}
                                           render={({ field }) => (
                                             <FormItem className="flex items-center">
                                               <FormControl>

@@ -22,6 +22,10 @@ import { router as asesorRoute } from "./routes/asesorRoute.js";
 import { router as administratorRoute } from "./routes/administratorRoute.js";
 import { router as dataDiriRoute } from "./routes/dataDiriRoute.js";
 import { router as persyaratanDasarRoute } from "./routes/persyaratanDasarRoute.js";
+import { router as tempatUjiKompetensiRoute } from "./routes/tempatUjiKompetensiRoute.js";
+import { router as negaraRoute } from "./routes/negaraRoute.js";
+import { router as jenisKelaminRoute } from "./routes/jenisKelaminRoute.js";
+import { router as kualifikasiPendidikanRoute } from "./routes/kualifikasiPendidikanRoute.js";
 
 const app = express();
 
@@ -44,6 +48,10 @@ app.use("/api/asesi", asesiRoute);
 app.use("/api/asesor", asesorRoute);
 app.use("/api/administrator", administratorRoute);
 app.use("/api/data-diri", dataDiriRoute);
+app.use("/api/tempat-uji-kompetensi", tempatUjiKompetensiRoute);
+app.use("/api/negara", negaraRoute);
+app.use("/api/jenis-kelamin", jenisKelaminRoute);
+app.use("/api/kualifikasi-pendidikan", kualifikasiPendidikanRoute);
 
 app.use(errorHandler);
 

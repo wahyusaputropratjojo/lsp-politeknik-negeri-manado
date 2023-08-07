@@ -15,10 +15,12 @@ import { RootLayout, ContentLayout, SidebarLayout } from "./layouts";
 import {
   Beranda,
   Masuk,
-  Unauthorized,
+  NotFound,
   Pendaftaran,
+  PendaftaranAsesor,
   SkemaSertifikasi,
   SkemaSertifikasiDetail,
+  Unauthorized,
 } from "./pages/public";
 import {
   AsesmenMandiri,
@@ -31,7 +33,8 @@ import {
   PertanyaanTertulisEsai,
 } from "./pages/auth/asesi";
 import {
-  DataAsesi,
+  DokumenAsesi,
+  DokumenAsesiDetail,
   EvaluasiAsesi,
   EvaluasiAsesiDetail,
   FRIA01,
@@ -46,6 +49,7 @@ import {
   JadwalAsesmen,
 } from "./pages/auth/asesor";
 import { PenentuanAsesor, TinjauPersyaratan } from "./pages/auth/administrator";
+import { DataAsesi } from "./pages/auth/administrator-asesor";
 
 // import {
 //   SkemaSertifikasiDashboard,
@@ -63,11 +67,13 @@ export const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
       <Route element={<RefreshAuthentication />}>
+        <Route path="*" element={<NotFound />} />
         <Route path="masuk" element={<Masuk />} />
         <Route element={<SidebarLayout />}>
           <Route index element={<Beranda />} />
           <Route element={<ContentLayout />}>
             <Route path="pendaftaran" element={<Pendaftaran />} />
+            <Route path="pendaftaran-asesor" element={<PendaftaranAsesor />} />
             <Route path="skema-sertifikasi">
               <Route index element={<SkemaSertifikasi />} />
               <Route path="detail" element={<SkemaSertifikasiDetail />} />
@@ -112,12 +118,18 @@ export const Router = createBrowserRouter(
                     <Route path="FR-IA-09" element={<FRIA09 />} />
                   </Route>
                 </Route>
+                <Route path="dokumen-asesi">
+                  <Route index element={<DokumenAsesi />} />
+                  <Route path="asesi" element={<DokumenAsesiDetail />} />
+                </Route>
               </Route>
               <Route element={<Authorization allowedRoles={["Administrator"]} />}>
                 <Route path="tinjau-persyaratan" element={<TinjauPersyaratan />} />
                 <Route path="penentuan-asesor" element={<PenentuanAsesor />} />
               </Route>
-              <Route path="data-asesi" element={<DataAsesi />} />
+              <Route element={<Authorization allowedRoles={["Administrator", "Asesor"]} />}>
+                <Route path="data-asesi" element={<DataAsesi />} />
+              </Route>
             </Route>
           </Route>
         </Route>

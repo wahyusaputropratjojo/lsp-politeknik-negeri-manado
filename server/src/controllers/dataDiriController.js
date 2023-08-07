@@ -1,20 +1,26 @@
-import asyncHandler from "express-async-handler";
-import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma.js";
 
-const prisma = new PrismaClient();
+const getDataDiri = async (req, res, next) => {
+  const { id } = req.params;
 
-const getDataDiri = asyncHandler(async (req, res) => {
-  const dataDiri = await prisma.dataDiri.findUnique({
-    where: {
-      id: req.params.id,
-    },
-  });
+  try {
+    const dataDiri = await prisma.dataDiri.findUnique({
+      where: {
+        id,
+      },
+    });
 
-  res.status(201).json({
-    code: 200,
-    status: "Created",
-    message: "Data diri berhasil didapatkan!",
-    data: { ...dataDiri },
-  });
-});
+    if (dataDiri.length === 0) {
+      res.status(404);
+      throw new Error("Data diri tidak ditemukan!");
+    }
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: dataDiri,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -4,13 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../context/AuthContext";
 import axios from "../../../utils/axios";
 
+import ClipboardX from "../../../assets/icons/untitled-ui-icons/line/components/ClipboardX";
+
 export const JadwalAsesmen = () => {
   const { auth } = useContext(AuthContext);
-  const [jadwalAsesmen, setJadwalAsesmen] = useState(null);
+  const [jadwalAsesmen, setJadwalAsesmen] = useState();
 
   const { id } = auth;
 
-  useQuery({
+  const { isLoading, isSuccess } = useQuery({
     queryKey: ["status-pendaftaran", id],
     queryFn: async () => {
       return await axios.get(`/asesor/${id}/tempat-uji-kompetensi/asesi`);
@@ -24,8 +26,8 @@ export const JadwalAsesmen = () => {
     },
   });
 
-  return (
-    <>
+  if (!!jadwalAsesmen && isSuccess) {
+    return (
       <div className="flex flex-col gap-8">
         <div>
           <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
@@ -40,14 +42,11 @@ export const JadwalAsesmen = () => {
                 id,
                 asesi_skema_sertifikasi: {
                   asesi: {
-                    data_diri: { url_profil_user: urlProfilUser },
-                    user: { nama_lengkap: namaLengkap },
+                    user: { nama_lengkap: namaLengkap, url_profil_user: urlProfilUser },
                   },
                   skema_sertifikasi: {
                     nama_skema_sertifikasi: namaSkemaSertifikasi,
-                    tempat_uji_kompetensi: {
-                      tempat_uji_kompetensi: tempatUjiKompetensi,
-                    },
+                    tempat_uji_kompetensi: { tempat_uji_kompetensi: tempatUjiKompetensi },
                   },
                   tujuan_asesmen: { tujuan },
                 },
@@ -76,29 +75,21 @@ export const JadwalAsesmen = () => {
                     </div>
                     <div className="grid grid-flow-col grid-rows-2 gap-x-12 gap-y-4">
                       <div>
-                        <p className="text-xs font-semibold leading-none">
-                          Nama Lengkap
-                        </p>
+                        <p className="text-xs font-semibold leading-none">Nama Lengkap</p>
                         <p className="text-sm">{namaLengkap}</p>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold leading-none">
-                          Skema Sertifikasi
-                        </p>
+                        <p className="text-xs font-semibold leading-none">Skema Sertifikasi</p>
                         <p className="text-sm">{namaSkemaSertifikasi}</p>
                       </div>
                       <div>
                         <div>
-                          <p className="text-xs font-semibold leading-none">
-                            Tujuan Asesmen
-                          </p>
+                          <p className="text-xs font-semibold leading-none">Tujuan Asesmen</p>
                           <p className="text-sm">{tujuan}</p>
                         </div>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold leading-none">
-                          Tempat Uji Kompetensi
-                        </p>
+                        <p className="text-xs font-semibold leading-none">Tempat Uji Kompetensi</p>
                         <p className="text-sm">{tempatUjiKompetensi}</p>
                       </div>
                     </div>
@@ -108,6 +99,21 @@ export const JadwalAsesmen = () => {
             })}
         </div>
       </div>
-    </>
-  );
+    );
+  } else if (!jadwalAsesmen && isSuccess) {
+    return (
+      <div className="flex flex-col gap-8">
+        <div>
+          <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
+            Jadwal Asesmen
+          </h1>
+          <p>Jadwal pelaksanaan Asesmen</p>
+        </div>
+        <div className="flex h-[60vh] flex-col items-center justify-center gap-2 rounded-lg bg-white shadow-lg">
+          <ClipboardX className="text-8xl text-secondary-100" />
+          <p className="font-aileron text-base text-secondary-500">Tidak memiliki jadwal Asesmen</p>
+        </div>
+      </div>
+    );
+  }
 };

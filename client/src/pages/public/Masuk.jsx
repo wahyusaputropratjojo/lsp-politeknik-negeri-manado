@@ -2,10 +2,11 @@
 import { useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DevTool } from "@hookform/devtools";
 import decodeJWT from "jwt-decode";
+import Cookies from "js-cookie";
 
 // Utils
 import axios from "../../utils/axios";
@@ -32,8 +33,10 @@ import BNSP from "../../assets/logo/components/BNSP";
 import LSP from "../../assets/logo/components/LSP";
 
 export const Masuk = () => {
+  const location = useLocation();
   const navigate = useNavigate();
-  const { setAuth } = useContext(AuthContext);
+  const { auth, setAuth } = useContext(AuthContext);
+  const accessToken = auth?.access_token;
 
   const { error, isError, mutate } = useMutation({
     mutationFn: (data) => {
@@ -50,6 +53,9 @@ export const Masuk = () => {
   const form = useForm({
     resolver: yupResolver(loginSchema),
     mode: "onSubmit",
+    defaultValues: {
+      email: !!location?.state?.email ? location?.state?.email : "",
+    },
   });
 
   const onSubmit = (user) => {
@@ -69,17 +75,16 @@ export const Masuk = () => {
     mutate({ email, password });
   };
 
-  return (
-    <>
-      <div className="flex min-h-[100vh] justify-center p-8">
+  if (!accessToken) {
+    return (
+      <section className="flex min-h-[100vh] justify-center p-8">
         <div className="flex justify-center gap-16">
           <div className="flex w-[28rem] min-w-max flex-col justify-between rounded-2xl bg-white p-12 shadow-lg">
             <div>
               <button
                 onClick={() => {
                   navigate("/");
-                }}
-              >
+                }}>
                 <LSP className="h-12" />
               </button>
             </div>
@@ -88,8 +93,8 @@ export const Masuk = () => {
                 Raih Kesuksesan.
               </p>
               <p className="w-80 font-aileron text-base text-secondary-500">
-                Maju Bersama Politeknik Negeri Manado dan Raih Sertifikasi
-                Profesi untuk Sukseskan Karier Anda!
+                Maju Bersama Politeknik Negeri Manado dan Raih Sertifikasi Profesi untuk Sukseskan
+                Karier Anda!
               </p>
             </div>
             <div>
@@ -100,8 +105,7 @@ export const Masuk = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="flex h-full flex-col justify-between gap-12"
-              >
+                className="flex h-full flex-col justify-between gap-12">
                 <div className="flex flex-col">
                   <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
                     Masuk
@@ -123,9 +127,7 @@ export const Masuk = () => {
                         <FormControl>
                           <Input
                             type="email"
-                            variant={
-                              form.formState.errors?.email ? "error" : "primary"
-                            }
+                            variant={form.formState.errors?.email ? "error" : "primary"}
                             {...field}
                           />
                         </FormControl>
@@ -142,11 +144,7 @@ export const Masuk = () => {
                         <FormControl>
                           <Input
                             type="password"
-                            variant={
-                              form.formState.errors?.password
-                                ? "error"
-                                : "primary"
-                            }
+                            variant={form.formState.errors?.password ? "error" : "primary"}
                             {...field}
                           />
                         </FormControl>
@@ -165,7 +163,9 @@ export const Masuk = () => {
           </div>
           <DevTool control={form.control} />
         </div>
-      </div>
-    </>
-  );
+      </section>
+    );
+  } else if (!!accessToken) {
+    return <Navigate to="/" />;
+  }
 };

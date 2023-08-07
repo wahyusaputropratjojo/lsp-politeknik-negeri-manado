@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import axios from "../../../utils/axios";
 import { cn } from "../../../utils/cn";
+
+import { useToast } from "../../../hooks/useToast";
 
 import {
   AlertDialog,
@@ -24,7 +26,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -36,13 +37,14 @@ export const FRIA03 = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const form = useForm();
+  const { toast } = useToast();
 
   const idAsesiSkemaSertifikasi = location?.state?.id_asesi_skema_sertifikasi;
 
   const [unitKompetensiData, setUnitKompetensiData] = useState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { isLoading, isSuccess, isError } = useQuery({
+  useQuery({
     queryKey: ["asesi", idAsesiSkemaSertifikasi],
     queryFn: async () => {
       return await axios.get(`/asesor/tempat-uji-kompetensi/asesi/${idAsesiSkemaSertifikasi}`);
@@ -52,10 +54,49 @@ export const FRIA03 = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    try {
+  const { mutate } = useMutation({
+    mutationFn: async (data) => {
+      return await axios.post(
+        `/asesor/tempat-uji-kompetensi/skema-sertifikasi/asesi/pertanyaan-observasi`,
+        data,
+      );
+    },
+    onSuccess: (data) => {
       console.log(data);
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Pertanyaan Observasi telah selesai",
+      });
+      navigate("/evaluasi-asesi/asesi", {
+        state: {
+          id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+          is_refetch: true,
+        },
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "error",
+        title: "Berhasil",
+        description: "Pertanyaan Observasi telah selesai",
+      });
+    },
+  });
+
+  const onSubmit = (data) => {
+    const pertanyaan_observasi = []
+      .concat(...data.pertanyaan_observasi)
+      .filter((value) => value !== undefined);
+
+    try {
+      mutate({
+        id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+        is_pertanyaan_observasi_selesai: true,
+        pertanyaan_observasi,
+      });
     } catch (error) {
+      console.log(error);
     } finally {
       setIsDialogOpen(false);
     }
@@ -108,14 +149,14 @@ export const FRIA03 = () => {
                                       if (value === true) {
                                         for (const [index] of pertanyaanObservasi.entries()) {
                                           form.setValue(
-                                            `data.${indexUnitKompetensi}.${index}.is_kompeten`,
+                                            `pertanyaan_observasi.${indexUnitKompetensi}.${index}.is_kompeten`,
                                             true,
                                           );
                                         }
                                       } else if (value === false) {
                                         for (const [index] of pertanyaanObservasi.entries()) {
                                           form.setValue(
-                                            `data.${indexUnitKompetensi}.${index}.is_kompeten`,
+                                            `pertanyaan_observasi.${indexUnitKompetensi}.${index}.is_kompeten`,
                                             false,
                                           );
                                         }
@@ -132,12 +173,17 @@ export const FRIA03 = () => {
                                 const { id, pertanyaan } = value;
 
                                 form.setValue(
-                                  `data.${indexUnitKompetensi}.${indexPertanyaanObservasi}.id_pertanyaan_observasi`,
+                                  `pertanyaan_observasi.${indexUnitKompetensi}.${indexPertanyaanObservasi}.id_asesi_skema_sertifikasi`,
+                                  idAsesiSkemaSertifikasi,
+                                );
+
+                                form.setValue(
+                                  `pertanyaan_observasi.${indexUnitKompetensi}.${indexPertanyaanObservasi}.id_pertanyaan_observasi`,
                                   id,
                                 );
 
                                 form.register(
-                                  `data.${indexUnitKompetensi}.${indexPertanyaanObservasi}.is_kompeten`,
+                                  `pertanyaan_observasi.${indexUnitKompetensi}.${indexPertanyaanObservasi}.is_kompeten`,
                                   { value: false },
                                 );
 
@@ -152,7 +198,7 @@ export const FRIA03 = () => {
                                     <TableCell className="text-base">
                                       <FormField
                                         control={form.control}
-                                        name={`data.${indexUnitKompetensi}.${indexPertanyaanObservasi}.is_kompeten`}
+                                        name={`pertanyaan_observasi.${indexUnitKompetensi}.${indexPertanyaanObservasi}.is_kompeten`}
                                         render={({ field }) => (
                                           <FormItem className="flex items-center">
                                             <FormControl>

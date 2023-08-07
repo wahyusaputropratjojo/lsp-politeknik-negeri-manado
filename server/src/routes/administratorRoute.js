@@ -7,6 +7,7 @@ import {
   listAsesorByTempatUjiKompetensi,
   createAsesorAsesi,
   updateAsesiSkemaSertifikasi,
+  getTempatUjiKompetensi,
   // updateStatusVerifikasiBerkasAsesi,
   // updateStatusPunyaAsesor,
 } from "../controllers/administratorController.js";
@@ -14,15 +15,18 @@ import {
 export const router = express.Router();
 
 router.get("/:id/tempat-uji-kompetensi/asesi", listAsesiByTempatUjiKompetensi);
+
 router.get(
   "/:id/tempat-uji-kompetensi/asesor",
-  listAsesorByTempatUjiKompetensi,
+  listAsesorByTempatUjiKompetensi
 );
 router.post(
   "/tempat-uji-kompetensi/skema-sertifikasi/asesor/asesi",
-  createAsesorAsesi,
+  createAsesorAsesi
 );
 router.patch(
   "/tempat-uji-kompetensi/skema-sertifikasi/asesi/:id",
-  updateAsesiSkemaSertifikasi,
+  updateAsesiSkemaSertifikasi
 );
+
+router.get("/:id/tempat-uji-kompetensi", getTempatUjiKompetensi);

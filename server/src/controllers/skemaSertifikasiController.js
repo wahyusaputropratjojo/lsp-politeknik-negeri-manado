@@ -1,102 +1,146 @@
-import asyncHandler from "express-async-handler";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma.js";
 
-const prisma = new PrismaClient();
-
-export const getSkemaSertifikasi = asyncHandler(async (req, res) => {
+export const getSkemaSertifikasi = async (req, res, next) => {
   const { id } = req.params;
 
-  const skemaSertifikasi = await prisma.skemaSertifikasi.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      id: true,
-      kode_skema_sertifikasi: true,
-      nama_skema_sertifikasi: true,
-      url_profil_skema_sertifikasi: true,
-      unit_kompetensi: {
-        orderBy: {
-          kode_unit_kompetensi: "asc",
-        },
-        select: {
-          id: true,
-          kode_unit_kompetensi: true,
-          nama_unit_kompetensi: true,
+  try {
+    const skemaSertifikasi = await prisma.skemaSertifikasi.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        kode_skema_sertifikasi: true,
+        nama_skema_sertifikasi: true,
+        url_profil_skema_sertifikasi: true,
+        unit_kompetensi: {
+          orderBy: {
+            kode_unit_kompetensi: "asc",
+          },
+          select: {
+            id: true,
+            kode_unit_kompetensi: true,
+            nama_unit_kompetensi: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan data skema sertifikasi",
-    data: skemaSertifikasi,
-  });
-});
+    if (skemaSertifikasi.length === 0) {
+      res.status(404);
+      throw new Error("Skema Sertifikasi tidak ditemukan");
+    }
 
-export const listSkemaSertifikasi = asyncHandler(async (req, res) => {
-  const skemaSertifikasi = await prisma.skemaSertifikasi.findMany({
-    orderBy: {
-      nama_skema_sertifikasi: "asc",
-    },
-    select: {
-      id: true,
-      kode_skema_sertifikasi: true,
-      nama_skema_sertifikasi: true,
-      url_profil_skema_sertifikasi: true,
-    },
-  });
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: skemaSertifikasi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan data Skema Sertifikasi",
-    data: skemaSertifikasi,
-  });
-});
+export const listSkemaSertifikasi = async (req, res, next) => {
+  try {
+    const skemaSertifikasi = await prisma.skemaSertifikasi.findMany({
+      orderBy: {
+        nama_skema_sertifikasi: "asc",
+      },
+      select: {
+        id: true,
+        kode_skema_sertifikasi: true,
+        nama_skema_sertifikasi: true,
+        url_profil_skema_sertifikasi: true,
+      },
+    });
 
-export const listTujuanAsesmen = asyncHandler(async (req, res) => {
-  const tujuanAsesmen = await prisma.tujuanAsesmen.findMany({
-    orderBy: {
-      tujuan: "asc",
-    },
-  });
+    if (skemaSertifikasi.length === 0) {
+      res.sendStatus(204);
+    }
 
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan data Tujuan Asesmen",
-    data: tujuanAsesmen,
-  });
-});
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: skemaSertifikasi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-export const createSkemaSertifikasi = asyncHandler(async (req, res) => {
+export const listTujuanAsesmen = async (req, res, next) => {
+  try {
+    const tujuanAsesmen = await prisma.tujuanAsesmen.findMany({
+      orderBy: {
+        tujuan: "asc",
+      },
+    });
+
+    if (tujuanAsesmen.length === 0) {
+      res.sendStatus(204);
+    }
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: tujuanAsesmen,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createSkemaSertifikasi = async (req, res, next) => {
   const { kode, nama } = req.body;
 
-  const skemaSertifikasi = await prisma.skemaSertifikasi.create({
-    data: {
-      kode,
-      nama,
-    },
-  });
+  try {
+    if (!kode) {
+      res.status(400);
+      throw new Error("Kode tidak boleh kosong!");
+    }
 
-  res.status(201).json({
-    code: 201,
-    status: "Created",
-    message: "Skema Sertifikasi berhasil dibuat",
-    data: {
-      ...skemaSertifikasi,
-    },
-  });
-});
+    if (!nama) {
+      res.status(400);
+      throw new Error("Nama tidak boleh kosong!");
+    }
 
-export const createSkemaSertifikasiWithAllRelated = async (req, res) => {
+    await prisma.skemaSertifikasi.create({
+      data: {
+        kode,
+        nama,
+      },
+    });
+
+    res.status(201).json({
+      code: 201,
+      status: "Created",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createSkemaSertifikasiWithAllRelated = async (req, res, next) => {
   const { kode_skema_sertifikasi, nama_skema_sertifikasi, unit_kompetensi } =
     req.body;
 
   try {
+    if (!kode_skema_sertifikasi) {
+      res.status(400);
+      throw new Error("Kode skema sertifikasi tidak boleh kosong!");
+    }
+
+    if (!nama_skema_sertifikasi) {
+      res.status(400);
+      throw new Error("Nama skema sertifikasi tidak boleh kosong!");
+    }
+
+    if (!unit_kompetensi) {
+      res.status(400);
+      throw new Error("Unit kompetensi tidak boleh kosong!");
+    }
+
     const skemaSertifikasi = await prisma.skemaSertifikasi.create({
       data: {
         kode_skema_sertifikasi,
@@ -207,61 +251,56 @@ export const createSkemaSertifikasiWithAllRelated = async (req, res) => {
       }
     }
 
-    res.status(200).json({
-      code: 200,
-      status: "OK",
-      message: "Berhasil memperbarui data skema sertifikasi",
-      data: {
-        ...skemaSertifikasi,
-      },
+    res.status(201).json({
+      code: 201,
+      status: "Created",
     });
   } catch (error) {
-    console.error("Error creating SkemaSertifikasi:", error);
-    res.status(500).json({
-      code: 500,
-      status: "Error",
-      message: "Terjadi kesalahan saat memperbarui data skema sertifikasi",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-export const updateSkemaSertifikasi = asyncHandler(async (req, res) => {
+export const updateSkemaSertifikasi = async (req, res, next) => {
   const { id } = req.params;
   const { kode, nama } = req.body;
 
-  const skemaSertifikasi = await prisma.skemaSertifikasi.update({
-    where: {
-      id,
-    },
-    data: {
-      kode,
-      nama,
-    },
-  });
+  try {
+    await prisma.skemaSertifikasi.update({
+      where: {
+        id,
+      },
+      data: {
+        kode,
+        nama,
+      },
+    });
 
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil memperbarui data skema sertifikasi",
-    data: {
-      ...skemaSertifikasi,
-    },
-  });
-});
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-export const deleteSkemaSertifikasi = asyncHandler(async (req, res) => {
+export const deleteSkemaSertifikasi = async (req, res, next) => {
   const { id } = req.params;
 
-  await prisma.skemaSertifikasi.delete({
-    where: {
-      id,
-    },
-  });
+  try {
+    if (!id) {
+      res.status(400);
+      throw new Error("ID tidak boleh kosong!");
+    }
 
-  res.status(200).json({
-    code: 200,
-    status: "Ok",
-    message: "Berhasil menghapus data skema sertifikasi",
-  });
-});
+    await prisma.skemaSertifikasi.delete({
+      where: {
+        id,
+      },
+    });
+
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+};

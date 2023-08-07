@@ -40,8 +40,7 @@ export const SkemaSertifikasi = () => {
             Skema Sertifikasi
           </h1>
           <p className="text-base">
-            Daftar Skema Sertifikasi yang tersedia di LSP Politeknik Negeri
-            Manado
+            Daftar Skema Sertifikasi yang tersedia di LSP Politeknik Negeri Manado
           </p>
         </div>
         <div className="grid grid-cols-4 gap-4">
@@ -69,9 +68,7 @@ export const SkemaSertifikasi = () => {
                         <p className="font-aileron text-xs font-bold leading-none">
                           Kode Skema Sertifikasi
                         </p>
-                        <p className="truncate font-aileron text-base">
-                          {kodeSkemaSertifikasi}
-                        </p>
+                        <p className="truncate font-aileron text-base">{kodeSkemaSertifikasi}</p>
                       </div>
                       <div>
                         <p className="font-aileron text-xs font-bold leading-none">
@@ -94,8 +91,7 @@ export const SkemaSertifikasi = () => {
                             id_skema_sertifikasi: id,
                           },
                         });
-                      }}
-                    >
+                      }}>
                       Lihat Skema
                     </Button>
                   </CardFooter>

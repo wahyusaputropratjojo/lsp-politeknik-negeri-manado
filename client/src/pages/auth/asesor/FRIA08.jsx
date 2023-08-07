@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import axios from "../../../utils/axios";
 import { cn } from "../../../utils/cn";
+
+import { useToast } from "../../../hooks/useToast";
 
 import {
   AlertDialog,
@@ -36,13 +38,14 @@ export const FRIA08 = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const form = useForm();
+  const { toast } = useToast();
 
   const idAsesiSkemaSertifikasi = location?.state?.id_asesi_skema_sertifikasi;
 
   const [portofolioData, setPortofolioData] = useState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { isLoading, isSuccess, isError } = useQuery({
+  useQuery({
     queryKey: ["asesi", idAsesiSkemaSertifikasi],
     queryFn: async () => {
       return await axios.get(`/asesor/tempat-uji-kompetensi/asesi/${idAsesiSkemaSertifikasi}`);
@@ -52,9 +55,35 @@ export const FRIA08 = () => {
     },
   });
 
+  const { mutate } = useMutation({
+    mutationFn: async (data) => {
+      await axios.post(
+        "/asesor/tempat-uji-kompetensi/skema-sertifikasi/asesi/verifikasi-portofolio",
+        data,
+      );
+    },
+    onSuccess: () => {
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Portofolio berhasil diverifikasi",
+      });
+
+      navigate("/evaluasi-asesi/asesi", {
+        state: { id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi, is_refetch: true },
+      });
+    },
+  });
+
   const onSubmit = (data) => {
+    const verifikasi_portofolio = data?.verifikasi_portofolio;
+
     try {
-      console.log(data);
+      mutate({
+        id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+        is_verifikasi_portofolio_selesai: true,
+        verifikasi_portofolio,
+      });
     } catch (error) {
     } finally {
       setIsDialogOpen(false);
@@ -74,7 +103,8 @@ export const FRIA08 = () => {
           <Form {...form}>
             <div className="flex flex-col gap-8">
               <div className="rounded-lg bg-white p-12 shadow-lg">
-                <div>
+                <div className="flex gap-12 rounded-t-lg bg-secondary-500 p-8"></div>
+                <div className="rounded-b-lg border-x-2 border-b-2 border-secondary-100">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -87,11 +117,11 @@ export const FRIA08 = () => {
                               onCheckedChange={(value) => {
                                 if (value === true) {
                                   for (const [index] of portofolioData.entries()) {
-                                    form.setValue(`data.${index}.is_valid`, true);
+                                    form.setValue(`verifikasi_portofolio.${index}.is_valid`, true);
                                   }
                                 } else if (value === false) {
                                   for (const [index] of portofolioData.entries()) {
-                                    form.setValue(`data.${index}.is_valid`, false);
+                                    form.setValue(`verifikasi_portofolio.${index}.is_valid`, false);
                                   }
                                 }
                               }}
@@ -105,11 +135,11 @@ export const FRIA08 = () => {
                               onCheckedChange={(value) => {
                                 if (value === true) {
                                   for (const [index] of portofolioData.entries()) {
-                                    form.setValue(`data.${index}.is_asli`, true);
+                                    form.setValue(`verifikasi_portofolio.${index}.is_asli`, true);
                                   }
                                 } else if (value === false) {
                                   for (const [index] of portofolioData.entries()) {
-                                    form.setValue(`data.${index}.is_asli`, false);
+                                    form.setValue(`verifikasi_portofolio.${index}.is_asli`, false);
                                   }
                                 }
                               }}
@@ -123,11 +153,17 @@ export const FRIA08 = () => {
                               onCheckedChange={(value) => {
                                 if (value === true) {
                                   for (const [index] of portofolioData.entries()) {
-                                    form.setValue(`data.${index}.is_terkini`, true);
+                                    form.setValue(
+                                      `verifikasi_portofolio.${index}.is_terkini`,
+                                      true,
+                                    );
                                   }
                                 } else if (value === false) {
                                   for (const [index] of portofolioData.entries()) {
-                                    form.setValue(`data.${index}.is_terkini`, false);
+                                    form.setValue(
+                                      `verifikasi_portofolio.${index}.is_terkini`,
+                                      false,
+                                    );
                                   }
                                 }
                               }}
@@ -141,11 +177,17 @@ export const FRIA08 = () => {
                               onCheckedChange={(value) => {
                                 if (value === true) {
                                   for (const [index] of portofolioData.entries()) {
-                                    form.setValue(`data.${index}.is_memadai`, true);
+                                    form.setValue(
+                                      `verifikasi_portofolio.${index}.is_memadai`,
+                                      true,
+                                    );
                                   }
                                 } else if (value === false) {
                                   for (const [index] of portofolioData.entries()) {
-                                    form.setValue(`data.${index}.is_memadai`, false);
+                                    form.setValue(
+                                      `verifikasi_portofolio.${index}.is_memadai`,
+                                      false,
+                                    );
                                   }
                                 }
                               }}
@@ -158,12 +200,23 @@ export const FRIA08 = () => {
                       {!!portofolioData &&
                         portofolioData.map((value, indexPortofolio) => {
                           const { id, keterangan } = value;
-                          form.setValue(`data.${indexPortofolio}.id_portofolio`, id);
+                          form.setValue(
+                            `verifikasi_portofolio.${indexPortofolio}.id_portofolio`,
+                            id,
+                          );
 
-                          form.register(`data.${indexPortofolio}.is_valid`, { value: false });
-                          form.register(`data.${indexPortofolio}.is_asli`, { value: false });
-                          form.register(`data.${indexPortofolio}.is_terkini`, { value: false });
-                          form.register(`data.${indexPortofolio}.is_memadai`, { value: false });
+                          form.register(`verifikasi_portofolio.${indexPortofolio}.is_valid`, {
+                            value: false,
+                          });
+                          form.register(`verifikasi_portofolio.${indexPortofolio}.is_asli`, {
+                            value: false,
+                          });
+                          form.register(`verifikasi_portofolio.${indexPortofolio}.is_terkini`, {
+                            value: false,
+                          });
+                          form.register(`verifikasi_portofolio.${indexPortofolio}.is_memadai`, {
+                            value: false,
+                          });
 
                           return (
                             <TableRow key={id}>
@@ -174,7 +227,7 @@ export const FRIA08 = () => {
                               <TableCell className="text-center">
                                 <FormField
                                   control={form.control}
-                                  name={`data.${indexPortofolio}.is_valid`}
+                                  name={`verifikasi_portofolio.${indexPortofolio}.is_valid`}
                                   render={({ field }) => (
                                     <FormItem className="flex items-center">
                                       <FormControl>
@@ -190,7 +243,7 @@ export const FRIA08 = () => {
                               <TableCell className="text-center">
                                 <FormField
                                   control={form.control}
-                                  name={`data.${indexPortofolio}.is_asli`}
+                                  name={`verifikasi_portofolio.${indexPortofolio}.is_asli`}
                                   render={({ field }) => (
                                     <FormItem className="flex items-center">
                                       <FormControl>
@@ -206,7 +259,7 @@ export const FRIA08 = () => {
                               <TableCell className="text-center">
                                 <FormField
                                   control={form.control}
-                                  name={`data.${indexPortofolio}.is_terkini`}
+                                  name={`verifikasi_portofolio.${indexPortofolio}.is_terkini`}
                                   render={({ field }) => (
                                     <FormItem className="flex items-center">
                                       <FormControl>
@@ -222,7 +275,7 @@ export const FRIA08 = () => {
                               <TableCell className="text-center">
                                 <FormField
                                   control={form.control}
-                                  name={`data.${indexPortofolio}.is_memadai`}
+                                  name={`verifikasi_portofolio.${indexPortofolio}.is_memadai`}
                                   render={({ field }) => (
                                     <FormItem className="flex items-center">
                                       <FormControl>

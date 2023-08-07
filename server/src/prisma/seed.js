@@ -1,11 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 
+import { getNegara } from "./data-seeding/negara.js";
+
 import {
   getProvinsi,
-  getKabupaten,
+  getKotaKabupaten,
   getKecamatan,
-  getDesa,
+  getKelurahanDesa,
 } from "./data-seeding/indonesiaAreadata.js";
+
+import { jenisKelamin } from "./data-seeding/jenisKelamin.js";
 
 import { tempatUjiKompetensi } from "./data-seeding/tempatUjiKompetensi.js";
 import { skemaSertifikasi } from "./data-seeding/skemaSertifikasi.js";
@@ -47,16 +51,25 @@ import { jawabanPertanyaanTertulisPilihanGanda } from "./data-seeding/pertanyaan
 import { pertanyaanLisan } from "./data-seeding/pertanyaan-lisan/pertanyaanLisan.js";
 import { pertanyaanObservasi } from "./data-seeding/pertanyaan-observasi/pertanyaanObservasi.js";
 
+import { proyekTerkaitPekerjaan } from "./data-seeding/proyekTerkaitPekerjaan.js";
+
+import { kualifikasiPendidikan } from "./data-seeding/kualifikasiPendidikan.js";
+
 const prisma = new PrismaClient();
 
 const main = async () => {
+  await prisma.negara.createMany({
+    data: await getNegara(),
+    skipDuplicates: true,
+  });
+
   await prisma.provinsi.createMany({
     data: await getProvinsi(),
     skipDuplicates: true,
   });
 
-  await prisma.kabupaten.createMany({
-    data: await getKabupaten(),
+  await prisma.kotaKabupaten.createMany({
+    data: await getKotaKabupaten(),
     skipDuplicates: true,
   });
 
@@ -65,8 +78,8 @@ const main = async () => {
     skipDuplicates: true,
   });
 
-  await prisma.desa.createMany({
-    data: await getDesa(),
+  await prisma.kelurahanDesa.createMany({
+    data: await getKelurahanDesa(),
     skipDuplicates: true,
   });
 
@@ -178,14 +191,29 @@ const main = async () => {
     data: pertanyaanObservasi,
     skipDuplicates: true,
   });
+
+  await prisma.proyekTerkaitPekerjaan.createMany({
+    data: proyekTerkaitPekerjaan,
+    skipDuplicates: true,
+  });
+
+  await prisma.jenisKelamin.createMany({
+    data: jenisKelamin,
+    skipDuplicates: true,
+  });
+
+  await prisma.kualifikasiPendidikan.createMany({
+    data: kualifikasiPendidikan,
+    skipDuplicates: true,
+  });
 };
 
 main()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async (e) => {
-    console.error(e);
+  .catch(async (error) => {
+    console.error(error);
     await prisma.$disconnect();
     process.exit(1);
   });

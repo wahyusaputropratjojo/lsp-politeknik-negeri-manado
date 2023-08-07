@@ -18,7 +18,7 @@ const capitalizePropertyValue = (arr, propertyName) => {
     if (obj.hasOwnProperty(propertyName)) {
       const value = obj[propertyName].toLowerCase();
       const capitalizedValue = value.replace(/\b\w/g, (char) =>
-        char.toUpperCase(),
+        char.toUpperCase()
       );
       obj[propertyName] = capitalizedValue;
     }
@@ -49,61 +49,53 @@ export const getProvinsi = async () => {
 
   const dataCapitalized = capitalizePropertyValue(dataPropertyChanged, "nama");
 
-  const dataAddedProperty = addProperty(dataCapitalized, "value", "nama");
-
-  return dataAddedProperty;
+  return dataCapitalized;
 };
 
-export const getKabupaten = async () => {
+export const getKotaKabupaten = async () => {
   const kabupaten = await IdnArea.regencies();
 
   const propertyChanges = [
-    { oldPropertyName: "name", newPropertyName: "nama" },
     { oldPropertyName: "code", newPropertyName: "id" },
     { oldPropertyName: "province_code", newPropertyName: "id_provinsi" },
+    { oldPropertyName: "name", newPropertyName: "nama" },
   ];
 
   const dataPropertyChanged = changePropertyNames(kabupaten, propertyChanges);
 
   const dataCapitalized = capitalizePropertyValue(dataPropertyChanged, "nama");
 
-  const dataAddedProperty = addProperty(dataCapitalized, "value", "nama");
-
-  return dataAddedProperty;
+  return dataCapitalized;
 };
 
 export const getKecamatan = async () => {
   const kecamatan = await IdnArea.districts();
 
   const propertyChanges = [
-    { oldPropertyName: "name", newPropertyName: "nama" },
     { oldPropertyName: "code", newPropertyName: "id" },
-    { oldPropertyName: "regency_code", newPropertyName: "id_kabupaten" },
+    { oldPropertyName: "regency_code", newPropertyName: "id_kota_kabupaten" },
+    { oldPropertyName: "name", newPropertyName: "nama" },
   ];
 
   const dataPropertyChanged = changePropertyNames(kecamatan, propertyChanges);
 
   const dataCapitalized = capitalizePropertyValue(dataPropertyChanged, "nama");
 
-  const dataAddedProperty = addProperty(dataCapitalized, "value", "nama");
-
-  return dataAddedProperty;
+  return dataCapitalized;
 };
 
-export const getDesa = async () => {
+export const getKelurahanDesa = async () => {
   const desa = await IdnArea.villages();
 
   const propertyChanges = [
-    { oldPropertyName: "name", newPropertyName: "nama" },
     { oldPropertyName: "code", newPropertyName: "id" },
     { oldPropertyName: "district_code", newPropertyName: "id_kecamatan" },
+    { oldPropertyName: "name", newPropertyName: "nama" },
   ];
 
   const dataPropertyChanged = changePropertyNames(desa, propertyChanges);
 
   const dataCapitalized = capitalizePropertyValue(dataPropertyChanged, "nama");
 
-  const dataAddedProperty = addProperty(dataCapitalized, "value", "nama");
-
-  return dataAddedProperty;
+  return dataCapitalized;
 };

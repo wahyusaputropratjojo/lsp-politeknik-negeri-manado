@@ -162,16 +162,15 @@ export const PertanyaanTertulisEsai = () => {
                                 pertanyaanTertulisEsai.map((value, index) => {
                                   const { id, pertanyaan } = value;
 
-                                  if (!!form.watch(`jawaban.${index}.jawaban`)) {
-                                    form.setValue(
-                                      `jawaban.${index}.id_asesi_skema_sertifikasi`,
-                                      idAsesiSkemaSertifikasi,
-                                    );
-                                    form.setValue(
-                                      `jawaban.${index}.id_pertanyaan_tertulis_esai`,
-                                      id,
-                                    );
-                                  }
+                                  // if (!!form.watch(`jawaban.${index}.jawaban`)) {
+                                  // }
+                                  form.setValue(
+                                    `jawaban.${index}.id_asesi_skema_sertifikasi`,
+                                    idAsesiSkemaSertifikasi,
+                                  );
+                                  form.setValue(`jawaban.${index}.id_pertanyaan_tertulis_esai`, id);
+
+                                  form.register(`jawaban.${index}.jawaban`, { value: "" });
 
                                   return (
                                     <div key={id} className="flex flex-col gap-2">

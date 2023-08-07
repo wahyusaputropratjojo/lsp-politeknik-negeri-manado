@@ -1,10 +1,6 @@
-import asyncHandler from "express-async-handler";
-import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma.js";
 
-const prisma = new PrismaClient();
-
-export const listAsesiByTempatUjiKompetensi = asyncHandler(async (req, res) => {
+export const listAsesiByTempatUjiKompetensi = async (req, res, next) => {
   const { id: id_user } = req.params;
 
   try {
@@ -26,6 +22,7 @@ export const listAsesiByTempatUjiKompetensi = asyncHandler(async (req, res) => {
                 asesi_skema_sertifikasi: {
                   select: {
                     id: true,
+                    created_at: true,
                     tujuan_asesmen: {
                       select: {
                         tujuan: true,
@@ -40,14 +37,18 @@ export const listAsesiByTempatUjiKompetensi = asyncHandler(async (req, res) => {
                           select: {
                             nama_lengkap: true,
                             email: true,
+                            url_profil_user: true,
                           },
                         },
                         data_diri: {
                           select: {
                             id: true,
-                            url_profil_user: true,
                             jenis_kelamin: true,
-                            kebangsaan: true,
+                            negara: {
+                              select: {
+                                nama: true,
+                              },
+                            },
                             kualifikasi_pendidikan: true,
                             nik: true,
                             tempat_lahir: true,
@@ -55,10 +56,26 @@ export const listAsesiByTempatUjiKompetensi = asyncHandler(async (req, res) => {
                             nomor_telepon: true,
                             alamat: {
                               select: {
-                                provinsi: true,
-                                kota_kabupaten: true,
-                                kecamatan: true,
-                                kelurahan_desa: true,
+                                provinsi: {
+                                  select: {
+                                    nama: true,
+                                  },
+                                },
+                                kota_kabupaten: {
+                                  select: {
+                                    nama: true,
+                                  },
+                                },
+                                kecamatan: {
+                                  select: {
+                                    nama: true,
+                                  },
+                                },
+                                kelurahan_desa: {
+                                  select: {
+                                    nama: true,
+                                  },
+                                },
                                 keterangan_lainnya: true,
                               },
                             },
@@ -73,10 +90,26 @@ export const listAsesiByTempatUjiKompetensi = asyncHandler(async (req, res) => {
                             fax: true,
                             alamat: {
                               select: {
-                                provinsi: true,
-                                kota_kabupaten: true,
-                                kecamatan: true,
-                                kelurahan_desa: true,
+                                provinsi: {
+                                  select: {
+                                    nama: true,
+                                  },
+                                },
+                                kota_kabupaten: {
+                                  select: {
+                                    nama: true,
+                                  },
+                                },
+                                kecamatan: {
+                                  select: {
+                                    nama: true,
+                                  },
+                                },
+                                kelurahan_desa: {
+                                  select: {
+                                    nama: true,
+                                  },
+                                },
                                 keterangan_lainnya: true,
                               },
                             },
@@ -112,69 +145,56 @@ export const listAsesiByTempatUjiKompetensi = asyncHandler(async (req, res) => {
       },
     });
 
-    res.status(201).json({
+    res.status(200).json({
       code: 200,
       status: "OK",
-      message:
-        "Data Asesi berdasarkan Tempat Uji Kompetensi berhasil diperoleh",
       data: asesiTempatUjiKompetensi,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      code: 500,
-      status: "Error",
-      message: "Terjadi kesalahan",
-    });
+    next(error);
   }
-});
+};
 
-export const listAsesorByTempatUjiKompetensi = asyncHandler(
-  async (req, res) => {
-    const { id: id_user } = req.params;
+export const listAsesorByTempatUjiKompetensi = async (req, res, next) => {
+  const { id: id_user } = req.params;
 
-    try {
-      const asesorTempatUjiKompetensi = await prisma.administrator.findUnique({
-        where: {
-          id_user,
-        },
-        select: {
-          tempat_uji_kompetensi: {
-            select: {
-              asesor: {
-                select: {
-                  id: true,
-                  user: {
-                    select: {
-                      nama_lengkap: true,
-                    },
+  try {
+    const asesorTempatUjiKompetensi = await prisma.administrator.findUnique({
+      where: {
+        id_user,
+      },
+      select: {
+        tempat_uji_kompetensi: {
+          select: {
+            asesor: {
+              select: {
+                id: true,
+                user: {
+                  select: {
+                    nama_lengkap: true,
                   },
                 },
               },
             },
           },
         },
-      });
+      },
+    });
 
-      res.status(201).json({
-        code: 200,
-        status: "OK",
-        message:
-          "Data Asesor berdasarkan Tempat Uji Kompetensi berhasil diperoleh",
-        data: asesorTempatUjiKompetensi,
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        code: 500,
-        status: "Error",
-        message: "Terjadi kesalahan",
-      });
-    }
-  },
-);
+    res.status(201).json({
+      code: 200,
+      status: "OK",
+      message:
+        "Data Asesor berdasarkan Tempat Uji Kompetensi berhasil diperoleh",
+      data: asesorTempatUjiKompetensi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-export const updateAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
+export const updateAsesiSkemaSertifikasi = async (req, res, next) => {
   const { id } = req.params;
 
   const { is_punya_asesor, is_verifikasi_berkas } = await req.body;
@@ -197,16 +217,11 @@ export const updateAsesiSkemaSertifikasi = asyncHandler(async (req, res) => {
       data: asesiSkemaSertifikasi,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      code: 500,
-      status: "Error",
-      message: "Terjadi kesalahan",
-    });
+    next(error);
   }
-});
+};
 
-export const createAsesorAsesi = asyncHandler(async (req, res) => {
+export const createAsesorAsesi = async (req, res, next) => {
   const { id_asesi_skema_sertifikasi, id_asesor, tanggal_pelaksanaan } =
     req.body;
 
@@ -219,18 +234,41 @@ export const createAsesorAsesi = asyncHandler(async (req, res) => {
       },
     });
 
-    res.status(201).json({
+    res.status(200).json({
       code: 200,
       status: "OK",
       message: "Asesor seorang Asesi berhasil dibuat",
       data: asesorAsesi,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      code: 500,
-      status: "Error",
-      message: "Terjadi kesalahan",
-    });
+    next(error);
   }
-});
+};
+
+export const getTempatUjiKompetensi = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const tempatUjiKompetensi = await prisma.administrator.findUnique({
+      where: {
+        id_user: id,
+      },
+      select: {
+        tempat_uji_kompetensi: {
+          select: {
+            tempat_uji_kompetensi: true,
+            kode_tempat_uji_kompetensi: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: tempatUjiKompetensi,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};

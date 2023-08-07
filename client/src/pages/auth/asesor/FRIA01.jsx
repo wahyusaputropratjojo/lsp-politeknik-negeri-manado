@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import axios from "../../../utils/axios";
 import { cn } from "../../../utils/cn";
+
+import { useToast } from "../../../hooks/useToast";
 
 import {
   AlertDialog,
@@ -24,7 +26,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -35,7 +36,7 @@ import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/compon
 export const FRIA01 = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const form = useForm();
+  const { toast } = useToast();
 
   const idAsesiSkemaSertifikasi = location?.state?.id_asesi_skema_sertifikasi;
 
@@ -52,10 +53,51 @@ export const FRIA01 = () => {
     },
   });
 
+  const form = useForm();
+
+  const { mutate } = useMutation({
+    mutationFn: async (data) => {
+      await axios.post(
+        "/asesor/tempat-uji-kompetensi/skema-sertifikasi/asesi/observasi-aktivitas-tempat-kerja",
+        data,
+      );
+    },
+    onSuccess: () => {
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Observasi Aktivitas di Tempat Kerja telah selesai.",
+      });
+
+      navigate("/evaluasi-asesi/asesi", {
+        state: {
+          id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+          is_refetch: true,
+        },
+      });
+    },
+    onError: () => {
+      toast({
+        variant: "error",
+        title: "Error",
+        description: "Terjadi Kesalahan",
+      });
+    },
+  });
+
   const onSubmit = (data) => {
+    const observasi_aktivitas_tempat_kerja = []
+      .concat(...data.observasi_aktivitas_tempat_kerja)
+      .filter((value) => value !== undefined);
+
     try {
-      console.log(data);
+      mutate({
+        id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+        is_observasi_aktivitas_tempat_kerja_selesai: true,
+        observasi_aktivitas_tempat_kerja,
+      });
     } catch (error) {
+      console.log(error);
     } finally {
       setIsDialogOpen(false);
     }
@@ -112,14 +154,14 @@ export const FRIA01 = () => {
                                         if (value === true) {
                                           for (const [index] of aktivitasUnitKompetensi.entries()) {
                                             form.setValue(
-                                              `data.${indexUnitKompetensi}.${index}.is_kompeten`,
+                                              `observasi_aktivitas_tempat_kerja.${indexUnitKompetensi}.${index}.is_kompeten`,
                                               true,
                                             );
                                           }
                                         } else if (value === false) {
                                           for (const [index] of aktivitasUnitKompetensi.entries()) {
                                             form.setValue(
-                                              `data.${indexUnitKompetensi}.${index}.is_kompeten`,
+                                              `observasi_aktivitas_tempat_kerja.${indexUnitKompetensi}.${index}.is_kompeten`,
                                               false,
                                             );
                                           }
@@ -141,8 +183,18 @@ export const FRIA01 = () => {
                                     } = value;
 
                                     form.setValue(
-                                      `data.${indexUnitKompetensi}.${indexAktivitasUnitKompetensi}.id_aktivitas_unit_kompetensi`,
+                                      `observasi_aktivitas_tempat_kerja.${indexUnitKompetensi}.${indexAktivitasUnitKompetensi}.id_asesi_skema_sertifikasi`,
+                                      idAsesiSkemaSertifikasi,
+                                    );
+
+                                    form.setValue(
+                                      `observasi_aktivitas_tempat_kerja.${indexUnitKompetensi}.${indexAktivitasUnitKompetensi}.id_aktivitas_unit_kompetensi`,
                                       id,
+                                    );
+
+                                    form.register(
+                                      `observasi_aktivitas_tempat_kerja.${indexUnitKompetensi}.${indexAktivitasUnitKompetensi}.is_kompeten`,
+                                      { value: false },
                                     );
 
                                     return (
@@ -170,7 +222,7 @@ export const FRIA01 = () => {
                                         <TableCell className="text-center">
                                           <FormField
                                             control={form.control}
-                                            name={`data.${indexUnitKompetensi}.${indexAktivitasUnitKompetensi}.is_kompeten`}
+                                            name={`observasi_aktivitas_tempat_kerja.${indexUnitKompetensi}.${indexAktivitasUnitKompetensi}.is_kompeten`}
                                             render={({ field }) => (
                                               <FormItem className="flex items-center">
                                                 <FormControl>

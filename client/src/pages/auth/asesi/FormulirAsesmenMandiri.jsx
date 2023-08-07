@@ -230,26 +230,6 @@ export const FormulirAsesmenMandiriDetail = () => {
                                         kriteria_unjuk_kerja: kriteriaUnjukKerja,
                                       } = value;
 
-                                      // if (
-                                      //   form.watch(
-                                      //     `asesmen_mandiri.${indexUnitKompetensi}.is_checked_all`,
-                                      //   )
-                                      // ) {
-                                      //   form.setValue(
-                                      //     `asesmen_mandiri.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.is_kompeten`,
-                                      //     true,
-                                      //   );
-                                      // } else if (
-                                      //   !form.watch(
-                                      //     `asesmen_mandiri.${indexUnitKompetensi}.is_checked_all`,
-                                      //   )
-                                      // ) {
-                                      //   form.setValue(
-                                      //     `asesmen_mandiri.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.is_kompeten`,
-                                      //     false,
-                                      //   );
-                                      // }
-
                                       form.setValue(
                                         `asesmen_mandiri.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.id_aktivitas_unit_kompetensi`,
                                         id,
@@ -292,21 +272,23 @@ export const FormulirAsesmenMandiriDetail = () => {
                                               })}
                                           </TableCell>
                                           <TableCell>
-                                            <FormField
-                                              control={form.control}
-                                              name={`asesmen_mandiri.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.is_kompeten`}
-                                              render={({ field }) => (
-                                                <FormItem>
-                                                  <FormControl>
-                                                    <Checkbox
-                                                      checked={field.value}
-                                                      onCheckedChange={field.onChange}
-                                                    />
-                                                  </FormControl>
-                                                  <FormMessage />
-                                                </FormItem>
-                                              )}
-                                            />
+                                            <div className="flex flex-col items-center">
+                                              <FormField
+                                                control={form.control}
+                                                name={`asesmen_mandiri.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.is_kompeten`}
+                                                render={({ field }) => (
+                                                  <FormItem>
+                                                    <FormControl>
+                                                      <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                      />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                  </FormItem>
+                                                )}
+                                              />
+                                            </div>
                                           </TableCell>
                                         </TableRow>
                                       );

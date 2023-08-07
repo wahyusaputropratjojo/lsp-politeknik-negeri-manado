@@ -1,6 +1,6 @@
 // Packages
 import { useState, useContext } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // Context
@@ -32,17 +32,18 @@ import {
   DotsVertical,
   FileAttachment04,
   FileQuestion02,
+  Folder,
   HomeLine,
-  ImageUserPlus,
   ImageUserDown,
+  ImageUserPlus,
+  LayoutAlt02,
   LogIn02,
   LogOut02,
   User01,
   UserLeft01,
   UsersEdit,
-  LayoutAlt02,
+  Users01,
 } from "./Icons";
-import { is } from "date-fns/locale";
 
 export const Sidebar = () => {
   const navigate = useNavigate();
@@ -55,9 +56,49 @@ export const Sidebar = () => {
   const isAsesi = auth?.role === "Asesi";
   const isAsesor = auth?.role === "Asesor";
   const isAdministrator = auth?.role === "Administrator";
+  const accessToken = auth?.access_token;
+  const id = auth?.id;
 
   const [visible, setVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(true);
+  const [userData, setUserData] = useState();
+  const [administratorTUKData, setAdministratorTUKData] = useState();
+  const [asesorTUKData, setAsesorTUKData] = useState();
+
+  useQuery({
+    queryKey: ["user", accessToken],
+    queryFn: async () => {
+      return await axios.get(`/user/${id}`);
+    },
+    onSuccess: (data) => {
+      setUserData(data.data.data);
+    },
+  });
+
+  useQuery({
+    queryKey: ["administrator", id],
+    queryFn: async () => {
+      return await axios.get(`/administrator/${id}/tempat-uji-kompetensi`);
+    },
+    onSuccess: (data) => {
+      console.log(data.data.data);
+      setAdministratorTUKData(data?.data?.data?.tempat_uji_kompetensi?.kode_tempat_uji_kompetensi);
+    },
+    enabled: !!isAdministrator,
+  });
+
+  useQuery({
+    queryKey: ["asesor", id],
+    queryFn: async () => {
+      return await axios.get(`/asesor/${id}/tempat-uji-kompetensi`);
+    },
+    onSuccess: (data) => {
+      setAsesorTUKData(data?.data?.data?.tempat_uji_kompetensi?.kode_tempat_uji_kompetensi);
+    },
+    enabled: !!isAsesor,
+  });
+
+  console.log(administratorTUKData, asesorTUKData);
 
   const { mutate } = useMutation({
     mutationFn: () => {
@@ -147,7 +188,7 @@ export const Sidebar = () => {
           </TooltipProvider>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className={cn({ hidden: isAsesor || isAdministrator })}>
+              <TooltipTrigger className={cn({ hidden: isAsesor || isAdministrator || isAsesi })}>
                 <Navigation to="/pendaftaran" isMinimized={isMinimized} isDisabled={isDisabled}>
                   <ImageUserPlus className="text-lg" />
                   {!isMinimized && <span>Pendaftaran</span>}
@@ -255,6 +296,29 @@ export const Sidebar = () => {
               <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
                 <Tooltip>
                   <TooltipTrigger>
+                    <Navigation to="/data-asesi" isMinimized={isMinimized} isDisabled={isDisabled}>
+                      <Users01 className="text-lg" />
+                      {!isMinimized && <span>Data Asesi</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Penentuan Asesor</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
                     <Navigation
                       to="/jadwal-asesmen"
                       isMinimized={isMinimized}
@@ -304,10 +368,59 @@ export const Sidebar = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+              {/* <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/dokumen-asesi"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <Folder className="text-lg" />
+                      {!isMinimized && <span>Dokumen Asesi</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Dokumen Asesi</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider> */}
             </>
           )}
           {isAdministrator && (
             <>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation to="/data-asesi" isMinimized={isMinimized} isDisabled={isDisabled}>
+                      <Users01 className="text-lg" />
+                      {!isMinimized && <span>Data Asesi</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Penentuan Asesor</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
                 <Tooltip>
                   <TooltipTrigger>
@@ -360,14 +473,37 @@ export const Sidebar = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation to="/data-asesor" isMinimized={isMinimized} isDisabled={isDisabled}>
+                      <Users01 className="text-lg" />
+                      {!isMinimized && <span>Data Asesor</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Penentuan Asesor</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </>
           )}
         </nav>
         <footer className="flex flex-col gap-4">
-          {auth ? (
+          {accessToken ? (
             <div className="flex gap-2">
               <Avatar>
-                <AvatarImage src="http://localhost:3000/uploads/new-profile-1024px-7-10-2023-23-57-40-819-2659.png" />
+                <AvatarImage src={userData?.url_profil_user} />
                 <AvatarFallback>
                   <User01 className="text-xl" />
                 </AvatarFallback>
@@ -378,7 +514,9 @@ export const Sidebar = () => {
                     <p className="truncate font-anek-latin text-lg font-semibold text-secondary-500">
                       {namaLengkap}
                     </p>
-                    <p className="font-aileron text-xs font-normal text-secondary-500">{role}</p>
+                    <p className="font-aileron text-xs font-normal text-secondary-500">
+                      {role} {administratorTUKData || asesorTUKData}
+                    </p>
                   </div>
                   <div>
                     <DropdownMenu>

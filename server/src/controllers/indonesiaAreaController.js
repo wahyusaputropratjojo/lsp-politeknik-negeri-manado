@@ -1,135 +1,151 @@
-import asyncHandler from "express-async-handler";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma.js";
 
-const prisma = new PrismaClient();
-
-export const listProvinsi = asyncHandler(async (req, res) => {
+export const listProvinsi = async (req, res, next) => {
   const { nama } = req.query;
 
-  const option = {
-    where: {},
-    orderBy: {
-      nama: "asc",
-    },
-  };
-
-  if (nama) {
-    option.where.nama = {
-      contains: nama,
+  try {
+    const option = {
+      where: {},
+      orderBy: {
+        nama: "asc",
+      },
     };
+
+    if (nama) {
+      option.where.nama = {
+        contains: nama,
+      };
+    }
+
+    const provinsi = await prisma.provinsi.findMany(option);
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: provinsi,
+    });
+  } catch (error) {
+    next(error);
   }
+};
 
-  const provinsi = await prisma.provinsi.findMany(option);
-
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan data Provinsi",
-    data: provinsi,
-  });
-});
-
-export const getProvinsi = asyncHandler(async (req, res) => {
-  const provinsi = await prisma.provinsi.findUnique({
-    where: {
-      id: req.params.id,
-    },
-  });
-
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan data Provinsi",
-    data: provinsi,
-  });
-});
-
-export const listKabupatenByProvinsiID = asyncHandler(async (req, res) => {
+export const getProvinsi = async (req, res, next) => {
   const { id } = req.params;
 
-  const { nama } = req.query;
+  try {
+    const provinsi = await prisma.provinsi.findUnique({
+      where: {
+        id,
+      },
+    });
 
-  const option = {
-    where: {
-      id_provinsi: id,
-    },
-    orderBy: {
-      nama: "asc",
-    },
-  };
+    if (provinsi.length === 0) {
+      res.status(404);
+      throw new Error("Provinsi tidak ditemukan!");
+    }
 
-  if (nama) {
-    option.where.nama = {
-      contains: nama,
-    };
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: provinsi,
+    });
+  } catch (error) {
+    next(error);
   }
+};
 
-  const kabupaten = await prisma.kabupaten.findMany(option);
-
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan data Kota & Kabupaten",
-    data: kabupaten,
-  });
-});
-
-export const listKecamatanByKabupatenID = asyncHandler(async (req, res) => {
+export const listKabupatenByProvinsiID = async (req, res, next) => {
   const { id } = req.params;
-
   const { nama } = req.query;
 
-  const option = {
-    where: {
-      id_kabupaten: id,
-    },
-    orderBy: {
-      nama: "asc",
-    },
-  };
-
-  if (nama) {
-    option.where.nama = {
-      contains: nama,
+  try {
+    const option = {
+      where: {
+        id_provinsi: id,
+      },
+      orderBy: {
+        nama: "asc",
+      },
     };
+
+    if (nama) {
+      option.where.nama = {
+        contains: nama,
+      };
+    }
+
+    const kabupaten = await prisma.kotaKabupaten.findMany(option);
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: kabupaten,
+    });
+  } catch (error) {
+    next(error);
   }
+};
 
-  const kecamatan = await prisma.kecamatan.findMany(option);
-
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan data Kota & Kabupaten",
-    data: kecamatan,
-  });
-});
-
-export const listDesaByKecamatanID = asyncHandler(async (req, res) => {
+export const listKecamatanByKabupatenID = async (req, res, next) => {
   const { id } = req.params;
-
   const { nama } = req.query;
 
-  const option = {
-    where: {
-      id_kecamatan: id,
-    },
-    orderBy: {
-      nama: "asc",
-    },
-  };
-
-  if (nama) {
-    option.where.nama = {
-      contains: nama,
+  try {
+    const option = {
+      where: {
+        id_kota_kabupaten: id,
+      },
+      orderBy: {
+        nama: "asc",
+      },
     };
+
+    if (nama) {
+      option.where.nama = {
+        contains: nama,
+      };
+    }
+
+    const kecamatan = await prisma.kecamatan.findMany(option);
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: kecamatan,
+    });
+  } catch (error) {
+    next(error);
   }
+};
 
-  const desa = await prisma.desa.findMany(option);
+export const listDesaByKecamatanID = async (req, res, next) => {
+  const { id } = req.params;
+  const { nama } = req.query;
 
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan data Kota & Kabupaten",
-    data: desa,
-  });
-});
+  try {
+    const option = {
+      where: {
+        id_kecamatan: id,
+      },
+      orderBy: {
+        nama: "asc",
+      },
+    };
+
+    if (nama) {
+      option.where.nama = {
+        contains: nama,
+      };
+    }
+
+    const desa = await prisma.kelurahanDesa.findMany(option);
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: desa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,118 +1,132 @@
-import asyncHandler from "express-async-handler";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma.js";
 
-const prisma = new PrismaClient();
+export const getUser = async (req, res, next) => {
+  const { id } = req.params;
 
-export const getUser = asyncHandler(async (req, res) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: req.params.id,
-    },
-    select: {
-      id: true,
-      nama_lengkap: true,
-      email: true,
-      role: true,
-    },
-  });
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        nama_lengkap: true,
+        email: true,
+        role: true,
+        url_profil_user: true,
+      },
+    });
 
-  if (user === null) {
-    res.status(404);
-    throw new Error("User tidak ditemukan");
+    if (user.length === 0) {
+      res.status(404);
+      throw new Error("User tidak ditemukan");
+    }
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
   }
+};
 
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan user",
-    data: { ...user },
-  });
-});
+export const listUser = async (req, res, next) => {
+  try {
+    const user = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
 
-export const listUser = asyncHandler(async (req, res) => {
-  const user = await prisma.user.findMany({
-    select: {
-      id: true,
-      email: true,
-      role: true,
-      created_at: true,
-      updated_at: true,
-    },
-  });
+    if (user.length === 0) {
+      res.sendStatus(204);
+    }
 
-  res.status(200).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mendapatkan semua user",
-    data: [...user],
-  });
-});
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-export const createUser = asyncHandler(async (req, res) => {
+export const createUser = async (req, res, next) => {
   const { email, password, role } = req.body;
 
-  // validasi
-  if (!email) {
-    res.status(400);
-    throw new Error("Email tidak boleh kosong");
-  } else if (!password) {
-    res.status(400);
-    throw new Error("Kata sandi tidak boleh kosong");
-  } else if (!email || !password) {
-    res.status(400);
-    throw new Error("Email dan kata sandi tidak boleh kosong");
+  try {
+    if (!email) {
+      res.status(400);
+      throw new Error("Email tidak boleh kosong");
+    }
+
+    if (!password) {
+      res.status(400);
+      throw new Error("Kata sandi tidak boleh kosong");
+    }
+
+    if (!role) {
+      res.status(400);
+      throw new Error("Role tidak boleh kosong");
+    }
+
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password,
+        role,
+      },
+    });
+
+    res.status(201).json({
+      code: 201,
+      status: "Created",
+    });
+  } catch (error) {
+    next(error);
   }
+};
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      password,
-      role,
-    },
-  });
-
-  res.status(201).json({
-    code: 201,
-    status: "Created",
-    message: "Berhasil membuat user baru",
-    data: {
-      ...user,
-    },
-  });
-});
-
-export const updateUser = asyncHandler(async (req, res) => {
+export const updateUser = async (req, res, next) => {
   const { email, password } = req.body;
-  const user = await prisma.user.update({
-    where: {
-      id: req.params.id,
-    },
-    data: {
-      email: email,
-      password: password,
-    },
-  });
 
-  res.status(201).json({
-    code: 200,
-    status: "OK",
-    message: "Berhasil mengubah data user",
-    data: {
-      ...user,
-    },
-  });
-});
+  try {
+    await prisma.user.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        email: email,
+        password: password,
+      },
+    });
 
-export const deleteUser = asyncHandler(async (req, res) => {
-  await prisma.user.delete({
-    where: {
-      id: req.params.id,
-    },
-  });
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-  res.status(204).json({
-    code: 200,
-    status: "No Content",
-    message: "Berhasil menghapus user",
-  });
-});
+export const deleteUser = async (req, res, next) => {
+  try {
+    await prisma.user.delete({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+};
