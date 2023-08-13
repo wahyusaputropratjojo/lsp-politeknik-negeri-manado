@@ -139,8 +139,8 @@ model AsesmenMandiri {
   id_asesi_skema_sertifikasi   String                  @map("id_asesi_skema_sertifikasi")
   id_aktivitas_unit_kompetensi String                  @map("id_aktivitas_unit_kompetensi")
   is_kompeten                  Boolean                 @default(false) @map("is_kompeten")
-  aktivitas_unit_kompetensi    AktivitasUnitKompetensi @relation(fields: [id_aktivitas_unit_kompetensi], references: [id])
-  asesi_skema_sertifikasi      AsesiSkemaSertifikasi   @relation(fields: [id_asesi_skema_sertifikasi], references: [id])
+  aktivitas_unit_kompetensi    AktivitasUnitKompetensi @relation(fields: [id_aktivitas_unit_kompetensi], references: [id], onDelete: Cascade)
+  asesi_skema_sertifikasi      AsesiSkemaSertifikasi   @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
 
   @@map("asesmen_mandiri")
 }
@@ -263,7 +263,7 @@ model AsesorProyekTerkaitPekerjaan {
   created_at                  DateTime                @default(now()) @map("created_at")
   updated_at                  DateTime                @updatedAt @map("updated_at")
   asesi_skema_sertifikasi     AsesiSkemaSertifikasi?  @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
-  proyek_terkait_pekerjaan    ProyekTerkaitPekerjaan? @relation(fields: [id_proyek_terkait_pekerjaan], references: [id], onDelete: Cascade)
+  proyek_terkait_pekerjaan    ProyekTerkaitPekerjaan? @relation(fields: [id_proyek_terkait_pekerjaan], references: [id])
 
   @@map("asesor_proyek_terkait_pekerjaan")
 }
@@ -554,7 +554,7 @@ model ProyekTerkaitPekerjaan {
   demonstrasi                     String                         @map("demonstrasi") @db.Text
   created_at                      DateTime                       @default(now()) @map("created_at")
   updated_at                      DateTime                       @updatedAt @map("updated_at")
-  unit_kompetensi                 UnitKompetensi?                @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
+  unit_kompetensi                 UnitKompetensi                 @relation(fields: [id_unit_kompetensi], references: [id], onDelete: Cascade)
   asesor_proyek_terkait_pekerjaan AsesorProyekTerkaitPekerjaan[]
 
   @@map("proyek_terkait_pekerjaan")

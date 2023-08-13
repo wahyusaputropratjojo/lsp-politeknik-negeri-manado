@@ -26,6 +26,13 @@ import { router as tempatUjiKompetensiRoute } from "./routes/tempatUjiKompetensi
 import { router as negaraRoute } from "./routes/negaraRoute.js";
 import { router as jenisKelaminRoute } from "./routes/jenisKelaminRoute.js";
 import { router as kualifikasiPendidikanRoute } from "./routes/kualifikasiPendidikanRoute.js";
+import { router as pertanyaanObservasiRoute } from "./routes/pertanyaanObservasiRoute.js";
+import { router as pertanyaanTertulisEsaiRoute } from "./routes/pertanyaanTertulisEsaiRoute.js";
+import { router as pertanyaanTertulisPilihanGandaRoute } from "./routes/pertanyaanTertulisPilihanGandaRoute.js";
+import { router as pertanyaanLisanRoute } from "./routes/pertanyaanLisanRoute.js";
+import { router as tugasPraktikDemonstrasiRoute } from "./routes/tugasPraktikDemonstrasiRoute.js";
+import { router as aktivitasUnitKompetensiRoute } from "./routes/aktivitasUnitKompetensiRoute.js";
+import { router as proyekTerkaitPekerjaanRoute } from "./routes/proyekTerkaitPekerjaanRoute.js";
 
 const app = express();
 
@@ -43,6 +50,16 @@ app.use("/api/user", userRoute);
 app.use("/api/skema-sertifikasi", skemaSertifikasiRoute);
 app.use("/api/skema-sertifikasi", unitKompetensiRoute);
 app.use("/api/skema-sertifikasi", persyaratanDasarRoute);
+app.use("/api/skema-sertifikasi/unit-kompetensi", pertanyaanObservasiRoute);
+app.use("/api/skema-sertifikasi/unit-kompetensi", pertanyaanTertulisEsaiRoute);
+app.use("/api/skema-sertifikasi/unit-kompetensi", tugasPraktikDemonstrasiRoute);
+app.use("/api/skema-sertifikasi/unit-kompetensi", aktivitasUnitKompetensiRoute);
+app.use("/api/skema-sertifikasi/unit-kompetensi", proyekTerkaitPekerjaanRoute);
+app.use(
+  "/api/skema-sertifikasi/unit-kompetensi",
+  pertanyaanTertulisPilihanGandaRoute
+);
+app.use("/api/skema-sertifikasi/unit-kompetensi", pertanyaanLisanRoute);
 app.use("/api/indonesia", indonesiaAreaRoute);
 app.use("/api/asesi", asesiRoute);
 app.use("/api/asesor", asesorRoute);

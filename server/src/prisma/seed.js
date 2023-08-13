@@ -192,10 +192,10 @@ const main = async () => {
     skipDuplicates: true,
   });
 
-  await prisma.proyekTerkaitPekerjaan.createMany({
-    data: proyekTerkaitPekerjaan,
-    skipDuplicates: true,
-  });
+  // await prisma.proyekTerkaitPekerjaan.createMany({
+  //   data: proyekTerkaitPekerjaan,
+  //   skipDuplicates: true,
+  // });
 
   await prisma.jenisKelamin.createMany({
     data: jenisKelamin,

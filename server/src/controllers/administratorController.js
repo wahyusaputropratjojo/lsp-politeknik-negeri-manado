@@ -255,6 +255,7 @@ export const getTempatUjiKompetensi = async (req, res, next) => {
       select: {
         tempat_uji_kompetensi: {
           select: {
+            id: true,
             tempat_uji_kompetensi: true,
             kode_tempat_uji_kompetensi: true,
           },
@@ -270,5 +271,145 @@ export const getTempatUjiKompetensi = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     next(error);
+  }
+};
+
+export const listSkemaSertifikasi = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const skemaSertifikasi = await prisma.administrator.findUnique({
+      where: {
+        id_user: id,
+      },
+      select: {
+        id: true,
+        tempat_uji_kompetensi: {
+          select: {
+            id: true,
+            skema_sertifikasi: {
+              select: {
+                id: true,
+                kode_skema_sertifikasi: true,
+                nama_skema_sertifikasi: true,
+                url_profil_skema_sertifikasi: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: skemaSertifikasi,
+    });
+  } catch (error) {
+    next(error);
+    console.log(error);
+  }
+};
+
+export const createSkemaSertifikasi = async (req, res, next) => {
+  const files = req.files;
+  const {
+    id_tempat_uji_kompetensi,
+    kode_skema_sertifikasi,
+    nama_skema_sertifikasi,
+    unit_kompetensi,
+  } = req.body;
+  try {
+    console.log(files);
+    if (Object.keys(req.body).length === 0) {
+      res.status(400);
+      throw new Error("Data yang dikirim kosong");
+    }
+
+    if (!kode_skema_sertifikasi || kode_skema_sertifikasi === null) {
+      res.status(400);
+      throw new Error("Kode skema sertifikasi tidak boleh kosong");
+    }
+
+    if (!nama_skema_sertifikasi || nama_skema_sertifikasi === null) {
+      res.status(400);
+      throw new Error("Nama skema sertifikasi tidak boleh kosong");
+    }
+
+    if (!unit_kompetensi || unit_kompetensi.length === 0) {
+      res.status(400);
+      throw new Error("Unit kompetensi tidak boleh kosong");
+    }
+
+    const generateLinkArray = async (array, req) => {
+      const linkMap = {};
+
+      for (const item of array) {
+        const link = `${req.protocol}://${req.get("host")}/uploads/${
+          item.filename
+        }`;
+        const fieldname = item.fieldname.replace(/\[\]$/, "");
+
+        if (linkMap[fieldname]) {
+          linkMap[fieldname].push(link);
+        } else {
+          linkMap[fieldname] = [link];
+        }
+      }
+
+      const newArray = Object.entries(linkMap).map(([fieldname, links]) => ({
+        fieldname,
+        link: links,
+      }));
+
+      return newArray;
+    };
+
+    const getSingleFileLink = async (linkFiles, fieldName) => {
+      let fieldValue;
+
+      for (const link of linkFiles) {
+        const { fieldname, link: links } = link;
+
+        if (fieldname === fieldName) {
+          fieldValue = links[0];
+          break;
+        }
+      }
+      return fieldValue;
+    };
+
+    const linkFiles = await generateLinkArray(files, req);
+
+    const url_profil_skema_sertifikasi = await getSingleFileLink(
+      linkFiles,
+      "profil_skema_sertifikasi"
+    );
+
+    await prisma.skemaSertifikasi.create({
+      data: {
+        kode_skema_sertifikasi,
+        nama_skema_sertifikasi,
+        url_profil_skema_sertifikasi,
+        tempat_uji_kompetensi: {
+          connect: {
+            id: id_tempat_uji_kompetensi,
+          },
+        },
+        unit_kompetensi: {
+          createMany: {
+            data: unit_kompetensi,
+          },
+        },
+      },
+    });
+
+    res.status(201).json({
+      code: 201,
+      status: "Created",
+    });
+  } catch (error) {
+    next(error);
+    console.log(error);
   }
 };

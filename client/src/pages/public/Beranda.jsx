@@ -76,79 +76,35 @@ export const Beranda = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-2">
-              <div className="w-4 rounded-lg bg-primary-500 shadow-lg"></div>
-              <h2 className="w-max rounded-lg bg-secondary-500 p-4 font-anek-latin text-2xl font-semibold text-white shadow-lg">
-                Skema Sertifikasi
-              </h2>
-            </div>
-            <div className="grid grid-cols-4 gap-4">
-              {!!skemaSertifikasiData &&
-                skemaSertifikasiData.map((value, index) => {
-                  const {
-                    id,
-                    kode_skema_sertifikasi: kodeSkemaSertifikasi,
-                    nama_skema_sertifikasi: namaSkemaSertifikasi,
-                    url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
-                  } = value;
+          {!isAsesor && !isAdministrator && (
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-2">
+                <div className="w-4 rounded-lg bg-primary-500 shadow-lg"></div>
+                <h2 className="w-max rounded-lg bg-secondary-500 p-4 font-anek-latin text-2xl font-semibold text-white shadow-lg">
+                  Skema Sertifikasi
+                </h2>
+              </div>
+              <div className="grid grid-cols-4 gap-4">
+                {!!skemaSertifikasiData &&
+                  skemaSertifikasiData.map((value, index) => {
+                    const {
+                      id,
+                      kode_skema_sertifikasi: kodeSkemaSertifikasi,
+                      nama_skema_sertifikasi: namaSkemaSertifikasi,
+                      url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
+                    } = value;
 
-                  if (index < 3) {
-                    return (
-                      <Card key={id} className="shadow-lg">
-                        <CardHeader>
-                          <img
-                            src={urlProfilSkemaSertifikasi}
-                            alt="Profil Skema Sertifikasi"
-                            className="rounded-lg"
-                          />
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex flex-col gap-2">
-                            <div>
-                              <p className="font-aileron text-xs font-bold leading-none">
-                                Kode Skema Sertifikasi
-                              </p>
-                              <p className="truncate font-aileron text-base">
-                                {kodeSkemaSertifikasi}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="font-aileron text-xs font-bold leading-none">
-                                Nama Skema Sertifikasi
-                              </p>
-                              <p className="truncate font-aileron text-base leading-snug">
-                                {namaSkemaSertifikasi}
-                              </p>
-                            </div>
-                          </div>
-                        </CardContent>
-                        <CardFooter>
-                          <Button
-                            size="sm"
-                            className="w-full"
-                            onClick={() => {
-                              navigate(`/skema-sertifikasi/detail`, {
-                                state: { id_skema_sertifikasi: id },
-                              });
-                            }}>
-                            Lihat Skema
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    );
-                  } else if (index === 3) {
-                    return (
-                      <div key={id} className="relative">
-                        <Card className="shadow-lg">
-                          <CardHeader className="select-none blur-lg">
+                    if (index < 3) {
+                      return (
+                        <Card key={id} className="shadow-lg">
+                          <CardHeader>
                             <img
                               src={urlProfilSkemaSertifikasi}
                               alt="Profil Skema Sertifikasi"
                               className="rounded-lg"
                             />
                           </CardHeader>
-                          <CardContent className="select-none blur-lg">
+                          <CardContent>
                             <div className="flex flex-col gap-2">
                               <div>
                                 <p className="font-aileron text-xs font-bold leading-none">
@@ -168,12 +124,12 @@ export const Beranda = () => {
                               </div>
                             </div>
                           </CardContent>
-                          <CardFooter className="select-none blur-lg">
+                          <CardFooter>
                             <Button
                               size="sm"
-                              className="pointer-events-none w-full cursor-default"
+                              className="w-full"
                               onClick={() => {
-                                navigate(`/skema-sertifikasi/detail`, {
+                                navigate(`/skema-sertifikasi/unit-kompetensi`, {
                                   state: { id_skema_sertifikasi: id },
                                 });
                               }}>
@@ -181,22 +137,68 @@ export const Beranda = () => {
                             </Button>
                           </CardFooter>
                         </Card>
-                        <div className="h-full w-full -translate-y-full rounded-lg bg-white/40">
-                          <Button
-                            className="absolute left-1/2 top-1/2 -translate-x-1/2"
-                            size="sm"
-                            onClick={() => {
-                              navigate(`/skema-sertifikasi`);
-                            }}>
-                            Selengkapnya
-                          </Button>
+                      );
+                    } else if (index === 3) {
+                      return (
+                        <div key={id} className="relative">
+                          <Card className="shadow-lg">
+                            <CardHeader className="select-none blur-lg">
+                              <img
+                                src={urlProfilSkemaSertifikasi}
+                                alt="Profil Skema Sertifikasi"
+                                className="rounded-lg"
+                              />
+                            </CardHeader>
+                            <CardContent className="select-none blur-lg">
+                              <div className="flex flex-col gap-2">
+                                <div>
+                                  <p className="font-aileron text-xs font-bold leading-none">
+                                    Kode Skema Sertifikasi
+                                  </p>
+                                  <p className="truncate font-aileron text-base">
+                                    {kodeSkemaSertifikasi}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="font-aileron text-xs font-bold leading-none">
+                                    Nama Skema Sertifikasi
+                                  </p>
+                                  <p className="truncate font-aileron text-base leading-snug">
+                                    {namaSkemaSertifikasi}
+                                  </p>
+                                </div>
+                              </div>
+                            </CardContent>
+                            <CardFooter className="select-none blur-lg">
+                              <Button
+                                size="sm"
+                                className="pointer-events-none w-full cursor-default"
+                                onClick={() => {
+                                  navigate(`/skema-sertifikasi/unit-kompetensi`, {
+                                    state: { id_skema_sertifikasi: id },
+                                  });
+                                }}>
+                                Lihat Skema
+                              </Button>
+                            </CardFooter>
+                          </Card>
+                          <div className="h-full w-full -translate-y-full rounded-lg bg-white/40">
+                            <Button
+                              className="absolute left-1/2 top-1/2 -translate-x-1/2"
+                              size="sm"
+                              onClick={() => {
+                                navigate(`/skema-sertifikasi`);
+                              }}>
+                              Selengkapnya
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  }
-                })}
+                      );
+                    }
+                  })}
+              </div>
             </div>
-          </div>
+          )}
           <div className="flex flex-col gap-4">
             <div className="flex gap-2">
               <div className="w-4 rounded-lg bg-primary-500 shadow-lg"></div>

@@ -62,8 +62,7 @@ const AktivitasUnitKompetensi = ({ indexUnitKompetensi, form }) => {
     return (
       <div
         key={field.id}
-        className="relative flex flex-col gap-8 rounded-lg border-2 border-secondary-300 p-12"
-      >
+        className="relative flex flex-col gap-8 rounded-lg border-2 border-secondary-300 p-12">
         <div className="flex flex-col gap-1">
           <p className="font-aileron text-secondary-300 transition-colors hover:text-secondary-400">
             Elemen
@@ -93,8 +92,7 @@ const AktivitasUnitKompetensi = ({ indexUnitKompetensi, form }) => {
           <button
             type="button"
             className="absolute right-1 top-1 rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100"
-            onClick={() => remove(index)}
-          >
+            onClick={() => remove(index)}>
             <XCircle />
           </button>
         )}
@@ -104,9 +102,7 @@ const AktivitasUnitKompetensi = ({ indexUnitKompetensi, form }) => {
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="flex flex-col gap-12">
-        {aktivitasUnitKompetensiFields}
-      </div>
+      <div className="flex flex-col gap-12">{aktivitasUnitKompetensiFields}</div>
       <Button
         type="button"
         className="col-span-1 col-start-10"
@@ -119,19 +115,14 @@ const AktivitasUnitKompetensi = ({ indexUnitKompetensi, form }) => {
               },
             ],
           })
-        }
-      >
+        }>
         <PlusSquare className="text-2xl" />
       </Button>
     </div>
   );
 };
 
-const KriteriaUnjukKerja = ({
-  indexUnitKompetensi,
-  indexAktivitasUnitKompetensi,
-  form,
-}) => {
+const KriteriaUnjukKerja = ({ indexUnitKompetensi, indexAktivitasUnitKompetensi, form }) => {
   const { fields, remove, append } = useFieldArray({
     name: `unit_kompetensi.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.kriteria_unjuk_kerja`,
     control: form.control,
@@ -164,8 +155,7 @@ const KriteriaUnjukKerja = ({
           <button
             type="button"
             className="absolute -right-2 top-1 translate-x-full rounded-lg bg-error-50 p-1 text-xl text-error-500 transition-colors hover:bg-error-100"
-            onClick={() => remove(index)}
-          >
+            onClick={() => remove(index)}>
             <XCircle />
           </button>
         )}
@@ -177,8 +167,7 @@ const KriteriaUnjukKerja = ({
               append({
                 kriteria_unjuk_kerja: "",
               })
-            }
-          >
+            }>
             <PlusSquare />
           </button>
         )}

@@ -58,7 +58,7 @@ export const DataAsesi = () => {
             </h1>
             <p>Data Asesi</p>
           </div>
-          <div className="block">
+          <div className="block rounded-lg bg-white p-6 shadow-lg">
             <table className="block w-full table-auto overflow-x-auto rounded-lg border-2 border-secondary-100">
               <thead className="border-2 border-secondary-500 bg-secondary-500 text-white">
                 <tr>
@@ -239,7 +239,7 @@ export const DataAsesi = () => {
             </h1>
             <p>Data Asesi {tempatUjiKompetensiData?.tempat_uji_kompetensi}</p>
           </div>
-          <div>
+          <div className="rounded-lg bg-white p-6 shadow-lg">
             <table className="block w-full table-auto overflow-x-auto rounded-lg border-2 border-secondary-100">
               <thead className="border-2 border-secondary-500 bg-secondary-500 text-white">
                 <tr>
@@ -327,7 +327,7 @@ export const DataAsesi = () => {
                       console.log(value);
                       return (
                         <tr key={id} className="text-sm">
-                          <td className="min-w-[6rem] border-2 border-b-0 border-secondary-100 px-4 py-2">
+                          <td className="min-w-[6rem] border-2 border-b-0 border-l-0 border-secondary-100 px-4 py-2">
                             <img
                               src={urlProfilUser}
                               alt=""

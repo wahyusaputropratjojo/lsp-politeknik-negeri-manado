@@ -2,7 +2,7 @@
 import { useState, useContext } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -105,7 +105,31 @@ export const Pendaftaran = () => {
 };
 
 const PenggunaBaru = () => {
+  const location = useLocation();
   const navigate = useNavigate();
+  const [fotoProfilPreview, setFotoProfilPreview, resetFotoProfilPreview] = useImagePreview();
+  const { toast } = useToast();
+
+  const test = location?.state?.id_skema_sertifikasi;
+
+  console.log(test);
+
+  const [provinsiAlamatRumahData, setProvinsiAlamatRumahData] = useState();
+  const [kotaKabupatenAlamatRumahData, setKotaKabupatenAlamatRumahData] = useState();
+  const [kecamatanAlamatRumahData, setKecamatanAlamatRumahData] = useState();
+  const [kelurahanDesaAlamatRumahData, setKelurahanDesaAlamatRumahData] = useState();
+  const [provinsiAlamatKantorData, setProvinsiAlamatKantorData] = useState();
+  const [kotaKabupatenAlamatKantorData, setKotaKabupatenAlamatKantorData] = useState();
+  const [kecamatanAlamatKantorData, setKecamatanAlamatKantorData] = useState();
+  const [kelurahanDesaAlamatKantorData, setKelurahanDesaAlamatKantorData] = useState();
+  const [skemaSertifikasiData, setSkemaSertifikasiData] = useState();
+  const [tujuanAsesmenData, setTujuanAsesmenData] = useState();
+  const [jenisKelaminData, setJenisKelaminData] = useState();
+  const [kualifikasiPendidikanData, setKualifikasiPendidikanData] = useState();
+  const [negaraData, setNegaraData] = useState();
+  const [persyaratanDasar, setPersyaratanDasar] = useState(null);
+  const [idSkemaSertifikasi, setIdSkemaSertifikasi] = useState(test);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const form = useForm({
     resolver: yupResolver(permohonanSertifikasiKompetensiSchema),
@@ -139,7 +163,7 @@ const PenggunaBaru = () => {
         id_kelurahan_desa: "",
         keterangan_lainnya: "",
       },
-      id_skema_sertifikasi: "",
+      id_skema_sertifikasi: "a364d474-185c-405d-ad56-280d0432729e",
       id_tujuan_asesmen: "",
       persyaratan_dasar: [],
       portofolio: [
@@ -191,26 +215,6 @@ const PenggunaBaru = () => {
 
   const toYear = currentYear - 17;
   const fromYear = currentYear - 70;
-
-  const [provinsiAlamatRumahData, setProvinsiAlamatRumahData] = useState();
-  const [kotaKabupatenAlamatRumahData, setKotaKabupatenAlamatRumahData] = useState();
-  const [kecamatanAlamatRumahData, setKecamatanAlamatRumahData] = useState();
-  const [kelurahanDesaAlamatRumahData, setKelurahanDesaAlamatRumahData] = useState();
-  const [provinsiAlamatKantorData, setProvinsiAlamatKantorData] = useState();
-  const [kotaKabupatenAlamatKantorData, setKotaKabupatenAlamatKantorData] = useState();
-  const [kecamatanAlamatKantorData, setKecamatanAlamatKantorData] = useState();
-  const [kelurahanDesaAlamatKantorData, setKelurahanDesaAlamatKantorData] = useState();
-  const [skemaSertifikasiData, setSkemaSertifikasiData] = useState();
-  const [tujuanAsesmenData, setTujuanAsesmenData] = useState();
-  const [jenisKelaminData, setJenisKelaminData] = useState();
-  const [kualifikasiPendidikanData, setKualifikasiPendidikanData] = useState();
-  const [negaraData, setNegaraData] = useState();
-  const [persyaratanDasar, setPersyaratanDasar] = useState(null);
-  const [idSkemaSertifikasi, setIdSkemaSertifikasi] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const [fotoProfilPreview, setFotoProfilPreview, resetFotoProfilPreview] = useImagePreview();
-  const { toast } = useToast();
 
   useQuery({
     queryKey: ["jenis-kelamin"],

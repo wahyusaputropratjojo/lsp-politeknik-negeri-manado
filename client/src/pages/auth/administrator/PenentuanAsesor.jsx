@@ -153,15 +153,6 @@ export const PenentuanAsesor = () => {
                       })}
                     </article>
                   );
-                } else {
-                  return (
-                    <div className="flex h-[60vh] flex-col items-center justify-center gap-2 rounded-lg bg-white shadow-lg">
-                      <ClipboardX className="text-8xl text-secondary-100" />
-                      <p className="font-aileron text-base text-secondary-500">
-                        Tidak Pengajuan Pendaftaran
-                      </p>
-                    </div>
-                  );
                 }
               })}
           </div>

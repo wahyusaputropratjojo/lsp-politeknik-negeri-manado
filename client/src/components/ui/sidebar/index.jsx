@@ -81,7 +81,6 @@ export const Sidebar = () => {
       return await axios.get(`/administrator/${id}/tempat-uji-kompetensi`);
     },
     onSuccess: (data) => {
-      console.log(data.data.data);
       setAdministratorTUKData(data?.data?.data?.tempat_uji_kompetensi?.kode_tempat_uji_kompetensi);
     },
     enabled: !!isAdministrator,
@@ -97,8 +96,6 @@ export const Sidebar = () => {
     },
     enabled: !!isAsesor,
   });
-
-  console.log(administratorTUKData, asesorTUKData);
 
   const { mutate } = useMutation({
     mutationFn: () => {
@@ -473,7 +470,7 @@ export const Sidebar = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+              {/* <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
                 <Tooltip>
                   <TooltipTrigger>
                     <Navigation to="/data-asesor" isMinimized={isMinimized} isDisabled={isDisabled}>
@@ -495,7 +492,7 @@ export const Sidebar = () => {
                     </div>
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
+              </TooltipProvider> */}
             </>
           )}
         </nav>

@@ -48,7 +48,20 @@ import {
   FRIA09,
   JadwalAsesmen,
 } from "./pages/auth/asesor";
-import { PenentuanAsesor, TinjauPersyaratan } from "./pages/auth/administrator";
+import {
+  BuatSkemaSertifikasi,
+  BuatUnitKompetensi,
+  FRIA01Administrator,
+  FRIA02Administrator,
+  FRIA03Administrator,
+  FRIA04Administrator,
+  FRIA05Administrator,
+  FRIA06Administrator,
+  FRIA07Administrator,
+  PenentuanAsesor,
+  TinjauPersyaratan,
+  UnitKompetensiDetail,
+} from "./pages/auth/administrator";
 import { DataAsesi } from "./pages/auth/administrator-asesor";
 
 // import {
@@ -76,7 +89,25 @@ export const Router = createBrowserRouter(
             <Route path="pendaftaran-asesor" element={<PendaftaranAsesor />} />
             <Route path="skema-sertifikasi">
               <Route index element={<SkemaSertifikasi />} />
-              <Route path="detail" element={<SkemaSertifikasiDetail />} />
+              <Route path="unit-kompetensi">
+                <Route index element={<SkemaSertifikasiDetail />} />
+                <Route element={<Authorization allowedRoles={["Administrator"]} />}>
+                  <Route path="buat-unit-kompetensi" element={<BuatUnitKompetensi />} />
+                  <Route path="detail-unit-kompetensi">
+                    <Route index element={<UnitKompetensiDetail />} />
+                    <Route path="FR-IA-01" element={<FRIA01Administrator />} />
+                    <Route path="FR-IA-02" element={<FRIA02Administrator />} />
+                    <Route path="FR-IA-03" element={<FRIA03Administrator />} />
+                    <Route path="FR-IA-04" element={<FRIA04Administrator />} />
+                    <Route path="FR-IA-05" element={<FRIA05Administrator />} />
+                    <Route path="FR-IA-06" element={<FRIA06Administrator />} />
+                    <Route path="FR-IA-07" element={<FRIA07Administrator />} />
+                  </Route>
+                </Route>
+              </Route>
+              <Route element={<Authorization allowedRoles={["Administrator"]} />}>
+                <Route path="buat-skema-sertifikasi" element={<BuatSkemaSertifikasi />} />
+              </Route>
             </Route>
             <Route element={<Authentication />}>
               <Route element={<Authorization allowedRoles={["Asesi"]} />}>

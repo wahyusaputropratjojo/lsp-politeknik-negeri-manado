@@ -5,11 +5,6 @@ import { Button } from "../../components/ui/button";
 
 export const NotFound = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    setTimeout(() => {
-      navigate("/");
-    }, 10000);
-  }, []);
 
   return (
     <section className="h-[100vh]">

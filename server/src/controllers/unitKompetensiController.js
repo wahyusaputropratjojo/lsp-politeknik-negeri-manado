@@ -25,36 +25,22 @@ export const listUnitKompetensi = async (req, res, next) => {
 };
 
 export const createUnitKompetensi = async (req, res, next) => {
-  const { id_skema_sertifikasi, kode, nama, standar_kompetensi } = req.body;
+  const { unit_kompetensi } = req.body;
 
   try {
-    if (!id_skema_sertifikasi) {
+    if (Object.keys(req.body).length === 0) {
       res.status(400);
       throw new Error("ID skema sertifikasi tidak boleh kosong!");
     }
 
-    if (!kode) {
+    if (unit_kompetensi.length === 0) {
       res.status(400);
-      throw new Error("Kode tidak boleh kosong!");
+      throw new Error("Unit kompetensi tidak boleh kosong!");
     }
 
-    if (!nama) {
-      res.status(400);
-      throw new Error("Nama tidak boleh kosong!");
-    }
-
-    if (!standar_kompetensi) {
-      res.status(400);
-      throw new Error("Standar kompetensi tidak boleh kosong!");
-    }
-
-    await prisma.unitKompetensi.create({
-      data: {
-        id_skema_sertifikasi,
-        kode,
-        nama,
-        standar_kompetensi,
-      },
+    await prisma.unitKompetensi.createMany({
+      data: unit_kompetensi,
+      skipDuplicates: true,
     });
 
     res.status(201).json({
