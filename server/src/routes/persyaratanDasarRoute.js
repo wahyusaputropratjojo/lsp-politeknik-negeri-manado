@@ -5,8 +5,14 @@ import express from "express";
 import { upload } from "../middlewares/upload.js";
 
 // Controllers
-import { listPersyaratanDasar } from "../controllers/persyaratanDasarController.js";
+import {
+  createPersyaratanDasar,
+  deletePersyaratanDasar,
+  listPersyaratanDasar,
+} from "../controllers/persyaratanDasarController.js";
 
 export const router = express.Router();
 
 router.get("/:id/persyaratan-dasar", listPersyaratanDasar);
+router.post("/persyaratan-dasar", createPersyaratanDasar);
+router.delete("/persyaratan-dasar/:id", deletePersyaratanDasar);

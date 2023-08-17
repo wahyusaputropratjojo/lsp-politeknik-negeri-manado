@@ -18,6 +18,7 @@ import {
   NotFound,
   Pendaftaran,
   PendaftaranAsesor,
+  PendaftaranAdministrator,
   SkemaSertifikasi,
   SkemaSertifikasiDetail,
   Unauthorized,
@@ -86,7 +87,14 @@ export const Router = createBrowserRouter(
           <Route index element={<Beranda />} />
           <Route element={<ContentLayout />}>
             <Route path="pendaftaran" element={<Pendaftaran />} />
-            <Route path="pendaftaran-asesor" element={<PendaftaranAsesor />} />
+            <Route
+              path="pendaftaran-asesor-47e5a94b-3a78-495e-a326-e2dbec6d49fe"
+              element={<PendaftaranAsesor />}
+            />
+            <Route
+              path="pendaftaran-administrator-b1a97b77-15a7-4aea-ad1f-55c04e73c1a2"
+              element={<PendaftaranAdministrator />}
+            />
             <Route path="skema-sertifikasi">
               <Route index element={<SkemaSertifikasi />} />
               <Route path="unit-kompetensi">

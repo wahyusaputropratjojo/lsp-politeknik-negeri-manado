@@ -67,6 +67,9 @@ model AsesiSkemaSertifikasi {
   is_verifikasi_berkas                            Boolean                                      @default(false) @map("is_verifikasi_berkas")
   is_verifikasi_portofolio_selesai                Boolean                                      @default(false) @map("is_verifikasi_portofolio_selesai")
   is_evaluasi_asesi_selesai                       Boolean                                      @default(false) @map("is_evaluasi_asesi_selesai")
+  is_tidak_kompeten                               Boolean                                      @default(false) @map("is_tidak_kompeten")
+  is_kompeten                                     Boolean                                      @default(false) @map("is_kompeten")
+  is_berkas_memenuhi_syarat                       Boolean                                      @default(false) @map("is_berkas_memenuhi_syarat")
   created_at                                      DateTime                                     @default(now()) @map("created_at")
   updated_at                                      DateTime                                     @updatedAt @map("updated_at")
   asesi                                           Asesi                                        @relation(fields: [id_asesi], references: [id], onDelete: Cascade)
@@ -153,7 +156,7 @@ model AsesiJawabanPertanyaanTertulisPilihanGanda {
   created_at                                   DateTime                               @default(now()) @map("created_at")
   updated_at                                   DateTime                               @updatedAt @map("updated_at")
   asesi_skema_sertifikasi                      AsesiSkemaSertifikasi?                 @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
-  JawabanPertanyaanTertulisPilihanGanda        JawabanPertanyaanTertulisPilihanGanda? @relation(fields: [id_jawaban_pertanyaan_tertulis_pilihan_ganda], references: [id])
+  jawaban_pertanyaan_tertulis_pilihan_ganda    JawabanPertanyaanTertulisPilihanGanda? @relation(fields: [id_jawaban_pertanyaan_tertulis_pilihan_ganda], references: [id])
 
   @@map("asesi_jawaban_pertanyaan_tertulis_pilihan_ganda")
 }
@@ -263,7 +266,7 @@ model AsesorProyekTerkaitPekerjaan {
   created_at                  DateTime                @default(now()) @map("created_at")
   updated_at                  DateTime                @updatedAt @map("updated_at")
   asesi_skema_sertifikasi     AsesiSkemaSertifikasi?  @relation(fields: [id_asesi_skema_sertifikasi], references: [id], onDelete: Cascade)
-  proyek_terkait_pekerjaan    ProyekTerkaitPekerjaan? @relation(fields: [id_proyek_terkait_pekerjaan], references: [id])
+  proyek_terkait_pekerjaan    ProyekTerkaitPekerjaan? @relation(fields: [id_proyek_terkait_pekerjaan], references: [id], onDelete: Cascade)
 
   @@map("asesor_proyek_terkait_pekerjaan")
 }
@@ -272,11 +275,13 @@ model AsesorProyekTerkaitPekerjaan {
 model Administrator {
   id                       String              @id @default(uuid()) @map("id")
   id_user                  String              @unique @map("id_user")
+  id_data_diri             String?             @unique @map("id_data_diri")
   id_tempat_uji_kompetensi String              @map("id_tempat_uji_kompetensi")
   created_at               DateTime            @default(now()) @map("created_at")
   updated_at               DateTime            @updatedAt @map("updated_at")
   user                     User                @relation(fields: [id_user], references: [id], onDelete: Cascade)
   tempat_uji_kompetensi    TempatUjiKompetensi @relation(fields: [id_tempat_uji_kompetensi], references: [id], onDelete: Cascade)
+  data_diri                DataDiri?           @relation(fields: [id_data_diri], references: [id], onDelete: Cascade)
 
   @@map("administrator")
 }
@@ -300,6 +305,7 @@ model DataDiri {
   kualifikasi_pendidikan    KualifikasiPendidikan? @relation(fields: [id_kualifikasi_pendidikan], references: [id], onDelete: Cascade)
   asesi                     Asesi?
   asesor                    Asesor?
+  administrator             Administrator?
 
   @@map("data_diri")
 }

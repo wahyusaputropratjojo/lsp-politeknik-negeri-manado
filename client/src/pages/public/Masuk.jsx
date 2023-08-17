@@ -110,12 +110,12 @@ export const Masuk = () => {
                   <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
                     Masuk
                   </h1>
-                  <p className="font-aileron text-base text-secondary-500">
+                  {/* <p className="font-aileron text-base text-secondary-500">
                     Belum punya akun?{" "}
                     <Link to="/daftar" className="underline">
                       Daftar Sekarang
                     </Link>
-                  </p>
+                  </p> */}
                 </div>
                 <div className="flex max-h-[36rem] flex-col gap-4 overflow-y-auto">
                   <FormField
@@ -161,7 +161,7 @@ export const Masuk = () => {
               </form>
             </Form>
           </div>
-          <DevTool control={form.control} />
+          {/* <DevTool control={form.control} /> */}
         </div>
       </section>
     );

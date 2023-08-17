@@ -386,6 +386,172 @@ export const registerAsesi = async (req, res, next) => {
   }
 };
 
+export const registerAsesiSkemaSertifikasi = async (req, res, next) => {
+  const files = req.files;
+
+  const {
+    id_asesi,
+    id_skema_sertifikasi,
+    id_tujuan_asesmen,
+    persyaratan_dasar,
+    portofolio,
+  } = req.body;
+
+  try {
+    if (!id_skema_sertifikasi) {
+      res.status(400);
+      throw new Error("Skema sertifikasi tidak boleh kosong!");
+    }
+
+    if (!id_tujuan_asesmen) {
+      res.status(400);
+      throw new Error("Tujuan asesmen tidak boleh kosong!");
+    }
+
+    if (persyaratan_dasar.length === 0) {
+      res.status(400);
+      throw new Error("Persyaratan dasar tidak boleh kosong!");
+    }
+
+    if (portofolio.length === 0) {
+      res.status(400);
+      throw new Error("Portofolio tidak boleh kosong!");
+    }
+
+    const generateLinkArray = async (array, req) => {
+      const linkMap = {};
+
+      for (const item of array) {
+        const link = `${req.protocol}://${req.get("host")}/uploads/${
+          item.filename
+        }`;
+        const fieldname = item.fieldname.replace(/\[\]$/, "");
+
+        if (linkMap[fieldname]) {
+          linkMap[fieldname].push(link);
+        } else {
+          linkMap[fieldname] = [link];
+        }
+      }
+
+      const newArray = Object.entries(linkMap).map(([fieldname, links]) => ({
+        fieldname,
+        link: links,
+      }));
+
+      return newArray;
+    };
+
+    const getSingleFileLink = async (linkFiles, fieldName) => {
+      let fieldValue;
+
+      for (const link of linkFiles) {
+        const { fieldname, link: links } = link;
+
+        if (fieldname === fieldName) {
+          fieldValue = links[0];
+          break;
+        }
+      }
+      return fieldValue;
+    };
+
+    const linkFiles = await generateLinkArray(files, req);
+
+    const asesiSkemaSertifikasi = await prisma.asesiSkemaSertifikasi.create({
+      data: {
+        asesi: {
+          connect: {
+            id: id_asesi,
+          },
+        },
+        skema_sertifikasi: {
+          connect: {
+            id: id_skema_sertifikasi,
+          },
+        },
+        tujuan_asesmen: {
+          connect: {
+            id: id_tujuan_asesmen,
+          },
+        },
+      },
+    });
+
+    for (const [index, valuePersyaratanDasar] of persyaratan_dasar.entries()) {
+      const { id_persyaratan_dasar } = valuePersyaratanDasar;
+
+      const propertyName = `persyaratan_dasar[${index}]`;
+
+      for (const valueLinkFiles of linkFiles) {
+        const { fieldname, link } = valueLinkFiles;
+
+        if (fieldname === propertyName) {
+          try {
+            const buktiPersyaratanDasar =
+              await prisma.buktiPersyaratanDasar.create({
+                data: {
+                  id_persyaratan_dasar,
+                  id_asesi_skema_sertifikasi: asesiSkemaSertifikasi?.id,
+                },
+              });
+            for (const valueLink of link) {
+              await prisma.fileBuktiPersyaratanDasar.create({
+                data: {
+                  url_file_bukti_persyaratan_dasar: valueLink,
+                  id_bukti_persyaratan_dasar: buktiPersyaratanDasar.id,
+                },
+              });
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+    }
+
+    for (const [index, valuePortofolio] of portofolio.entries()) {
+      const { keterangan } = valuePortofolio;
+
+      const propertyName = `portofolio[${index}]`;
+
+      for (const valueLinkFiles of linkFiles) {
+        const { fieldname, link } = valueLinkFiles;
+
+        if (fieldname === propertyName) {
+          try {
+            const portofolio = await prisma.portofolio.create({
+              data: {
+                keterangan,
+                id_asesi_skema_sertifikasi: asesiSkemaSertifikasi?.id,
+              },
+            });
+
+            for (const valueLink of link) {
+              await prisma.filePortofolio.create({
+                data: {
+                  url_file_portofolio: valueLink,
+                  id_portofolio: portofolio.id,
+                },
+              });
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+    }
+
+    res.status(201).json({
+      code: 201,
+      status: "Created",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 export const getStatusPendaftaran = async (req, res, next) => {
   const { id } = req.params;
 
@@ -402,6 +568,7 @@ export const getStatusPendaftaran = async (req, res, next) => {
                 id: true,
                 is_verifikasi_berkas: true,
                 is_punya_asesor: true,
+                is_berkas_memenuhi_syarat: true,
                 tujuan_asesmen: {
                   select: {
                     tujuan: true,
@@ -424,6 +591,11 @@ export const getStatusPendaftaran = async (req, res, next) => {
                   select: {
                     asesor: {
                       select: {
+                        data_diri: {
+                          select: {
+                            nomor_telepon: true,
+                          },
+                        },
                         user: {
                           select: {
                             nama_lengkap: true,
@@ -504,6 +676,10 @@ export const getStatusSkemaSertifikasiAsesi = async (req, res, next) => {
           is_punya_asesor: true,
           is_verifikasi_berkas: true,
           is_verifikasi_portofolio_selesai: true,
+          is_berkas_memenuhi_syarat: true,
+          is_evaluasi_pertanyaan_tertulis_esai_selesai: true,
+          is_kompeten: true,
+          is_tidak_kompeten: true,
         },
       });
 
@@ -520,6 +696,175 @@ export const getStatusSkemaSertifikasiAsesi = async (req, res, next) => {
   } catch (error) {
     next(error);
     console.log(error);
+  }
+};
+
+export const getAsesi = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const dataAsesi = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        asesi: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: dataAsesi,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getKompetensiPertanyaanTertulisPilihanGanda = async (
+  req,
+  res,
+  next
+) => {
+  const { id } = req.params;
+  try {
+    const kompetensiPertanyaanTertulisPilihanGanda =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          asesi_jawaban_pertanyaan_tertulis_pilihan_ganda: {
+            select: {
+              is_benar: true,
+              jawaban_pertanyaan_tertulis_pilihan_ganda: {
+                select: {
+                  is_benar: true,
+                },
+              },
+            },
+          },
+          skema_sertifikasi: {
+            select: {
+              unit_kompetensi: {
+                select: {
+                  pertanyaan_tertulis_pilihan_ganda: {
+                    select: {
+                      pertanyaan: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+    const unitKompetensiArray =
+      kompetensiPertanyaanTertulisPilihanGanda.skema_sertifikasi
+        .unit_kompetensi;
+
+    const asesiJawabanArray =
+      kompetensiPertanyaanTertulisPilihanGanda.asesi_jawaban_pertanyaan_tertulis_pilihan_ganda;
+
+    const totalPertanyaanCount = unitKompetensiArray.reduce(
+      (totalCount, unit) => {
+        totalCount += unit.pertanyaan_tertulis_pilihan_ganda.length;
+        return totalCount;
+      },
+      0
+    );
+
+    const totalKompeten = asesiJawabanArray.reduce((totalCount, item) => {
+      if (
+        item.is_benar &&
+        item.jawaban_pertanyaan_tertulis_pilihan_ganda.is_benar
+      ) {
+        totalCount++;
+      }
+      return totalCount;
+    }, 0);
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: {
+        total_kompeten: totalKompeten,
+        total_pertanyaan_tertulis_pilihan_ganda: totalPertanyaanCount,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getKompetensiPertanyaanTertulisEsai = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const kompetensiPertanyaanTertulisEsai =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          skema_sertifikasi: {
+            select: {
+              unit_kompetensi: {
+                select: {
+                  pertanyaan_tertulis_esai: {
+                    select: {
+                      pertanyaan: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          asesi_jawaban_pertanyaan_tertulis_esai: {
+            select: {
+              is_kompeten: true,
+            },
+          },
+        },
+      });
+
+    const unitKompetensiArray =
+      kompetensiPertanyaanTertulisEsai.skema_sertifikasi.unit_kompetensi;
+
+    const asesiJawabanArray =
+      kompetensiPertanyaanTertulisEsai.asesi_jawaban_pertanyaan_tertulis_esai;
+
+    const totalPertanyaan = unitKompetensiArray.reduce((totalCount, unit) => {
+      totalCount += unit.pertanyaan_tertulis_esai.length;
+      return totalCount;
+    }, 0);
+
+    const totalKompeten = asesiJawabanArray.reduce((totalCount, item) => {
+      if (item.is_kompeten === true) {
+        totalCount++;
+      }
+      return totalCount;
+    }, 0);
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: {
+        total_kompeten: totalKompeten,
+        total_pertanyaan_tertulis_esai: totalPertanyaan,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 };
 
@@ -557,6 +902,9 @@ export const listSkemaSertifikasiAsesi = async (req, res, next) => {
                 is_asesmen_mandiri: true,
                 is_asesmen_mandiri_selesai: true,
                 is_evaluasi_asesi_selesai: true,
+                is_kompeten: true,
+                is_tidak_kompeten: true,
+                is_berkas_memenuhi_syarat: true,
               },
             },
           },

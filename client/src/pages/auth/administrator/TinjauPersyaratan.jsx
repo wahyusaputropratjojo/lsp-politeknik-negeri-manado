@@ -29,12 +29,14 @@ import {
 
 import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/components/AnnotationAlert";
 import ClipboardX from "../../../assets/icons/untitled-ui-icons/line/components/ClipboardX";
+import { is } from "date-fns/locale";
 
 export const TinjauPersyaratan = () => {
   const { auth } = useContext(AuthContext);
   const [asesiSkemaSertifikasi, setAsesiSkemaSertifikasi] = useState(null);
   const [idAsesiSkemaSertifikasi, setIdAsesiSkemaSertifikasi] = useState(null);
-  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [isOpenDialogOne, setIsOpenDialogOne] = useState(false);
+  const [isOpenDialogTwo, setIsOpenDialogTwo] = useState(false);
   const [isRefetch, setIsRefetch] = useState(false);
 
   const idUser = auth?.id;
@@ -49,28 +51,41 @@ export const TinjauPersyaratan = () => {
     },
   });
 
-  const { mutate } = useMutation({
+  const { mutate: mutateTerimaAsesi } = useMutation({
     mutationFn: async () => {
       return await axios.patch(
         `/administrator/tempat-uji-kompetensi/skema-sertifikasi/asesi/${idAsesiSkemaSertifikasi}`,
         {
           is_verifikasi_berkas: true,
+          is_berkas_memenuhi_syarat: true,
         },
       );
     },
     onSuccess: () => {
       setIdAsesiSkemaSertifikasi(null);
+      refetch();
     },
   });
 
-  useEffect(() => {
-    refetch();
-    return () => setIsRefetch(false);
-  }, [isRefetch]);
+  const { mutate: mutateTolakAsesi } = useMutation({
+    mutationFn: async () => {
+      return await axios.patch(
+        `/administrator/tempat-uji-kompetensi/skema-sertifikasi/asesi/${idAsesiSkemaSertifikasi}`,
+        {
+          is_verifikasi_berkas: true,
+          is_berkas_memenuhi_syarat: false,
+        },
+      );
+    },
+    onSuccess: () => {
+      setIdAsesiSkemaSertifikasi(null);
+      refetch();
+    },
+  });
 
   return (
     <section>
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-8">
         <div>
           <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
             Tinjau Persyaratan
@@ -86,8 +101,11 @@ export const TinjauPersyaratan = () => {
                 nama_skema_sertifikasi: namaSkemaSertifikasi,
               } = value;
 
+              console.log(asesiSkemaSertifikasi);
+
               const filteredAsesiSkemaSertifikasi = asesiSkemaSertifikasi.filter(
-                (value) => value.is_verifikasi_berkas === false,
+                (value) =>
+                  value.is_verifikasi_berkas === false && value.is_berkas_memenuhi_syarat === false,
               );
 
               if (filteredAsesiSkemaSertifikasi.length !== 0) {
@@ -383,13 +401,13 @@ export const TinjauPersyaratan = () => {
                                                                 className="aspect-[3/4] w-20 cursor-pointer rounded-lg border-2 border-secondary-200 object-cover p-1"
                                                               />
                                                             </DialogTrigger>
-                                                            <DialogContent className="sm:max-w-[30rem]">
+                                                            <DialogContent>
                                                               <img
                                                                 src={
                                                                   value.url_file_bukti_persyaratan_dasar
                                                                 }
                                                                 alt="File Bukti Persyaratan"
-                                                                className="cursor-pointer rounded-lg object-cover"
+                                                                className="w-[50vh]"
                                                               />
                                                             </DialogContent>
                                                           </Dialog>
@@ -435,11 +453,11 @@ export const TinjauPersyaratan = () => {
                                                                 className="aspect-[3/4] w-20 cursor-pointer rounded-lg border-2 border-secondary-200 object-cover p-1"
                                                               />
                                                             </DialogTrigger>
-                                                            <DialogContent className="sm:max-w-[30rem]">
+                                                            <DialogContent>
                                                               <img
                                                                 src={value.url_file_portofolio}
                                                                 alt="File Portofolio"
-                                                                className="cursor-pointer rounded-lg object-cover"
+                                                                className="w-[50vh]"
                                                               />
                                                             </DialogContent>
                                                           </Dialog>
@@ -455,10 +473,66 @@ export const TinjauPersyaratan = () => {
                                       </AccordionItem>
                                     </Accordion>
                                   </div>
-                                  <div>
-                                    <AlertDialog open={isOpenDialog} onOpenChange={setIsOpenDialog}>
+                                  <div className="flex gap-4">
+                                    <AlertDialog
+                                      open={isOpenDialogOne}
+                                      onOpenChange={setIsOpenDialogOne}>
                                       <AlertDialogTrigger asChild>
-                                        <Button className="w-full">Setujui</Button>
+                                        <Button variant="error" className="w-full">
+                                          Tolak
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            <div className="flex flex-col items-center gap-2">
+                                              <AnnotationAlert className="text-5xl text-secondary-500" />
+                                              <p className="font-anek-latin text-xl">Tolak Asesi</p>
+                                            </div>
+                                          </AlertDialogTitle>
+                                          <AlertDialogDescription className="py-4 text-sm">
+                                            Harap diingat bahwa setelah tindakan ini dilakukan,
+                                            tidak akan ada kesempatan untuk mengulanginya. Apakah
+                                            Anda yakin?
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <div className="flex w-full gap-4">
+                                            <AlertDialogCancel asChild>
+                                              <Button
+                                                size="sm"
+                                                variant="outline-error"
+                                                className="w-full">
+                                                Batalkan
+                                              </Button>
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction asChild>
+                                              <Button
+                                                size="sm"
+                                                type="submit"
+                                                className="w-full"
+                                                onClick={() => {
+                                                  try {
+                                                    setIdAsesiSkemaSertifikasi(id);
+                                                    mutateTolakAsesi();
+                                                  } catch (error) {
+                                                    console.error(error);
+                                                  } finally {
+                                                    setIsOpenDialogOne(false);
+                                                  }
+                                                }}>
+                                                Konfirmasi
+                                              </Button>
+                                            </AlertDialogAction>
+                                          </div>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                    <AlertDialog
+                                      open={isOpenDialogTwo}
+                                      onOpenChange={setIsOpenDialogTwo}>
+                                      <AlertDialogTrigger asChild>
+                                        <Button className="w-full">Terima</Button>
                                       </AlertDialogTrigger>
                                       <AlertDialogContent>
                                         <AlertDialogHeader>
@@ -466,7 +540,7 @@ export const TinjauPersyaratan = () => {
                                             <div className="flex flex-col items-center gap-2">
                                               <AnnotationAlert className="text-5xl text-secondary-500" />
                                               <p className="font-anek-latin text-xl">
-                                                Tinjau Asesmen
+                                                Terima Asesi
                                               </p>
                                             </div>
                                           </AlertDialogTitle>
@@ -494,12 +568,11 @@ export const TinjauPersyaratan = () => {
                                                 onClick={() => {
                                                   try {
                                                     setIdAsesiSkemaSertifikasi(id);
-                                                    mutate();
-                                                    setIsRefetch(true);
+                                                    mutateTerimaAsesi();
                                                   } catch (error) {
                                                     console.error(error);
                                                   } finally {
-                                                    setIsOpenDialog(false);
+                                                    setIsOpenDialogTwo(false);
                                                   }
                                                 }}>
                                                 Konfirmasi

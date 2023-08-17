@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { AuthContext } from "../../context/AuthContext";
@@ -21,7 +22,7 @@ import {
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
 import { Button, buttonVariants } from "../../components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "../../components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../../components/ui/form";
 import { Textarea } from "../../components/ui/textarea";
 import {
   Table,
@@ -37,18 +38,21 @@ import PlusCircle from "../../assets/icons/untitled-ui-icons/line/components/Plu
 import Delete from "../../assets/icons/untitled-ui-icons/line/components/Delete";
 
 export const SkemaSertifikasiDetail = () => {
+  const form = useForm();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const { auth } = useContext(AuthContext);
 
-  const isAsesor = auth?.role === "Asesor";
-  const isAdministrator = auth?.role === "Administrator";
-
   const [skemaSertifikasiData, setSkemaSertifikasiData] = useState();
+  const [persyaratanDasarData, setPersyaratanDasarData] = useState();
   const [idUnitKompetensi, setIdUnitKompetensi] = useState();
+  const [idPersyaratanDasar, setIdPersyaratanDasar] = useState();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const state = location?.state;
+  const isAsesor = auth?.role === "Asesor";
+  const isAdministrator = auth?.role === "Administrator";
   const idSkemaSertifikasi = location?.state?.id_skema_sertifikasi;
 
   const { refetch } = useQuery({
@@ -59,6 +63,17 @@ export const SkemaSertifikasiDetail = () => {
     onSuccess: (data) => {
       setSkemaSertifikasiData(data.data.data);
     },
+  });
+
+  const { refetch: refetchPersyaratanDasar } = useQuery({
+    queryKey: ["persyaratan-dasar", auth?.id],
+    queryFn: async () => {
+      return await axios.get(`/skema-sertifikasi/${idSkemaSertifikasi}/persyaratan-dasar`);
+    },
+    onSuccess: (data) => {
+      setPersyaratanDasarData(data.data.data);
+    },
+    enabled: !!isAdministrator,
   });
 
   const { mutate } = useMutation({
@@ -74,6 +89,49 @@ export const SkemaSertifikasiDetail = () => {
       });
     },
   });
+
+  const { mutate: mutateDeletePersyaratanDasar } = useMutation({
+    mutationFn: async () => {
+      return await axios.delete(`/skema-sertifikasi/persyaratan-dasar/${idPersyaratanDasar}`);
+    },
+    onSuccess: () => {
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Unit Kompetensi berhasil dihapus",
+      });
+      refetchPersyaratanDasar();
+    },
+    enabled: !!isAdministrator,
+  });
+
+  const { mutate: mutateCreatePersyaratanDasar } = useMutation({
+    mutationFn: async (data) => {
+      return await axios.post(`/skema-sertifikasi/persyaratan-dasar`, data);
+    },
+    onSuccess: () => {
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Unit Kompetensi berhasil dihapus",
+      });
+      refetchPersyaratanDasar();
+    },
+    enabled: !!isAdministrator,
+  });
+
+  const onSubmit = (data) => {
+    try {
+      mutateCreatePersyaratanDasar({
+        id_skema_sertifikasi: idSkemaSertifikasi,
+        ...data,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDialogOpen(false);
+    }
+  };
 
   if (!!skemaSertifikasiData && !!idSkemaSertifikasi) {
     const {
@@ -118,25 +176,165 @@ export const SkemaSertifikasiDetail = () => {
               </div>
             </div>
             {!!isAdministrator && (
-              <div className="flex gap-12 rounded-lg bg-white shadow-lg">
-                <div className="rounded-lg bg-white p-4">
-                  <Button
-                    size="xs"
-                    onClick={() =>
-                      navigate("buat-unit-kompetensi", {
-                        state: {
-                          ...state,
-                          nama_skema_sertifikasi: namaSkemaSertifikasi,
-                        },
-                      })
-                    }>
-                    <div className="flex items-center gap-2">
-                      <PlusCircle />
-                      <p>Buat Unit Kompetensi</p>
-                    </div>
-                  </Button>
+              <>
+                <div className="flex flex-col gap-12 rounded-lg bg-white p-6 shadow-lg">
+                  <div>
+                    <Table className="text-base">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>No.</TableHead>
+                          <TableHead>Persyaratan Dasar</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {!!persyaratanDasarData &&
+                          persyaratanDasarData.map((value, index) => {
+                            const { id, persyaratan_dasar } = value;
+                            return (
+                              <TableRow key={value.id}>
+                                <TableCell>{index + 1}.</TableCell>
+                                <TableCell>{persyaratan_dasar}</TableCell>
+                                <TableCell>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger
+                                      className={cn(
+                                        buttonVariants({ variant: "error", size: "sm" }),
+                                        "w-full",
+                                      )}>
+                                      <Delete className="text-xl text-error-500" />
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          <div className="flex flex-col items-center gap-2">
+                                            <AnnotationAlert className="text-5xl text-secondary-500" />
+                                            <p className="font-anek-latin text-xl">
+                                              Hapus Persyaratan Dasar
+                                            </p>
+                                          </div>
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="py-4 text-sm">
+                                          Harap diingat bahwa setelah tindakan ini dilakukan, tidak
+                                          akan ada kesempatan untuk mengulanginya. Apakah Anda
+                                          yakin?
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <div className="flex w-full gap-4">
+                                          <AlertDialogCancel
+                                            className={cn(
+                                              buttonVariants({
+                                                size: "sm",
+                                                variant: "outline-error",
+                                              }),
+                                              "w-full",
+                                            )}>
+                                            Batalkan
+                                          </AlertDialogCancel>
+                                          <AlertDialogAction
+                                            className={cn(
+                                              buttonVariants({
+                                                size: "sm",
+                                              }),
+                                              "w-full",
+                                            )}
+                                            onClick={() => {
+                                              setIdPersyaratanDasar(id);
+                                              mutateDeletePersyaratanDasar();
+                                            }}>
+                                            Konfirmasi
+                                          </AlertDialogAction>
+                                        </div>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <Form {...form}>
+                      <FormField
+                        control={form.control}
+                        name="persyaratan_dasar"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Persyaratan Dasar</FormLabel>
+                            <FormControl>
+                              <Textarea {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </Form>
+                    <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <AlertDialogTrigger className={cn(buttonVariants(), "w-full")}>
+                        Simpan
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            <div className="flex flex-col items-center gap-2">
+                              <AnnotationAlert className="text-5xl text-secondary-500" />
+                              <p className="font-anek-latin text-xl">Buat Persyaratan Dasar</p>
+                            </div>
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="py-4 text-sm">
+                            Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan ada
+                            kesempatan untuk mengulanginya. Apakah Anda yakin?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <div className="flex w-full gap-4">
+                            <AlertDialogCancel
+                              className={cn(
+                                buttonVariants({
+                                  size: "sm",
+                                  variant: "outline-error",
+                                }),
+                                "w-full",
+                              )}>
+                              Batalkan
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              className={cn(
+                                buttonVariants({
+                                  size: "sm",
+                                }),
+                                "w-full",
+                              )}
+                              onClick={form.handleSubmit(onSubmit)}>
+                              Konfirmasi
+                            </AlertDialogAction>
+                          </div>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
-              </div>
+                <div className="flex gap-12 rounded-lg bg-white shadow-lg">
+                  <div className="rounded-lg bg-white p-4">
+                    <Button
+                      size="xs"
+                      onClick={() =>
+                        navigate("buat-unit-kompetensi", {
+                          state: {
+                            ...state,
+                            nama_skema_sertifikasi: namaSkemaSertifikasi,
+                          },
+                        })
+                      }>
+                      <div className="flex items-center gap-2">
+                        <PlusCircle />
+                        <p>Buat Unit Kompetensi</p>
+                      </div>
+                    </Button>
+                  </div>
+                </div>
+              </>
             )}
             {!!isAdministrator && (
               <div className="flex gap-12 rounded-lg bg-white p-6 shadow-lg">

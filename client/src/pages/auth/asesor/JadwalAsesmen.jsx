@@ -26,6 +26,24 @@ export const JadwalAsesmen = () => {
     },
   });
 
+  if (!!jadwalAsesmen && jadwalAsesmen.length === 0) {
+    return (
+      <div className="flex flex-col gap-8">
+        <div>
+          <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
+            Jadwal Asesmen
+          </h1>
+          <p>Jadwal pelaksanaan Asesmen Asesi</p>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div>
+            <p className="text-base">Tidak ada jadwal asesmen</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!!jadwalAsesmen && isSuccess) {
     return (
       <div className="flex flex-col gap-8">
@@ -33,7 +51,7 @@ export const JadwalAsesmen = () => {
           <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
             Jadwal Asesmen
           </h1>
-          <p>Jadwal pelaksanaan Asesmen</p>
+          <p>Jadwal pelaksanaan Asesmen Asesi</p>
         </div>
         <div className="grid grid-cols-1 gap-8">
           {jadwalAsesmen &&
@@ -97,21 +115,6 @@ export const JadwalAsesmen = () => {
                 </div>
               );
             })}
-        </div>
-      </div>
-    );
-  } else if (!jadwalAsesmen && isSuccess) {
-    return (
-      <div className="flex flex-col gap-8">
-        <div>
-          <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
-            Jadwal Asesmen
-          </h1>
-          <p>Jadwal pelaksanaan Asesmen</p>
-        </div>
-        <div className="flex h-[60vh] flex-col items-center justify-center gap-2 rounded-lg bg-white shadow-lg">
-          <ClipboardX className="text-8xl text-secondary-100" />
-          <p className="font-aileron text-base text-secondary-500">Tidak memiliki jadwal Asesmen</p>
         </div>
       </div>
     );

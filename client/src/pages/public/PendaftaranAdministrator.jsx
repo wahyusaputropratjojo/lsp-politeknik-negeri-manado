@@ -49,7 +49,7 @@ import PlusSquare from "../../assets/icons/untitled-ui-icons/line/components/Plu
 import RefreshCw04 from "../../assets/icons/untitled-ui-icons/line/components/RefreshCw04";
 import XCircle from "../../assets/icons/untitled-ui-icons/line/components/XCircle";
 
-export const PendaftaranAsesor = () => {
+export const PendaftaranAdministrator = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const form = useForm();
@@ -198,7 +198,7 @@ export const PendaftaranAsesor = () => {
 
   const { isLoading, mutate } = useMutation({
     mutationFn: async (data) => {
-      return await axios.post(`/asesor/register`, data, {
+      return await axios.post(`/administrator/register`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -208,7 +208,7 @@ export const PendaftaranAsesor = () => {
       toast({
         variant: "success",
         title: "Berhasil",
-        description: "Pendaftaran Asesor berhasil",
+        description: "Pendaftaran Administrator berhasil",
       });
       navigate("/masuk", {
         state: {
@@ -221,7 +221,7 @@ export const PendaftaranAsesor = () => {
       toast({
         variant: "error",
         title: "Gagal",
-        description: "Pendaftaran Asesor gagal",
+        description: "Pendaftaran Administrator gagal",
       });
     },
   });
@@ -229,6 +229,7 @@ export const PendaftaranAsesor = () => {
   const onSubmit = (data) => {
     try {
       mutate(data);
+      console.log(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -243,7 +244,7 @@ export const PendaftaranAsesor = () => {
           <div>
             <div>
               <h1 className="font-anek-latin text-5xl font-semibold uppercase">
-                Pendaftaran Asesor
+                Pendaftaran Administrator
               </h1>
               <p className="font-aileron text-base">Pendaftaran Asesor</p>
             </div>

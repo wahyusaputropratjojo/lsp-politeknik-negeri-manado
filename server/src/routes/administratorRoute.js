@@ -5,6 +5,7 @@ import { upload } from "../middlewares/upload.js";
 
 // Controllers
 import {
+  registerAdministrator,
   listAsesiByTempatUjiKompetensi,
   listAsesorByTempatUjiKompetensi,
   listSkemaSertifikasi,
@@ -12,12 +13,13 @@ import {
   createSkemaSertifikasi,
   updateAsesiSkemaSertifikasi,
   getTempatUjiKompetensi,
+  deleteSkemaSertifikasi,
   // updateStatusVerifikasiBerkasAsesi,
   // updateStatusPunyaAsesor,
 } from "../controllers/administratorController.js";
 
 export const router = express.Router();
-
+router.post("/register", upload.any(), registerAdministrator);
 router.get("/:id/tempat-uji-kompetensi/asesi", listAsesiByTempatUjiKompetensi);
 router.get(
   "/:id/tempat-uji-kompetensi/skema-sertifikasi",
@@ -41,3 +43,7 @@ router.patch(
   updateAsesiSkemaSertifikasi
 );
 router.get("/:id/tempat-uji-kompetensi", getTempatUjiKompetensi);
+router.delete(
+  "/tempat-uji-kompetensi/skema-sertifikasi/:id",
+  deleteSkemaSertifikasi
+);

@@ -66,11 +66,7 @@ export const PertanyaanTertulisPilihanGanda = () => {
     },
   });
 
-  const {
-    mutate: mutateJawabanPertanyaanTertulisPilihanGanda,
-    isSuccess: isSuccessJawabanPertanyaanTertulisPilihanGanda,
-    isError: isErrorJawabanPertanyaanTertulisPilihanGanda,
-  } = useMutation({
+  const { mutate: mutateJawabanPertanyaanTertulisPilihanGanda } = useMutation({
     mutationFn: async (data) => {
       return await axios.post(
         `/asesi/skema-sertifikasi/jawaban-pertanyaan-tertulis-pilihan-ganda`,
@@ -89,16 +85,20 @@ export const PertanyaanTertulisPilihanGanda = () => {
     },
   });
 
-  const {
-    mutate: mutateUpdateAsesiSkemaSertifikasi,
-    isSuccess: isSuccessUpdateAsesiSkemaSertifikasi,
-    isError: isErrorUpdateAsesiSkemaSertifikasi,
-  } = useMutation({
+  const { mutate: mutateUpdateAsesiSkemaSertifikasi } = useMutation({
     mutationFn: async (data) => {
       return await axios.patch(`/asesi/skema-sertifikasi/${idAsesiSkemaSertifikasi}`, data);
     },
     onSuccess: (data) => {
-      console.log(data);
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Pertanyaan Tertulis Pilihan Ganda telah selesai",
+      });
+
+      navigate(`/uji-kompetensi/skema-sertifikasi`, {
+        state: { id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi },
+      });
     },
     onError: (error) => {
       toast({
@@ -127,18 +127,6 @@ export const PertanyaanTertulisPilihanGanda = () => {
       setIsDialogOpen(false);
     }
   };
-
-  if (isSuccessJawabanPertanyaanTertulisPilihanGanda && isSuccessUpdateAsesiSkemaSertifikasi) {
-    toast({
-      variant: "success",
-      title: "Berhasil",
-      description: "Pertanyaan Tertulis Pilihan Ganda telah selesai",
-    });
-
-    navigate(`/uji-kompetensi/skema-sertifikasi`, {
-      state: { id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi },
-    });
-  }
 
   if (!!idAsesiSkemaSertifikasi) {
     return (

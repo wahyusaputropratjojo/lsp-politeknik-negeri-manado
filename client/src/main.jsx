@@ -9,7 +9,13 @@ import { Toaster } from "./components/ui/toaster";
 // Context
 import { AuthProvider } from "./context/AuthContext.jsx";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: 1000,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

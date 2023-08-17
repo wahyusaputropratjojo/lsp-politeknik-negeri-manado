@@ -11,7 +11,15 @@ import {
   createAsesorVerifikasiPortofolio,
   createAsesorProyekTerkaitPekerjaan,
   getAsesiSkemaSertifikasi,
+  getKompetensiAsesmenMandiri,
+  getKompetensiObservasiTempatKerja,
+  getKompetensiPertanyaanObservasi,
+  getKompetensiPertanyaanTertulisPilihanGanda,
+  getKompetensiPertanyaanTertulisEsai,
+  getKompetensiPertanyaanLisan,
+  getKompetensiPortofolio,
   listAsesi,
+  listSkemaSertifikasi,
   updateAsesiSkemaSertifikasi,
   updateEvaluasiPertanyaanTertulisEsai,
   registerAsesor,
@@ -45,6 +53,34 @@ router.post(
 
 router.get("/:id/tempat-uji-kompetensi/asesi", listAsesi);
 router.get("/tempat-uji-kompetensi/asesi/:id", getAsesiSkemaSertifikasi);
+router.get(
+  "/tempat-uji-kompetensi/asesi/:id/kompetensi-asesmen-mandiri",
+  getKompetensiAsesmenMandiri
+);
+router.get(
+  "/tempat-uji-kompetensi/asesi/:id/kompetensi-observasi-tempat-kerja",
+  getKompetensiObservasiTempatKerja
+);
+router.get(
+  "/tempat-uji-kompetensi/asesi/:id/kompetensi-pertanyaan-observasi",
+  getKompetensiPertanyaanObservasi
+);
+router.get(
+  "/tempat-uji-kompetensi/asesi/:id/kompetensi-pertanyaan-tertulis-pilihan-ganda",
+  getKompetensiPertanyaanTertulisPilihanGanda
+);
+router.get(
+  "/tempat-uji-kompetensi/asesi/:id/kompetensi-pertanyaan-tertulis-esai",
+  getKompetensiPertanyaanTertulisEsai
+);
+router.get(
+  "/tempat-uji-kompetensi/asesi/:id/kompetensi-pertanyaan-lisan",
+  getKompetensiPertanyaanLisan
+);
+router.get(
+  "/tempat-uji-kompetensi/asesi/:id/kompetensi-portofolio",
+  getKompetensiPortofolio
+);
 router.patch("/tempat-uji-kompetensi/asesi/:id", updateAsesiSkemaSertifikasi);
 router.post(
   "/tempat-uji-kompetensi/asesi/evaluasi-jawaban-pertanyaan-esai",
@@ -52,3 +88,7 @@ router.post(
 );
 
 router.get("/:id/tempat-uji-kompetensi", getTempatUjiKompetensi);
+router.get(
+  "/:id/tempat-uji-kompetensi/skema-sertifikasi",
+  listSkemaSertifikasi
+);

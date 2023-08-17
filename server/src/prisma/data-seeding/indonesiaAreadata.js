@@ -26,16 +26,16 @@ const capitalizePropertyValue = (arr, propertyName) => {
   return arr;
 };
 
-const addProperty = (arr, newPropertyName, sourcePropertyName) => {
-  for (let obj of arr) {
-    if (obj.hasOwnProperty(sourcePropertyName)) {
-      const sourcePropertyValue = obj[sourcePropertyName];
-      const lowercaseValue = sourcePropertyValue.toLowerCase();
-      obj[newPropertyName] = lowercaseValue;
-    }
-  }
-  return arr;
-};
+// const addProperty = (arr, newPropertyName, sourcePropertyName) => {
+//   for (let obj of arr) {
+//     if (obj.hasOwnProperty(sourcePropertyName)) {
+//       const sourcePropertyValue = obj[sourcePropertyName];
+//       const lowercaseValue = sourcePropertyValue.toLowerCase();
+//       obj[newPropertyName] = lowercaseValue;
+//     }
+//   }
+//   return arr;
+// };
 
 export const getProvinsi = async () => {
   const provinsi = await IdnArea.provinces();

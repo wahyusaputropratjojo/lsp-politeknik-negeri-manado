@@ -12,12 +12,16 @@ import {
   getSkemaSertifikasiAsesi,
   getStatusPendaftaran,
   getStatusSkemaSertifikasiAsesi,
+  getAsesi,
+  getKompetensiPertanyaanTertulisEsai,
+  getKompetensiPertanyaanTertulisPilihanGanda,
   listAktivitasUnitKompetensiUntukAsesmenMandiri,
   listPertanyaanTertulisEsai,
   listPertanyaanTertulisPilihanGanda,
   listSkemaSertifikasiAsesi,
   listTugasPraktikDemonstrasi,
   registerAsesi,
+  registerAsesiSkemaSertifikasi,
   updateAsesiSkemaSertifikasi,
 } from "../controllers/asesiController.js";
 
@@ -29,31 +33,44 @@ router.get("/skema-sertifikasi/:id/status", getStatusSkemaSertifikasiAsesi);
 router.get("/:id/skema-sertifikasi", listSkemaSertifikasiAsesi);
 router.get(
   "/skema-sertifikasi/:id/aktivitas-unit-kompetensi",
-  listAktivitasUnitKompetensiUntukAsesmenMandiri,
+  listAktivitasUnitKompetensiUntukAsesmenMandiri
 );
 router.get(
   "/skema-sertifikasi/:id/tugas-praktik-demonstrasi",
-  listTugasPraktikDemonstrasi,
+  listTugasPraktikDemonstrasi
 );
 
 router.get(
   "/skema-sertifikasi/:id/pertanyaan-tertulis-esai",
-  listPertanyaanTertulisEsai,
+  listPertanyaanTertulisEsai
 );
 router.get(
   "/skema-sertifikasi/:id/pertanyaan-tertulis-pilihan-ganda",
-  listPertanyaanTertulisPilihanGanda,
+  listPertanyaanTertulisPilihanGanda
 );
-
+router.get(
+  "/skema-sertifikasi/:id/kompetensi-pertanyaan-tertulis-pilihan-ganda",
+  getKompetensiPertanyaanTertulisPilihanGanda
+);
+router.get(
+  "/skema-sertifikasi/:id/kompetensi-pertanyaan-tertulis-esai",
+  getKompetensiPertanyaanTertulisEsai
+);
 router.post("/register", upload.any(), registerAsesi);
+router.post(
+  "/register/skema-sertifikasi",
+  upload.any(),
+  registerAsesiSkemaSertifikasi
+);
 router.post("/asesmen-mandiri", createAsesmenMandiri);
 router.post(
   "/skema-sertifikasi/jawaban-pertanyaan-tertulis-pilihan-ganda",
-  createJawabanPertanyaanTertulisPilihanGanda,
+  createJawabanPertanyaanTertulisPilihanGanda
 );
 router.post(
   "/skema-sertifikasi/jawaban-pertanyaan-tertulis-esai",
-  createJawabanPertanyaanTertulisEsai,
+  createJawabanPertanyaanTertulisEsai
 );
 
 router.patch("/skema-sertifikasi/:id", updateAsesiSkemaSertifikasi);
+router.get("/:id", getAsesi);

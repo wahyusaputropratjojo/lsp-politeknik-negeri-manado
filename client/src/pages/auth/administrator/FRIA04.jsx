@@ -148,6 +148,7 @@ export const FRIA04Administrator = () => {
                     {!!proyekTerkaitPekerjaanData &&
                       proyekTerkaitPekerjaanData.map((value, index) => {
                         const { id, persiapan, demonstrasi } = value;
+
                         return (
                           <TableRow key={id}>
                             <TableCell className="w-20 align-top text-base">{index + 1}.</TableCell>

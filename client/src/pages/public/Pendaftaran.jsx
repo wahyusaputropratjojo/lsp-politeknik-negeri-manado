@@ -81,7 +81,9 @@ export const Pendaftaran = () => {
             <h1 className="font-anek-latin text-5xl font-semibold uppercase">Pendaftaran</h1>
             <p className="font-aileron text-base">Pendaftaran Sertifikasi Kompetensi</p>
           </div>
-          <div>Formulir Untuk Asesi</div>
+          <div>
+            <PenggunaTerdaftar isAsesi={isAsesi} auth={auth} />
+          </div>
         </section>
       </>
     );
@@ -110,9 +112,7 @@ const PenggunaBaru = () => {
   const [fotoProfilPreview, setFotoProfilPreview, resetFotoProfilPreview] = useImagePreview();
   const { toast } = useToast();
 
-  const test = location?.state?.id_skema_sertifikasi;
-
-  console.log(test);
+  console.log(location);
 
   const [provinsiAlamatRumahData, setProvinsiAlamatRumahData] = useState();
   const [kotaKabupatenAlamatRumahData, setKotaKabupatenAlamatRumahData] = useState();
@@ -128,7 +128,9 @@ const PenggunaBaru = () => {
   const [kualifikasiPendidikanData, setKualifikasiPendidikanData] = useState();
   const [negaraData, setNegaraData] = useState();
   const [persyaratanDasar, setPersyaratanDasar] = useState(null);
-  const [idSkemaSertifikasi, setIdSkemaSertifikasi] = useState(test);
+  const [idSkemaSertifikasi, setIdSkemaSertifikasi] = useState(
+    location?.state?.id_skema_sertifikasi || null,
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const form = useForm({
@@ -163,7 +165,7 @@ const PenggunaBaru = () => {
         id_kelurahan_desa: "",
         keterangan_lainnya: "",
       },
-      id_skema_sertifikasi: "a364d474-185c-405d-ad56-280d0432729e",
+      id_skema_sertifikasi: location?.state?.id_skema_sertifikasi || "",
       id_tujuan_asesmen: "",
       persyaratan_dasar: [],
       portofolio: [
@@ -568,7 +570,8 @@ const PenggunaBaru = () => {
                               className="grid w-full grid-cols-12 justify-items-start">
                               <p className="col-span-11 flex w-full items-start justify-self-start truncate">
                                 {field.value
-                                  ? skemaSertifikasiData.find((data) => data.id === field.value)
+                                  ? !!skemaSertifikasiData &&
+                                    skemaSertifikasiData.find((data) => data.id === field.value)
                                       ?.nama_skema_sertifikasi
                                   : ""}
                               </p>
@@ -1877,7 +1880,424 @@ const PenggunaBaru = () => {
   );
 };
 
-const PenggunaTerdaftar = () => {};
+const PenggunaTerdaftar = ({ auth, isAsesi }) => {
+  const location = useLocation();
+  const { toast } = useToast();
+  const form = useForm({
+    defaultValues: {
+      id_skema_sertifikasi: location?.state?.id_skema_sertifikasi || "",
+      id_tujuan_asesmen: "",
+      portofolio: [
+        {
+          keterangan: "",
+          bukti: [],
+        },
+      ],
+    },
+  });
+
+  const [skemaSertifikasiData, setSkemaSertifikasiData] = useState();
+  const [tujuanAsesmenData, setTujuanAsesmenData] = useState();
+  const [persyaratanDasar, setPersyaratanDasar] = useState(null);
+  const [idSkemaSertifikasi, setIdSkemaSertifikasi] = useState(
+    location?.state?.id_skema_sertifikasi || null,
+  );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [idAsesi, setIdAsesi] = useState();
+
+  useQuery({
+    queryKey: ["asesi", auth?.id],
+    queryFn: async () => {
+      return await axios.get(`/asesi/${auth?.id}`);
+    },
+    onSuccess: (data) => {
+      setIdAsesi(data.data.data.asesi.id);
+    },
+    enabled: !!isAsesi,
+  });
+
+  useQuery({
+    queryKey: ["skema-sertifikasi"],
+    queryFn: async () => {
+      return await axios.get(`/skema-sertifikasi`);
+    },
+    onSuccess: (data) => {
+      setSkemaSertifikasiData(data.data.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  useQuery({
+    queryKey: ["tujuan-asesmen"],
+    queryFn: async () => {
+      return await axios.get(`/skema-sertifikasi/tujuan-asesmen`);
+    },
+    onSuccess: (data) => {
+      setTujuanAsesmenData(data.data.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  useQuery({
+    queryKey: ["persyaratan-dasar", idSkemaSertifikasi],
+    queryFn: async () => {
+      return await axios.get(`/skema-sertifikasi/${idSkemaSertifikasi}/persyaratan-dasar`);
+    },
+    onSuccess: (data) => {
+      setPersyaratanDasar(data.data.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+    enabled: !!idSkemaSertifikasi,
+  });
+
+  const { isLoading, mutate } = useMutation({
+    mutationFn: async (data) => {
+      return await axios.post(`/asesi/register/skema-sertifikasi`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    },
+    onSuccess: (data) => {
+      setPersyaratanDasar(null);
+      toast({
+        variant: "success",
+        title: "Pendaftaran Skema Sertifikasi Berhasil",
+        description: "Silahkan periksa Status Pendaftaran untuk info lebih lanjut",
+      });
+      form.reset();
+    },
+    onError: (error) => {
+      console.log(error);
+      toast({
+        variant: "error",
+        title: "Terjadi Kesalahan",
+        description: "Silahkan coba lagi",
+      });
+    },
+  });
+
+  const onSubmit = (data) => {
+    const { id_skema_sertifikasi, id_tujuan_asesmen, persyaratan_dasar, portofolio } = data;
+
+    const processArrayEntries = (inputArray, propertyName, customPropertyName) => {
+      const resultObject = {};
+      for (const [index, valueInputArray] of inputArray.entries()) {
+        const fileList = valueInputArray[propertyName];
+        const fileArray = Array.from(fileList);
+        const fileValueArray = [];
+        for (const valueFileArray of fileArray) {
+          fileValueArray.push(valueFileArray);
+        }
+        resultObject[`${customPropertyName}[${index}]`] = fileValueArray;
+      }
+      return resultObject;
+    };
+
+    try {
+      const persyaratanDasarFile = processArrayEntries(
+        persyaratan_dasar,
+        "bukti",
+        "persyaratan_dasar",
+      );
+
+      const portofolioFile = processArrayEntries(portofolio, "bukti", "portofolio");
+
+      mutate({
+        id_asesi: idAsesi,
+        id_skema_sertifikasi,
+        id_tujuan_asesmen,
+        persyaratan_dasar,
+        ...persyaratanDasarFile,
+        portofolio,
+        ...portofolioFile,
+      });
+
+      // console.log({
+      //   id_asesi: idAsesi,
+      //   id_skema_sertifikasi,
+      //   id_tujuan_asesmen,
+      //   persyaratan_dasar,
+      //   ...persyaratanDasarFile,
+      //   portofolio,
+      //   ...portofolioFile,
+      // });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDialogOpen(false);
+    }
+  };
+
+  if (!!idAsesi) {
+    return (
+      <div>
+        <div>
+          <Form {...form}>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 rounded-lg bg-white p-12 shadow-lg">
+                <div>
+                  <p className="font-anek-latin text-2xl font-semibold text-secondary-500">
+                    Skema Sertifikasi
+                  </p>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div className="grid grid-cols-2 gap-8">
+                    <FormField
+                      control={form.control}
+                      name="id_skema_sertifikasi"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Skema Sertifkasi</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                disabled={isLoading}
+                                similar={
+                                  form.formState.errors?.id_skema_sertifikasi
+                                    ? "input-error"
+                                    : "input-primary"
+                                }
+                                role="combobox"
+                                className="grid w-full grid-cols-12 justify-items-start">
+                                <p className="col-span-11 flex w-full items-start justify-self-start truncate">
+                                  {field.value
+                                    ? !!skemaSertifikasiData &&
+                                      skemaSertifikasiData.find((data) => data.id === field.value)
+                                        ?.nama_skema_sertifikasi
+                                    : ""}
+                                </p>
+                                <ChevronSelectorVertical className="col-span-1 justify-self-end" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                              <Command>
+                                <CommandGroup>
+                                  <ScrollArea className="h-48">
+                                    {!!skemaSertifikasiData &&
+                                      skemaSertifikasiData.map((data) => (
+                                        <CommandItem
+                                          className="min-w-max pr-6 first:rounded-t-lg last:rounded-b-lg"
+                                          key={data.id}
+                                          value={data.id}
+                                          onSelect={(value) => {
+                                            form.setValue("id_skema_sertifikasi", value, {
+                                              shouldValidate: true,
+                                            });
+                                            form.setValue("persyaratan_dasar", null);
+                                            setIdSkemaSertifikasi(data.id);
+                                          }}>
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              data.id === field.value ? "opacity-100" : "opacity-0",
+                                            )}
+                                          />
+                                          {data.nama_skema_sertifikasi}
+                                        </CommandItem>
+                                      ))}
+                                  </ScrollArea>
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="id_tujuan_asesmen"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tujuan Asesmen</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                disabled={isLoading}
+                                similar={
+                                  form.formState.errors?.id_tujuan_asesmen
+                                    ? "input-error"
+                                    : "input-primary"
+                                }
+                                role="combobox"
+                                className="grid w-full grid-cols-12 justify-items-start">
+                                <p className="col-span-11 flex w-full items-start justify-self-start truncate">
+                                  {field.value
+                                    ? tujuanAsesmenData.find((data) => data.id === field.value)
+                                        ?.tujuan
+                                    : ""}
+                                </p>
+                                <ChevronSelectorVertical className="col-span-1 justify-self-end" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                              <Command>
+                                <CommandGroup>
+                                  <ScrollArea className="h-48">
+                                    {!!tujuanAsesmenData &&
+                                      tujuanAsesmenData.map((data) => (
+                                        <CommandItem
+                                          className="min-w-max pr-6 first:rounded-t-lg last:rounded-b-lg"
+                                          key={data.id}
+                                          value={data.id}
+                                          onSelect={(value) => {
+                                            form.setValue("id_tujuan_asesmen", value, {
+                                              shouldValidate: true,
+                                            });
+                                          }}>
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              data.id === field.value ? "opacity-100" : "opacity-0",
+                                            )}
+                                          />
+                                          {data.tujuan}
+                                        </CommandItem>
+                                      ))}
+                                  </ScrollArea>
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+              {!!persyaratanDasar && (
+                <div className="flex flex-col rounded-lg bg-white p-12 shadow-lg">
+                  <div className="flex flex-col gap-12">
+                    <div className="flex flex-col gap-4">
+                      <p className="font-anek-latin text-2xl font-semibold text-secondary-500">
+                        Persyaratan Dasar
+                      </p>
+                      <Table>
+                        <TableHeader className="text-base">
+                          <TableRow>
+                            <TableHead className="w-8/12">Syarat</TableHead>
+                            <TableHead className="w-3/12">Bukti</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody className="text-base">
+                          {!!persyaratanDasar &&
+                            persyaratanDasar.map((data, index) => (
+                              <TableRow key={data.id}>
+                                <TableCell>{data.persyaratan_dasar}</TableCell>
+                                <TableCell>
+                                  <div className="flex justify-end gap-4">
+                                    <FormField
+                                      control={form.control}
+                                      name={`persyaratan_dasar.${index}.bukti`}
+                                      render={({ field }) => (
+                                        <FormItem className="w-full self-end">
+                                          <FormControl>
+                                            <Upload
+                                              {...field}
+                                              variant={
+                                                form.formState.errors?.persyaratan_dasar?.[index]
+                                                  ?.bukti
+                                                  ? "error"
+                                                  : "primary"
+                                              }
+                                              disabled={isLoading}
+                                              value={field.value?.fileName}
+                                              size="xs"
+                                              totalFile={
+                                                form.watch(`persyaratan_dasar.${index}.bukti`)
+                                                  ?.length ?? 0
+                                              }
+                                              multiple
+                                              onChange={(event) => {
+                                                field.onChange(event.target.files);
+                                                form.setValue(
+                                                  `persyaratan_dasar.${index}.id_persyaratan_dasar`,
+                                                  data.id,
+                                                );
+                                              }}
+                                              accept={"image/*"}
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-col rounded-lg bg-white p-12 shadow-lg">
+                <div className="flex flex-col gap-4">
+                  <p className="font-anek-latin text-2xl font-semibold text-secondary-500">
+                    Portofolio
+                  </p>
+                  <div>
+                    <Portofolio form={form} isLoading={isLoading} />
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-lg bg-white p-6 shadow-lg">
+                <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button disabled={isLoading} className="w-full gap-2">
+                      {isLoading && <RefreshCw04 className="origin-center animate-spin" />}
+                      Selesai
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        <div className="flex flex-col items-center gap-2">
+                          <AnnotationAlert className="text-5xl text-secondary-500" />
+                          <p className="font-anek-latin text-xl">Pendaftaran Asesi</p>
+                        </div>
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="py-4 text-sm">
+                        Pastikan data yang dimasukkan sudah sesuai, karena ada beberapa data yang
+                        tidak bisa di ubah lagi. Apakah Anda yakin?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <div className="flex w-full gap-4">
+                        <AlertDialogCancel asChild>
+                          <Button size="sm" variant="outline-error" className="w-full">
+                            Batalkan
+                          </Button>
+                        </AlertDialogCancel>
+                        <AlertDialogAction asChild>
+                          <Button
+                            size="sm"
+                            className="w-full"
+                            onClick={form.handleSubmit(onSubmit)}>
+                            Konfirmasi
+                          </Button>
+                        </AlertDialogAction>
+                      </div>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          </Form>
+        </div>
+      </div>
+    );
+  }
+};
 
 const Portofolio = ({ form, isLoading }) => {
   const [imageFiles, setImageFiles] = useState([]);

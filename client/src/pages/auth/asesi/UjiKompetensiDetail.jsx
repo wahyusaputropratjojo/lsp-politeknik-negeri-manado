@@ -23,7 +23,7 @@ import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/compon
 import CheckCircle from "../../../assets/icons/untitled-ui-icons/line/components/CheckCircle";
 import PencilLine from "../../../assets/icons/untitled-ui-icons/line/components/PencilLine";
 import InfoCircle from "../../../assets/icons/untitled-ui-icons/line/components/InfoCircle";
-import { is } from "date-fns/locale";
+import XCircle from "../../../assets/icons/untitled-ui-icons/line/components/XCircle";
 
 export const UjiKompetensiDetail = () => {
   const navigate = useNavigate();
@@ -36,8 +36,43 @@ export const UjiKompetensiDetail = () => {
   const [isAlertDialogOpenComponentOne, setIsAlertDialogOpenComponentOne] = useState(false);
   const [isAlertDialogOpenComponentTwo, setIsAlertDialogOpenComponentTwo] = useState(false);
   const [isAlertDialogOpenComponentThree, setIsAlertDialogOpenComponentThree] = useState(false);
+  const [totalKompetenFRIA05, setTotalKompetenFRIA05] = useState();
+  const [totalKompetenFRIA06, setTotalKompetenFRIA06] = useState();
+  const [totalPertanyaanTertulisPilihanGandaFRIA05, setTotalPertanyaanTertulisPilihanGandaFRIA05] =
+    useState();
+  const [totalPertanyaanTertulisEsaiFRIA06, setTotalPertanyaanTertulisEsaiFRIA06] = useState();
 
-  const { isLoading, isSuccess } = useQuery({
+  useQuery({
+    queryKey: ["kompetensi-pertanyaan-tertulis-pilihan-ganda", idAsesiSkemaSertifikasi],
+    queryFn: async () => {
+      return await axios.get(
+        `/asesi/skema-sertifikasi/${idAsesiSkemaSertifikasi}/kompetensi-pertanyaan-tertulis-pilihan-ganda`,
+      );
+    },
+    onSuccess: (data) => {
+      setTotalKompetenFRIA05(data.data.data.total_kompeten);
+      setTotalPertanyaanTertulisPilihanGandaFRIA05(
+        data.data.data.total_pertanyaan_tertulis_pilihan_ganda,
+      );
+    },
+    enabled: !!idAsesiSkemaSertifikasi,
+  });
+
+  useQuery({
+    queryKey: ["kompetensi-pertanyaan-tertulis-esai", idAsesiSkemaSertifikasi],
+    queryFn: async () => {
+      return await axios.get(
+        `/asesi/skema-sertifikasi/${idAsesiSkemaSertifikasi}/kompetensi-pertanyaan-tertulis-esai`,
+      );
+    },
+    onSuccess: (data) => {
+      setTotalKompetenFRIA06(data.data.data.total_kompeten);
+      setTotalPertanyaanTertulisEsaiFRIA06(data.data.data.total_pertanyaan_tertulis_esai);
+    },
+    enabled: !!idAsesiSkemaSertifikasi,
+  });
+
+  useQuery({
     queryKey: ["aktivitas-unit-kompetensi", idAsesiSkemaSertifikasi],
     queryFn: async () => {
       return await axios.get(
@@ -77,54 +112,62 @@ export const UjiKompetensiDetail = () => {
       is_praktik_demonstrasi_selesai: isPraktikDemonstrasiSelesai,
       is_praktik_demonstrasi: isPraktikDemonstrasi,
       is_evaluasi_asesi_selesai: isEvaluasiAsesiSelesai,
+      is_evaluasi_pertanyaan_tertulis_esai_selesai: isEvaluasiPertanyaanTertulisEsaiSelesai,
+      is_kompeten: isKompeten,
+      is_tidak_kompeten: isTidakKompeten,
     } = statusSkemaSertifikasiAsesi;
 
-    if (!isEvaluasiAsesiSelesai) {
-      return (
-        <section className="flex flex-col gap-8">
+    return (
+      <section className="flex flex-col gap-8">
+        <div>
+          <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
+            Uji Kompetensi
+          </h1>
+          <p>Uji Kompetensi</p>
+        </div>
+        <div className="flex flex-col gap-4">
           <div>
-            <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
-              Uji Kompetensi
-            </h1>
-            <p>Uji Kompetensi</p>
+            <img
+              src={urlProfilSkemaSertifikasi}
+              alt="Gambar Skema Sertifikasi"
+              className="aspect-square w-64 rounded-lg bg-white object-cover p-6 shadow-lg"
+            />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex gap-12 rounded-lg bg-white p-6 shadow-lg">
             <div>
-              <img
-                src={urlProfilSkemaSertifikasi}
-                alt="Gambar Skema Sertifikasi"
-                className="aspect-square w-64 rounded-lg bg-white object-cover p-6 shadow-lg"
-              />
+              <p className="text-xs font-bold leading-none">Skema Sertifikasi</p>
+              <p className="text-sm">{namaSkemaSertifikasi}</p>
             </div>
-            <div className="flex gap-12 rounded-lg bg-white p-6 shadow-lg">
-              <div>
-                <p className="text-xs font-bold leading-none">Skema Sertifikasi</p>
-                <p className="text-sm">{namaSkemaSertifikasi}</p>
-              </div>
-              <div>
-                <p className="text-xs font-bold leading-none">Tujuan Asesmen</p>
-                <p className="text-sm">{tujuan}</p>
-              </div>
+            <div>
+              <p className="text-xs font-bold leading-none">Tujuan Asesmen</p>
+              <p className="text-sm">{tujuan}</p>
             </div>
-            <div className="bottom-16 flex w-full gap-6">
-              <div className="flex w-full flex-col gap-4">
-                <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                  <div className="flex items-center gap-6">
-                    {!isPraktikDemonstrasiSelesai && (
-                      <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
-                        <InfoCircle className="text-2xl" />
-                      </div>
-                    )}
-                    {!!isPraktikDemonstrasiSelesai && (
-                      <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                        <CheckCircle className="text-2xl" />
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-xs font-bold leading-none">FR.IA.02</p>
-                      <p className="text-base">Tugas Praktek Demonstrasi</p>
+          </div>
+          <div className="bottom-16 flex w-full gap-6">
+            <div className="flex w-full flex-col gap-4">
+              <div className="flex w-full items-center justify-between rounded-lg bg-white p-6 shadow-lg">
+                <div className="flex w-full items-center  gap-6">
+                  {!!isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-error-500 text-white">
+                      <XCircle className="text-2xl" />
                     </div>
+                  )}
+                  {!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
+                      <InfoCircle className="text-2xl" />
+                    </div>
+                  )}
+                  {!!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
+                      <CheckCircle className="text-2xl" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-xs font-bold leading-none">FR.IA.02</p>
+                    <p className="text-base">Tugas Praktek Demonstrasi</p>
                   </div>
+                </div>
+                {!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
                   <div className="flex items-center">
                     <Button
                       size="xs"
@@ -139,29 +182,143 @@ export const UjiKompetensiDetail = () => {
                       Kerjakan
                     </Button>
                   </div>
-                </div>
-                <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                  <div className="flex items-center gap-6">
-                    {!isPertanyaanTertulisPilihanGandaSelesai && (
-                      <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
-                        <InfoCircle className="text-2xl" />
-                      </div>
-                    )}
-                    {!!isPertanyaanTertulisPilihanGandaSelesai && (
-                      <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                        <CheckCircle className="text-2xl" />
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-xs font-bold leading-none">FR.IA.05</p>
-                      <p className="text-base">Pertanyaan Tertulis Pilihan Ganda</p>
+                )}
+              </div>
+              <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                <div className="flex items-center gap-6">
+                  {!!isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-error-500 text-white">
+                      <XCircle className="text-2xl" />
                     </div>
+                  )}
+                  {!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
+                      <InfoCircle className="text-2xl" />
+                    </div>
+                  )}
+                  {!!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
+                      <CheckCircle className="text-2xl" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-xs font-bold leading-none">FR.IA.05</p>
+                    <p className="text-base">Pertanyaan Tertulis Pilihan Ganda</p>
                   </div>
-                  <div className="flex items-center">
-                    {!isPertanyaanTertulisPilihanGandaSelesai && (
+                </div>
+                <div className="flex items-center">
+                  {!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
+                    <AlertDialog
+                      open={isAlertDialogOpenComponentTwo}
+                      onOpenChange={setIsAlertDialogOpenComponentTwo}>
+                      <AlertDialogTrigger asChild>
+                        <Button size="xs">Kerjakan</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            <div className="flex flex-col items-center gap-2">
+                              <AnnotationAlert className="text-5xl text-secondary-500" />
+                              <p className="font-anek-latin text-xl">
+                                Pertanyaan Tertulis Pilihan Ganda
+                              </p>
+                            </div>
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            <p className="py-4 text-sm">
+                              Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan ada
+                              kesempatan untuk mengulanginya. Apakah Anda yakin?
+                            </p>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <div className="flex w-full gap-4">
+                            <AlertDialogCancel asChild>
+                              <Button size="sm" variant="outline-error" className="w-full">
+                                Batalkan
+                              </Button>
+                            </AlertDialogCancel>
+                            <AlertDialogAction asChild>
+                              <Button
+                                size="sm"
+                                className="w-full"
+                                onClick={() => {
+                                  navigate(`pertanyaan-tertulis-pilihan-ganda`, {
+                                    state: {
+                                      ...location.state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                      is_disabled: true,
+                                    },
+                                  });
+                                }}>
+                                Konfirmasi
+                              </Button>
+                            </AlertDialogAction>
+                          </div>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                  {/* {!!isPertanyaanTertulisPilihanGandaSelesai && (
+                    <>
+                      <div className="flex gap-2">
+                        <Button
+                          size="xs"
+                          onClick={() => {
+                            navigate(`pertanyaan-tertulis-pilihan-ganda`, {
+                              state: {
+                                ...location.state,
+                                id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                              },
+                            });
+                          }}>
+                          Lihat Hasil
+                        </Button>
+                      </div>
+                    </>
+                  )} */}
+                  {!!isPertanyaanTertulisPilihanGandaSelesai && (
+                    <div className="text-sm">
+                      <div className="flex flex-col items-center">
+                        <p className="font-bold">Kompeten</p>
+                        <div className="flex gap-2">
+                          <p>{totalKompetenFRIA05}</p>
+                          <p>/</p>
+                          <p>{totalPertanyaanTertulisPilihanGandaFRIA05}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                <div className="flex items-center gap-6">
+                  {!!isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-error-500 text-white">
+                      <XCircle className="text-2xl" />
+                    </div>
+                  )}
+                  {!isPertanyaanTertulisEsaiSelesai && !isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
+                      <InfoCircle className="text-2xl" />
+                    </div>
+                  )}
+                  {!!isPertanyaanTertulisEsaiSelesai && !isTidakKompeten && (
+                    <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
+                      <CheckCircle className="text-2xl" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-xs font-bold leading-none">FR.IA.06</p>
+                    <p className="text-base">Pertanyaan Tertulis Esai</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  {!isPertanyaanTertulisEsaiSelesai && !isTidakKompeten && (
+                    <>
                       <AlertDialog
-                        open={isAlertDialogOpenComponentTwo}
-                        onOpenChange={setIsAlertDialogOpenComponentTwo}>
+                        open={isAlertDialogOpenComponentThree}
+                        onOpenChange={setIsAlertDialogOpenComponentThree}>
                         <AlertDialogTrigger asChild>
                           <Button size="xs">Kerjakan</Button>
                         </AlertDialogTrigger>
@@ -170,9 +327,7 @@ export const UjiKompetensiDetail = () => {
                             <AlertDialogTitle>
                               <div className="flex flex-col items-center gap-2">
                                 <AnnotationAlert className="text-5xl text-secondary-500" />
-                                <p className="font-anek-latin text-xl">
-                                  Pertanyaan Tertulis Pilihan Ganda
-                                </p>
+                                <p className="font-anek-latin text-xl">Pertanyaan Tertulis Esai</p>
                               </div>
                             </AlertDialogTitle>
                             <AlertDialogDescription>
@@ -194,7 +349,7 @@ export const UjiKompetensiDetail = () => {
                                   size="sm"
                                   className="w-full"
                                   onClick={() => {
-                                    navigate(`pertanyaan-tertulis-pilihan-ganda`, {
+                                    navigate(`pertanyaan-tertulis-esai`, {
                                       state: {
                                         ...location.state,
                                         id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
@@ -209,354 +364,53 @@ export const UjiKompetensiDetail = () => {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
-                    )}
-                    {!!isPertanyaanTertulisPilihanGandaSelesai && (
-                      <>
-                        <div className="flex gap-2">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`pertanyaan-tertulis-pilihan-ganda`, {
-                                state: {
-                                  ...location.state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Hasil
-                          </Button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                  <div className="flex items-center gap-6">
-                    {!isPertanyaanTertulisEsaiSelesai && (
-                      <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
-                        <InfoCircle className="text-2xl" />
-                      </div>
-                    )}
-                    {!!isPertanyaanTertulisEsaiSelesai && (
-                      <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                        <CheckCircle className="text-2xl" />
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-xs font-bold leading-none">FR.IA.06</p>
-                      <p className="text-base">Pertanyaan Tertulis Esai</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    {!isPertanyaanTertulisEsaiSelesai && (
-                      <>
-                        <AlertDialog
-                          open={isAlertDialogOpenComponentThree}
-                          onOpenChange={setIsAlertDialogOpenComponentThree}>
-                          <AlertDialogTrigger asChild>
-                            <Button size="xs">Kerjakan</Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                <div className="flex flex-col items-center gap-2">
-                                  <AnnotationAlert className="text-5xl text-secondary-500" />
-                                  <p className="font-anek-latin text-xl">
-                                    Pertanyaan Tertulis Esai
-                                  </p>
-                                </div>
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                <p className="py-4 text-sm">
-                                  Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan ada
-                                  kesempatan untuk mengulanginya. Apakah Anda yakin?
-                                </p>
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <div className="flex w-full gap-4">
-                                <AlertDialogCancel asChild>
-                                  <Button size="sm" variant="outline-error" className="w-full">
-                                    Batalkan
-                                  </Button>
-                                </AlertDialogCancel>
-                                <AlertDialogAction asChild>
-                                  <Button
-                                    size="sm"
-                                    className="w-full"
-                                    onClick={() => {
-                                      navigate(`pertanyaan-tertulis-esai`, {
-                                        state: {
-                                          ...location.state,
-                                          id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                          is_disabled: true,
-                                        },
-                                      });
-                                    }}>
-                                    Konfirmasi
-                                  </Button>
-                                </AlertDialogAction>
-                              </div>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </>
-                    )}
-                    {/* {!!isPertanyaanTertulisEsaiSelesai && (
-                      <>
-                        <div className="flex gap-2">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`pertanyaan-tertulis-esai`, {
-                                state: {
-                                  ...location.state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Hasil
-                          </Button>
-                        </div>
-                      </>
-                    )} */}
-                  </div>
-                </div>
-                {/* {!!isPraktikDemonstrasi && (
-                  <>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex items-center gap-6">
-                        {!isPraktikDemonstrasiSelesai && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isPraktikDemonstrasiSelesai && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-xs font-bold leading-none">FR.IA.02</p>
-                          <p className="text-base">Tugas Praktek Demonstrasi</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
+                    </>
+                  )}
+                  {/* {!!isPertanyaanTertulisEsaiSelesai && (
+                    <>
+                      <div className="flex gap-2">
                         <Button
                           size="xs"
                           onClick={() => {
-                            navigate(`tugas-praktek-demonstrasi`, {
+                            navigate(`pertanyaan-tertulis-esai`, {
                               state: {
                                 ...location.state,
                                 id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
                               },
                             });
                           }}>
-                          Kerjakan
+                          Lihat Hasil
                         </Button>
                       </div>
-                    </div>
-                  </>
-                )} */}
-                {/* {!!isPertanyaanTertulis && (
-                  <>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex items-center gap-6">
-                        {!isPertanyaanTertulisPilihanGandaSelesai && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isPertanyaanTertulisPilihanGandaSelesai && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-xs font-bold leading-none">FR.IA.05</p>
-                          <p className="text-base">Pertanyaan Tertulis Pilihan Ganda</p>
+                    </>
+                  )} */}
+                  {!isEvaluasiPertanyaanTertulisEsaiSelesai &&
+                    !!isPertanyaanTertulisEsaiSelesai && (
+                      <div className="text-sm">
+                        <div className="flex flex-col items-center">
+                          <p className="font-bold">Dalam Proses Evaluasi</p>
                         </div>
                       </div>
-                      <div className="flex items-center">
-                        {!isPertanyaanTertulisPilihanGandaSelesai && (
-                          <AlertDialog
-                            open={isAlertDialogOpenComponentTwo}
-                            onOpenChange={setIsAlertDialogOpenComponentTwo}>
-                            <AlertDialogTrigger asChild>
-                              <Button size="xs">Kerjakan</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  <div className="flex flex-col items-center gap-2">
-                                    <AnnotationAlert className="text-5xl text-secondary-500" />
-                                    <p className="font-anek-latin text-xl">
-                                      Pertanyaan Tertulis Pilihan Ganda
-                                    </p>
-                                  </div>
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  <p className="py-4 text-sm">
-                                    Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan
-                                    ada kesempatan untuk mengulanginya. Apakah Anda yakin?
-                                  </p>
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <div className="flex w-full gap-4">
-                                  <AlertDialogCancel asChild>
-                                    <Button size="sm" variant="outline-error" className="w-full">
-                                      Batalkan
-                                    </Button>
-                                  </AlertDialogCancel>
-                                  <AlertDialogAction asChild>
-                                    <Button
-                                      size="sm"
-                                      className="w-full"
-                                      onClick={() => {
-                                        navigate(`pertanyaan-tertulis-pilihan-ganda`, {
-                                          state: {
-                                            ...location.state,
-                                            id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                            is_disabled: true,
-                                          },
-                                        });
-                                      }}>
-                                      Konfirmasi
-                                    </Button>
-                                  </AlertDialogAction>
-                                </div>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        )}
-                        {!!isPertanyaanTertulisPilihanGandaSelesai && (
-                          <>
-                            <div className="flex gap-2">
-                              <Button
-                                size="xs"
-                                onClick={() => {
-                                  navigate(`pertanyaan-tertulis-pilihan-ganda`, {
-                                    state: {
-                                      ...location.state,
-                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                    },
-                                  });
-                                }}>
-                                Lihat Hasil
-                              </Button>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex items-center gap-6">
-                        {!isPertanyaanTertulisEsaiSelesai && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isPertanyaanTertulisEsaiSelesai && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-xs font-bold leading-none">FR.IA.06</p>
-                          <p className="text-base">Pertanyaan Tertulis Esai</p>
+                    )}
+                  {!!isEvaluasiPertanyaanTertulisEsaiSelesai && (
+                    <div className="text-sm">
+                      <div className="flex flex-col items-center">
+                        <p className="font-bold">Kompeten</p>
+                        <div className="flex gap-2">
+                          <p>{totalKompetenFRIA06}</p>
+                          <p>/</p>
+                          <p>{totalPertanyaanTertulisEsaiFRIA06}</p>
                         </div>
                       </div>
-                      <div className="flex items-center">
-                        {!isPertanyaanTertulisEsaiSelesai && (
-                          <>
-                            <AlertDialog
-                              open={isAlertDialogOpenComponentThree}
-                              onOpenChange={setIsAlertDialogOpenComponentThree}>
-                              <AlertDialogTrigger asChild>
-                                <Button size="xs">Kerjakan</Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    <div className="flex flex-col items-center gap-2">
-                                      <AnnotationAlert className="text-5xl text-secondary-500" />
-                                      <p className="font-anek-latin text-xl">
-                                        Pertanyaan Tertulis Esai
-                                      </p>
-                                    </div>
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    <p className="py-4 text-sm">
-                                      Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan
-                                      ada kesempatan untuk mengulanginya. Apakah Anda yakin?
-                                    </p>
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <div className="flex w-full gap-4">
-                                    <AlertDialogCancel asChild>
-                                      <Button size="sm" variant="outline-error" className="w-full">
-                                        Batalkan
-                                      </Button>
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction asChild>
-                                      <Button
-                                        size="sm"
-                                        className="w-full"
-                                        onClick={() => {
-                                          navigate(`pertanyaan-tertulis-esai`, {
-                                            state: {
-                                              ...location.state,
-                                              id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                              is_disabled: true,
-                                            },
-                                          });
-                                        }}>
-                                        Konfirmasi
-                                      </Button>
-                                    </AlertDialogAction>
-                                  </div>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </>
-                        )}
-                        {!!isPertanyaanTertulisEsaiSelesai && (
-                          <>
-                            <div className="flex gap-2">
-                              <Button
-                                size="xs"
-                                onClick={() => {
-                                  navigate(`pertanyaan-tertulis-esai`, {
-                                    state: {
-                                      ...location.state,
-                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                    },
-                                  });
-                                }}>
-                                Lihat Hasil
-                              </Button>
-                            </div>
-                          </>
-                        )}
-                      </div>
                     </div>
-                  </>
-                )} */}
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </section>
-      );
-    } else if (!!isEvaluasiAsesiSelesai) {
-      return (
-        <Navigate
-          to="/uji-kompetensi"
-          state={{ id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi }}
-        />
-      );
-    }
+        </div>
+      </section>
+    );
   } else if (!idAsesiSkemaSertifikasi) {
     return <Navigate to="/uji-kompetensi" />;
   }

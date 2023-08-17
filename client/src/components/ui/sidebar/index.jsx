@@ -185,7 +185,7 @@ export const Sidebar = () => {
           </TooltipProvider>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className={cn({ hidden: isAsesor || isAdministrator || isAsesi })}>
+              <TooltipTrigger className={cn({ hidden: isAsesor || isAdministrator })}>
                 <Navigation to="/pendaftaran" isMinimized={isMinimized} isDisabled={isDisabled}>
                   <ImageUserPlus className="text-lg" />
                   {!isMinimized && <span>Pendaftaran</span>}

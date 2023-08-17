@@ -1,4 +1,236 @@
+import bcrypt from "bcrypt";
+
 import prisma from "../utils/prisma.js";
+
+export const registerAdministrator = async (req, res, next) => {
+  const files = req.files;
+  const {
+    email,
+    id_jenis_kelamin,
+    id_kebangsaan,
+    id_kecamatan,
+    id_kelurahan_desa,
+    id_kota_kabupaten,
+    id_kualifikasi_pendidikan,
+    id_provinsi,
+    id_tempat_uji_kompetensi,
+    keterangan_lainnya,
+    nama_lengkap,
+    nik,
+    nomor_telepon,
+    password,
+    tanggal_lahir,
+    tempat_lahir,
+  } = req.body;
+
+  try {
+    if (!email) {
+      res.status(400);
+      throw new Error("Email tidak boleh kosong!");
+    }
+
+    if (!id_jenis_kelamin) {
+      res.status(400);
+      throw new Error("Jenis kelamin tidak boleh kosong!");
+    }
+
+    if (!id_kebangsaan) {
+      res.status(400);
+      throw new Error("Kebangsaan tidak boleh kosong!");
+    }
+
+    if (!id_kecamatan) {
+      res.status(400);
+      throw new Error("Kecamatan tidak boleh kosong!");
+    }
+
+    if (!id_kelurahan_desa) {
+      res.status(400);
+      throw new Error("Kelurahan/Desa tidak boleh kosong!");
+    }
+
+    if (!id_kota_kabupaten) {
+      res.status(400);
+      throw new Error("Kota/Kabupaten tidak boleh kosong!");
+    }
+
+    if (!id_kualifikasi_pendidikan) {
+      res.status(400);
+      throw new Error("Kualifikasi pendidikan tidak boleh kosong!");
+    }
+
+    if (!id_provinsi) {
+      res.status(400);
+      throw new Error("Provinsi tidak boleh kosong!");
+    }
+
+    if (!id_tempat_uji_kompetensi) {
+      res.status(400);
+      throw new Error("Tempat uji kompetensi tidak boleh kosong!");
+    }
+
+    if (!keterangan_lainnya) {
+      res.status(400);
+      throw new Error("Keterangan lainnya tidak boleh kosong!");
+    }
+
+    if (!nama_lengkap) {
+      res.status(400);
+      throw new Error("Nama lengkap tidak boleh kosong!");
+    }
+
+    if (!nik) {
+      res.status(400);
+      throw new Error("NIK tidak boleh kosong!");
+    }
+
+    if (!nomor_telepon) {
+      res.status(400);
+      throw new Error("Nomor telepon tidak boleh kosong!");
+    }
+
+    if (!password) {
+      res.status(400);
+      throw new Error("Password tidak boleh kosong!");
+    }
+
+    if (!tanggal_lahir) {
+      res.status(400);
+      throw new Error("Tanggal lahir tidak boleh kosong!");
+    }
+
+    if (!tempat_lahir) {
+      res.status(400);
+      throw new Error("Tempat lahir tidak boleh kosong!");
+    }
+
+    const generateLinkArray = async (array, req) => {
+      const linkMap = {};
+
+      for (const item of array) {
+        const link = `${req.protocol}://${req.get("host")}/uploads/${
+          item.filename
+        }`;
+        const fieldname = item.fieldname.replace(/\[\]$/, "");
+
+        if (linkMap[fieldname]) {
+          linkMap[fieldname].push(link);
+        } else {
+          linkMap[fieldname] = [link];
+        }
+      }
+
+      const newArray = Object.entries(linkMap).map(([fieldname, links]) => ({
+        fieldname,
+        link: links,
+      }));
+
+      return newArray;
+    };
+
+    const getSingleFileLink = async (linkFiles, fieldName) => {
+      let fieldValue;
+
+      for (const link of linkFiles) {
+        const { fieldname, link: links } = link;
+
+        if (fieldname === fieldName) {
+          fieldValue = links[0];
+          break;
+        }
+      }
+      return fieldValue;
+    };
+
+    const linkFiles = await generateLinkArray(files, req);
+
+    const url_profil_user = await getSingleFileLink(linkFiles, "profil_user");
+
+    const emailAvailability = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (emailAvailability) {
+      res.status(400);
+      throw new Error("Email sudah digunakan!");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const alamat = await prisma.alamat.create({
+      data: {
+        id_kecamatan,
+        id_kelurahan_desa,
+        id_kota_kabupaten,
+        id_provinsi,
+        keterangan_lainnya,
+      },
+    });
+
+    const dataDiri = await prisma.dataDiri.create({
+      data: {
+        alamat: {
+          connect: {
+            id: alamat.id,
+          },
+        },
+        nik,
+        nomor_telepon,
+        tanggal_lahir,
+        tempat_lahir,
+        jenis_kelamin: {
+          connect: {
+            id: id_jenis_kelamin,
+          },
+        },
+        negara: {
+          connect: {
+            id: id_kebangsaan,
+          },
+        },
+        kualifikasi_pendidikan: {
+          connect: {
+            id: id_kualifikasi_pendidikan,
+          },
+        },
+      },
+    });
+
+    await prisma.user.create({
+      data: {
+        nama_lengkap,
+        email,
+        password: hashedPassword,
+        role: "Administrator",
+        url_profil_user,
+        administrator: {
+          create: {
+            tempat_uji_kompetensi: {
+              connect: {
+                id: id_tempat_uji_kompetensi,
+              },
+            },
+            data_diri: {
+              connect: {
+                id: dataDiri.id,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(201).json({
+      code: 201,
+      status: "Created",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
 
 export const listAsesiByTempatUjiKompetensi = async (req, res, next) => {
   const { id: id_user } = req.params;
@@ -30,6 +262,8 @@ export const listAsesiByTempatUjiKompetensi = async (req, res, next) => {
                     },
                     is_verifikasi_berkas: true,
                     is_punya_asesor: true,
+                    is_evaluasi_asesi_selesai: true,
+                    is_berkas_memenuhi_syarat: true,
                     asesi: {
                       select: {
                         id: true,
@@ -197,24 +431,29 @@ export const listAsesorByTempatUjiKompetensi = async (req, res, next) => {
 export const updateAsesiSkemaSertifikasi = async (req, res, next) => {
   const { id } = req.params;
 
-  const { is_punya_asesor, is_verifikasi_berkas } = await req.body;
+  const {
+    is_punya_asesor,
+    is_verifikasi_berkas,
+    is_tidak_kompeten,
+    is_berkas_memenuhi_syarat,
+  } = await req.body;
 
   try {
-    const asesiSkemaSertifikasi = await prisma.asesiSkemaSertifikasi.update({
+    await prisma.asesiSkemaSertifikasi.update({
       where: {
         id,
       },
       data: {
         is_punya_asesor,
         is_verifikasi_berkas,
+        is_tidak_kompeten,
+        is_berkas_memenuhi_syarat,
       },
     });
 
-    res.status(201).json({
+    res.status(200).json({
       code: 200,
       status: "OK",
-      message: "Status Punya Asesor telah diperbarui",
-      data: asesiSkemaSertifikasi,
     });
   } catch (error) {
     next(error);
@@ -411,5 +650,24 @@ export const createSkemaSertifikasi = async (req, res, next) => {
   } catch (error) {
     next(error);
     console.log(error);
+  }
+};
+
+export const deleteSkemaSertifikasi = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.skemaSertifikasi.delete({
+      where: {
+        id,
+      },
+    });
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+    });
+  } catch (error) {
+    next(error);
   }
 };

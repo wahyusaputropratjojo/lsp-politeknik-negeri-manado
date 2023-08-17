@@ -9,6 +9,7 @@ import axios from "../../../utils/axios";
 import { Button } from "../../../components/ui/button";
 
 import CheckCircle from "../../../assets/icons/untitled-ui-icons/line/components/CheckCircle";
+import XCircle from "../../../assets/icons/untitled-ui-icons/line/components/XCircle";
 
 export const UjiKompetensi = () => {
   const { auth } = useContext(AuthContext);
@@ -45,6 +46,9 @@ export const UjiKompetensi = () => {
                 is_verifikasi_berkas: isVerifikasiBerkas,
                 is_asesmen_mandiri_selesai: isAsesmenMandiriSelesai,
                 is_evaluasi_asesi_selesai: isEvaluasiAsesiSelesai,
+                is_tidak_kompeten: isTidakKompeten,
+                is_kompeten: isKompeten,
+                is_berkas_memenuhi_syarat: isBerkasMemenuhiSyarat,
                 skema_sertifikasi: {
                   url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
                   nama_skema_sertifikasi: namaSkemaSertifikasi,
@@ -52,7 +56,12 @@ export const UjiKompetensi = () => {
                 tujuan_asesmen: tujuanAsesmen,
               } = value;
 
-              if (isVerifikasiBerkas && isPunyaAsesor && isAsesmenMandiri) {
+              if (
+                isVerifikasiBerkas &&
+                isPunyaAsesor &&
+                isAsesmenMandiri &&
+                isBerkasMemenuhiSyarat
+              ) {
                 return (
                   <div key={id} className="flex flex-col gap-6 rounded-lg bg-white p-6 shadow-lg">
                     <div className="flex gap-6">
@@ -73,16 +82,27 @@ export const UjiKompetensi = () => {
                             <p className="text-xs font-bold leading-none">Tujuan Asesmen</p>
                             <p className="text-sm">{tujuanAsesmen.tujuan}</p>
                           </div>
-                          {!!isEvaluasiAsesiSelesai && (
+                          {!!isEvaluasiAsesiSelesai && !!isKompeten && (
                             <div>
                               <p className="text-xs font-bold leading-none">Status</p>
                               <p className="text-sm">Kompeten</p>
                             </div>
                           )}
+                          {!!isEvaluasiAsesiSelesai && !!isTidakKompeten && (
+                            <div>
+                              <p className="text-xs font-bold leading-none">Status</p>
+                              <p className="text-sm">Tidak Kompeten</p>
+                            </div>
+                          )}
                         </div>
-                        {!!isEvaluasiAsesiSelesai && (
-                          <div className="flex h-full items-center rounded-lg bg-success-500 p-4">
+                        {!!isEvaluasiAsesiSelesai && !!isKompeten && (
+                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500">
                             <CheckCircle className="text-2xl text-white" />
+                          </div>
+                        )}
+                        {!!isEvaluasiAsesiSelesai && !!isTidakKompeten && (
+                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500">
+                            <XCircle className="text-2xl text-white" />
                           </div>
                         )}
                       </div>
@@ -100,6 +120,22 @@ export const UjiKompetensi = () => {
                             });
                           }}>
                           Uji Kompetensi
+                        </Button>
+                      </div>
+                    )}
+                    {!!isEvaluasiAsesiSelesai && (
+                      <div className="flex">
+                        <Button
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            navigate(`/uji-kompetensi/skema-sertifikasi`, {
+                              state: {
+                                id_asesi_skema_sertifikasi: id,
+                              },
+                            });
+                          }}>
+                          Lihat Hasil
                         </Button>
                       </div>
                     )}

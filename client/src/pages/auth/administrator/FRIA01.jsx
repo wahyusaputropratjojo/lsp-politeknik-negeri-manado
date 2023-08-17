@@ -258,7 +258,7 @@ export const FRIA01Administrator = () => {
             </div>
           </Form>
         </div>
-        <div>
+        <div className="flex rounded-lg bg-white p-6 shadow-lg">
           <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <AlertDialogTrigger className={cn(buttonVariants(), "w-full")}>
               Simpan

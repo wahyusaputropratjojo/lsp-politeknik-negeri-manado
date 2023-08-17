@@ -10,6 +10,7 @@ import { Button } from "../../../components/ui/button";
 import { Skeleton } from "../../../components/ui/skeleton";
 
 import CheckCircle from "../../../assets/icons/untitled-ui-icons/line/components/CheckCircle";
+import XCircle from "../../../assets/icons/untitled-ui-icons/line/components/XCircle";
 
 export const AsesmenMandiri = () => {
   const { auth } = useContext(AuthContext);
@@ -44,7 +45,7 @@ export const AsesmenMandiri = () => {
           </h1>
           <p>Asesmen Mandiri</p>
         </div>
-        <div className="grid grid-cols-1 gap-8">
+        <div className="grid grid-cols-1 gap-4">
           {!!asesiSkemaSertifikasi &&
             asesiSkemaSertifikasi.map((value) => {
               const {
@@ -53,6 +54,8 @@ export const AsesmenMandiri = () => {
                 is_punya_asesor: isPunyaAsesor,
                 is_verifikasi_berkas: isVerifikasiBerkas,
                 is_asesmen_mandiri_selesai: isAsesmenMandiriSelesai,
+                is_berkas_memenuhi_syarat: isBerkasMemenuhiSyarat,
+                is_tidak_kompeten: isTidakKompeten,
                 skema_sertifikasi: {
                   url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
                   nama_skema_sertifikasi: namaSkemaSertifikasi,
@@ -60,9 +63,14 @@ export const AsesmenMandiri = () => {
                 tujuan_asesmen: tujuanAsesmen,
               } = value;
 
-              if (!!isVerifikasiBerkas && !!isPunyaAsesor && !!isAsesmenMandiri) {
+              if (
+                !!isVerifikasiBerkas &&
+                !!isPunyaAsesor &&
+                !!isAsesmenMandiri &&
+                !!isBerkasMemenuhiSyarat
+              ) {
                 return (
-                  <div className="flex flex-col gap-6 rounded-lg bg-white p-6 shadow-lg">
+                  <div key={id} className="flex flex-col gap-6 rounded-lg bg-white p-6 shadow-lg">
                     <div className="flex gap-6">
                       <div>
                         <img
@@ -83,13 +91,18 @@ export const AsesmenMandiri = () => {
                           </div>
                         </div>
                         {!!isAsesmenMandiriSelesai && (
-                          <div className="flex h-full items-center rounded-lg bg-success-500 p-4">
+                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500">
                             <CheckCircle className="text-2xl text-white" />
                           </div>
                         )}
+                        {/* {!!isTidakKompeten && (
+                          <div className="flex h-full items-center rounded-lg bg-error-500 p-4">
+                            <XCircle className="text-2xl text-white" />
+                          </div>
+                        )} */}
                       </div>
                     </div>
-                    {!isAsesmenMandiriSelesai && (
+                    {!isAsesmenMandiriSelesai && !isTidakKompeten && (
                       <div className="flex">
                         <Button
                           disabled={isAsesmenMandiriSelesai}

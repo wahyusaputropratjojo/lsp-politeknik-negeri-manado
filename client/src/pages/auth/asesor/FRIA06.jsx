@@ -43,6 +43,7 @@ export const FRIA06 = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [unitKompetensiData, setUnitKompetensiData] = useState();
+  const [jawabanPertanyaanTertulisEsaiData, setJawabanPertanyaanTertulisEsaiData] = useState();
 
   useQuery({
     queryKey: ["asesi", idAsesiSkemaSertifikasi],
@@ -51,6 +52,7 @@ export const FRIA06 = () => {
     },
     onSuccess: (data) => {
       setUnitKompetensiData(data.data.data.skema_sertifikasi.unit_kompetensi);
+      setJawabanPertanyaanTertulisEsaiData(data.data.data.asesi_jawaban_pertanyaan_tertulis_esai);
     },
   });
 
@@ -62,7 +64,6 @@ export const FRIA06 = () => {
       );
     },
     onSuccess: (data) => {
-      console.log(data);
       navigate("/evaluasi-asesi/asesi", {
         state: {
           id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
@@ -205,6 +206,79 @@ export const FRIA06 = () => {
                                 </div>
                               );
                             })}
+
+                          {/* {!!jawabanPertanyaanTertulisEsaiData &&
+                            jawabanPertanyaanTertulisEsaiData.map(
+                              (value, indexPertanyaanTertulisEsai) => {
+                                const {
+                                  id,
+                                  jawaban: jawabanAsesi,
+                                  pertanyaan_tertulis_esai: {
+                                    id: idPertanyaanTertulisEsai,
+                                    pertanyaan,
+                                    jawaban: kunciJawaban,
+                                  },
+                                } = value;
+
+                                form.register(
+                                  `unit_kompetensi.${indexUnitKompetensi}.${indexPertanyaanTertulisEsai}.is_kompeten`,
+                                  { value: false },
+                                );
+
+                                form.setValue(
+                                  `unit_kompetensi.${indexUnitKompetensi}.${indexPertanyaanTertulisEsai}.id_jawaban_pertanyaan_tertulis_esai`,
+                                  id,
+                                );
+
+                                return (
+                                  <div key={id} className="flex flex-col gap-4">
+                                    <div>
+                                      <p className="relative text-base">
+                                        <span className="absolute -left-1 -translate-x-full">
+                                          {indexPertanyaanTertulisEsai + 1}.
+                                        </span>
+                                        {pertanyaan}
+                                      </p>
+                                    </div>
+                                    <table className="w-full">
+                                      <thead>
+                                        <tr className="border-2 border-secondary-100 bg-primary-500">
+                                          <th className="w-6/12 p-4">Kunci Jawaban</th>
+                                          <th className="w-6/12 p-4">Jawaban Asesi</th>
+                                          <th className="min-w-[4rem] p-4">K</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr className="border-2 border-secondary-100">
+                                          <td className="border-2 border-secondary-100 p-4 align-top text-sm">
+                                            {kunciJawaban}
+                                          </td>
+                                          <td className="border-2 border-secondary-100 p-4 align-top text-sm">
+                                            {jawabanAsesi}
+                                          </td>
+                                          <td className="border-2 border-secondary-100 text-center">
+                                            <FormField
+                                              control={form.control}
+                                              name={`unit_kompetensi.${indexUnitKompetensi}.${indexPertanyaanTertulisEsai}.is_kompeten`}
+                                              render={({ field }) => (
+                                                <FormItem className="flex items-center">
+                                                  <FormControl>
+                                                    <Checkbox
+                                                      checked={field.value}
+                                                      onCheckedChange={field.onChange}
+                                                    />
+                                                  </FormControl>
+                                                </FormItem>
+                                              )}
+                                            />
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                );
+                              },
+                            )} */}
                         </div>
                       </div>
                     </div>

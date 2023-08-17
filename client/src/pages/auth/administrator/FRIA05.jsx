@@ -392,7 +392,7 @@ export const FRIA05Administrator = () => {
                     name={`jawaban_pertanyaan_tertulis_pilihan_ganda.${0}.jawaban`}
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Jawaban A</FormLabel>
+                        <FormLabel>Jawaban Pilihan 1</FormLabel>
                         <FormControl>
                           <Textarea {...field} />
                         </FormControl>
@@ -429,7 +429,7 @@ export const FRIA05Administrator = () => {
                     name={`jawaban_pertanyaan_tertulis_pilihan_ganda.${1}.jawaban`}
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Jawaban B</FormLabel>
+                        <FormLabel>Jawaban Pilihan 2</FormLabel>
                         <FormControl>
                           <Textarea {...field} />
                         </FormControl>
@@ -466,7 +466,7 @@ export const FRIA05Administrator = () => {
                     name={`jawaban_pertanyaan_tertulis_pilihan_ganda.${2}.jawaban`}
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Jawaban C</FormLabel>
+                        <FormLabel>Jawaban Pilihan 3</FormLabel>
                         <FormControl>
                           <Textarea {...field} />
                         </FormControl>
@@ -503,7 +503,7 @@ export const FRIA05Administrator = () => {
                     name={`jawaban_pertanyaan_tertulis_pilihan_ganda.${3}.jawaban`}
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Jawaban D</FormLabel>
+                        <FormLabel>Jawaban Pilihan 4</FormLabel>
                         <FormControl>
                           <Textarea {...field} />
                         </FormControl>

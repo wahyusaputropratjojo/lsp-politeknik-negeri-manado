@@ -9,18 +9,22 @@ import { Button } from "../../../components/ui/button";
 
 import ClipboardX from "../../../assets/icons/untitled-ui-icons/line/components/ClipboardX";
 import CheckCircle from "../../../assets/icons/untitled-ui-icons/line/components/CheckCircle";
+import XCircle from "../../../assets/icons/untitled-ui-icons/line/components/XCircle";
 
 export const EvaluasiAsesi = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { auth } = useContext(AuthContext);
 
+  const pathname = location?.pathname;
   const state = location?.state;
-  const isRefetch = state?.isRefetch;
+  const isRefetch = state?.is_refetch;
+
+  console.log(isRefetch);
 
   const [asesorAsesiData, setAsesorAsesiData] = useState();
 
-  useQuery({
+  const { refetch } = useQuery({
     queryKey: ["asesi-asesor", auth?.id],
     queryFn: async () => {
       return await axios.get(`/asesor/${auth?.id}/tempat-uji-kompetensi/asesi`);
@@ -31,6 +35,36 @@ export const EvaluasiAsesi = () => {
     refetchInterval: 1000,
   });
 
+  useEffect(() => {
+    if (!!isRefetch) {
+      refetch();
+      navigate(pathname, {
+        state: {
+          ...state,
+          is_refetch: false,
+        },
+      });
+    }
+  }, []);
+
+  if (!!asesorAsesiData && asesorAsesiData.length === 0) {
+    return (
+      <div className="flex flex-col gap-8">
+        <div>
+          <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
+            Evaluasi Asesi
+          </h1>
+          <p>Evaluasi Asesi untuk Peserta Bimbingan Asesi</p>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div>
+            <p className="text-base">Tidak ada jadwal asesmen</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!!asesorAsesiData) {
     return (
       <section>
@@ -39,7 +73,7 @@ export const EvaluasiAsesi = () => {
             <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
               Evaluasi Asesi
             </h1>
-            <p>Asesi</p>
+            <p>Evaluasi Asesi untuk Peserta Bimbingan Asesi</p>
           </div>
           <div className="grid grid-cols-1 gap-8">
             {asesorAsesiData &&
@@ -49,6 +83,8 @@ export const EvaluasiAsesi = () => {
                   asesi_skema_sertifikasi: {
                     id: idAsesiSkemaSertifikasi,
                     is_evaluasi_asesi_selesai: isEvaluasiAsesiSelesai,
+                    is_tidak_kompeten: isTidakKompeten,
+                    is_kompeten: isKompeten,
                     asesi: {
                       user: { nama_lengkap: namaLengkap, url_profil_user: urlProfilUser },
                     },
@@ -76,16 +112,27 @@ export const EvaluasiAsesi = () => {
                             <p className="text-xs font-bold leading-none">Skema Sertifikasi</p>
                             <p className="text-sm">{namaSkemaSertifikasi}</p>
                           </div>
-                          {!!isEvaluasiAsesiSelesai && (
+                          {!!isEvaluasiAsesiSelesai && !!isKompeten && (
                             <div>
                               <p className="text-xs font-bold leading-none">Status</p>
                               <p className="text-sm">Kompeten</p>
                             </div>
                           )}
+                          {!!isEvaluasiAsesiSelesai && !!isTidakKompeten && (
+                            <div>
+                              <p className="text-xs font-bold leading-none">Status</p>
+                              <p className="text-sm">Tidak Kompeten</p>
+                            </div>
+                          )}
                         </div>
-                        {!!isEvaluasiAsesiSelesai && (
-                          <div className="flex h-full items-center rounded-lg bg-success-500 p-4">
+                        {!!isEvaluasiAsesiSelesai && !!isKompeten && (
+                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500">
                             <CheckCircle className="text-2xl text-white" />
+                          </div>
+                        )}
+                        {!!isEvaluasiAsesiSelesai && !!isTidakKompeten && (
+                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500">
+                            <XCircle className="text-2xl text-white" />
                           </div>
                         )}
                       </div>
@@ -107,28 +154,26 @@ export const EvaluasiAsesi = () => {
                         </Button>
                       </div>
                     )}
+                    {!!isEvaluasiAsesiSelesai && (
+                      <div>
+                        <Button
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            navigate(`asesi`, {
+                              state: {
+                                ...state,
+                                id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                              },
+                            });
+                          }}>
+                          Lihat Hasil
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
-          </div>
-        </div>
-      </section>
-    );
-  } else if (!asesorAsesiData) {
-    return (
-      <section>
-        <div className="flex flex-col gap-8">
-          <div>
-            <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
-              Evaluasi Asesi
-            </h1>
-            <p>Asesi</p>
-          </div>
-          <div className="flex h-[60vh] flex-col items-center justify-center gap-2 rounded-lg bg-white shadow-lg">
-            <ClipboardX className="text-8xl text-secondary-100" />
-            <p className="font-aileron text-base text-secondary-500">
-              Tidak ada kegiatan Evaluasi Asesi
-            </p>
           </div>
         </div>
       </section>

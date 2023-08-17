@@ -261,6 +261,7 @@ export const DataAsesi = () => {
                   <th className="p-6">Email Kantor</th>
                   <th className="p-6">Fax Kantor</th>
                   <th className="p-6">Tanggal Pendaftaran</th>
+                  <th className="p-6">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -305,11 +306,10 @@ export const DataAsesi = () => {
                             fax: faxKantor,
                           },
                         },
+                        is_evaluasi_asesi_selesai: isEvaluasiAsesiSelesai,
                         created_at,
                         tujuan_asesmen: { tujuan },
                       } = value;
-
-                      console.log(value);
 
                       const date = new Date(tanggal_lahir);
                       const tanggalLahir = date.toLocaleDateString("id-ID", {
@@ -385,6 +385,10 @@ export const DataAsesi = () => {
                           </td>
                           <td className="min-w-[16rem] border-2 border-b-0 border-r-0 border-secondary-100 px-4 py-2">
                             {tanggalPendaftaran}
+                          </td>
+                          <td className="min-w-[16rem] border-2 border-b-0 border-r-0 border-secondary-100 px-4 py-2">
+                            {!!isEvaluasiAsesiSelesai && "Kompeten"}
+                            {!isEvaluasiAsesiSelesai && "Dalam Proses Asesmen"}
                           </td>
                         </tr>
                       );

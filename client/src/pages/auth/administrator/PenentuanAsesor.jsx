@@ -66,6 +66,7 @@ export const PenentuanAsesor = () => {
       const { skema_sertifikasi: skemaSertifikasi } = await tempatUjiKompetensi;
       setAsesiTempatUjiKompetensi(skemaSertifikasi);
     },
+    refetchInterval: 1000,
   });
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export const PenentuanAsesor = () => {
   return (
     <>
       <section>
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-8">
           <div>
             <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
               Penetuan Asesor
@@ -93,7 +94,10 @@ export const PenentuanAsesor = () => {
                 } = skemaSertifikasi;
 
                 const filteredAsesiSkemaSertifikasi = asesiSkemaSertifikasi.filter(
-                  (value) => value.is_punya_asesor === false && value.is_verifikasi_berkas === true,
+                  (value) =>
+                    value.is_punya_asesor === false &&
+                    value.is_verifikasi_berkas === true &&
+                    value.is_berkas_memenuhi_syarat === true,
                 );
 
                 if (filteredAsesiSkemaSertifikasi.length !== 0) {
@@ -211,6 +215,7 @@ const PenentuanAsesorForm = ({ id, setIsRefetch }) => {
     },
     onSuccess: (data) => {
       setIdAsesiSkemaSertifikasi(null);
+      refetch();
     },
   });
 

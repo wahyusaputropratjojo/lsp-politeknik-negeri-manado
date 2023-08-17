@@ -2,7 +2,6 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import path from "path";
 
 // Configs
 import { corsOptions } from "./configs/corsOptions.js";
@@ -36,7 +35,7 @@ import { router as proyekTerkaitPekerjaanRoute } from "./routes/proyekTerkaitPek
 
 const app = express();
 
-const port = 3000;
+const port = 5000;
 
 app.use(credentials);
 app.use(cors(corsOptions));
@@ -44,6 +43,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("src/uploads"));
 app.use(cookieParser());
+
+app.get("/", (_req, res) => {
+  res.write("<p>REST API</p>");
+  res.write("<p>Lembaga Sertifikasi Profesi - Politeknik Negeri Manado</p>");
+});
 
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);

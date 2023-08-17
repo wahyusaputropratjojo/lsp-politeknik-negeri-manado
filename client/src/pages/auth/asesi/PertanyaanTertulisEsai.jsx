@@ -72,16 +72,21 @@ export const PertanyaanTertulisEsai = () => {
     },
   });
 
-  const {
-    mutate: mutateUpdateAsesiSkemaSertifikasi,
-    isSuccess: isSuccessUpdateAsesiSkemaSertifikasi,
-    isError: isErrorUpdateAsesiSkemaSertifikasi,
-  } = useMutation({
+  const { mutate: mutateUpdateAsesiSkemaSertifikasi } = useMutation({
     mutationFn: async (data) => {
       return await axios.patch(`/asesi/skema-sertifikasi/${idAsesiSkemaSertifikasi}`, data);
     },
     onSuccess: (data) => {
       console.log(data);
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Pertanyaan Tertulis Esai telah selesai",
+      });
+
+      navigate(`/uji-kompetensi/skema-sertifikasi`, {
+        state: { id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi },
+      });
     },
     onError: (error) => {
       toast({
@@ -104,18 +109,6 @@ export const PertanyaanTertulisEsai = () => {
       setIsDialogOpen(false);
     }
   };
-
-  if (isSuccessJawabanPertanyaanTertulisEsai && isSuccessUpdateAsesiSkemaSertifikasi) {
-    toast({
-      variant: "success",
-      title: "Berhasil",
-      description: "Pertanyaan Tertulis Pilihan Ganda telah selesai",
-    });
-
-    navigate(`/uji-kompetensi/skema-sertifikasi`, {
-      state: { id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi },
-    });
-  }
 
   if (!!idAsesiSkemaSertifikasi) {
     return (
