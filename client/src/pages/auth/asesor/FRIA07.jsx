@@ -212,7 +212,7 @@ export const FRIA07 = () => {
                                                 <FormItem className="flex">
                                                   <FormLabel>Jawaban Asesi</FormLabel>
                                                   <FormControl>
-                                                    <Textarea {...field} />
+                                                    <Textarea className="text-base" {...field} />
                                                   </FormControl>
                                                 </FormItem>
                                               )}

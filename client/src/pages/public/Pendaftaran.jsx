@@ -1078,7 +1078,9 @@ const PenggunaBaru = () => {
                     )}
                   />
                   <div className="col-span-2 flex flex-col gap-2">
-                    <p className="font-aileron text-secondary-500">Alamat Rumah</p>
+                    <p className="font-aileron text-base font-bold text-secondary-500">
+                      Alamat Rumah
+                    </p>
                     <div className="grid grid-cols-2 gap-8">
                       <FormField
                         control={form.control}
@@ -1464,7 +1466,9 @@ const PenggunaBaru = () => {
                     )}
                   />
                   <div className="col-span-2 flex flex-col gap-2">
-                    <p className="font-aileron text-secondary-500">Alamat Kantor</p>
+                    <p className="font-aileron text-base font-bold text-secondary-500">
+                      Alamat Kantor
+                    </p>
                     <div className="grid grid-cols-2 gap-8">
                       <FormField
                         control={form.control}

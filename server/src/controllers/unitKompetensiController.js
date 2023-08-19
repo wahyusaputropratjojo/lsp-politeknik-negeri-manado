@@ -27,6 +27,8 @@ export const listUnitKompetensi = async (req, res, next) => {
 export const createUnitKompetensi = async (req, res, next) => {
   const { unit_kompetensi } = req.body;
 
+  console.log(unit_kompetensi);
+
   try {
     if (Object.keys(req.body).length === 0) {
       res.status(400);

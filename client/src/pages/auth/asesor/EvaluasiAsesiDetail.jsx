@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
@@ -38,6 +38,7 @@ import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/compon
 import InfoCircle from "../../../assets/icons/untitled-ui-icons/line/components/InfoCircle";
 import CheckCircle from "../../../assets/icons/untitled-ui-icons/line/components/CheckCircle";
 import XCircle from "../../../assets/icons/untitled-ui-icons/line/components/XCircle";
+import { is } from "date-fns/locale";
 
 export const EvaluasiAsesiDetail = () => {
   const navigate = useNavigate();
@@ -79,35 +80,30 @@ export const EvaluasiAsesiDetail = () => {
     ),
   });
 
-  // const formToggleMetodePengujian = useForm({
-  //   defaultValues: {
-  //     is_praktik_demonstrasi: false,
-  //     is_pertanyaan_tertulis: false,
-  //     is_pertanyaan_lisan: false,
-  //     is_portofolio: false,
-  //   },
-  //   resolver: yupResolver(
-  //     yup
-  //       .object()
-  //       .shape({
-  //         is_praktik_demonstrasi: yup.boolean(),
-  //         is_pertanyaan_tertulis: yup.boolean(),
-  //         is_pertanyaan_lisan: yup.boolean(),
-  //         is_portofolio: yup.boolean(),
-  //       })
-  //       .test("at-least-one-checked", "Setidaknya 1 metode pengujian dipilih", (obj) => {
-  //         const {
-  //           is_praktik_demonstrasi,
-  //           is_pertanyaan_tertulis,
-  //           is_pertanyaan_lisan,
-  //           is_portofolio,
-  //         } = obj;
-  //         return (
-  //           is_praktik_demonstrasi || is_pertanyaan_tertulis || is_pertanyaan_lisan || is_portofolio
-  //         );
-  //       }),
-  //   ),
-  // });
+  const formToggleMetodePengujian = useForm({
+    defaultValues: {
+      is_praktik_demonstrasi: false,
+      is_portofolio: false,
+      is_uji_tertulis: false,
+      // is_wawancara: false,
+    },
+    resolver: yupResolver(
+      yup
+        .object()
+        .shape({
+          is_praktik_demonstrasi: yup.boolean(),
+          is_portofolio: yup.boolean(),
+          is_uji_tertulis: yup.boolean(),
+          // is_wawancara: yup.boolean(),
+        })
+        .test("at-least-one-checked", "Setidaknya 1 metode pengujian dipilih", (object) => {
+          // const { is_praktik_demonstrasi, is_portofolio, is_uji_tertulis, is_wawancara } = object;
+          // return is_praktik_demonstrasi || is_portofolio || is_uji_tertulis || is_wawancara;
+          const { is_praktik_demonstrasi, is_portofolio, is_uji_tertulis } = object;
+          return is_praktik_demonstrasi || is_portofolio || is_uji_tertulis;
+        }),
+    ),
+  });
 
   useQuery({
     queryKey: ["kompetensi-asesmen-mandiri", idAsesiSkemaSertifikasi],
@@ -255,18 +251,17 @@ export const EvaluasiAsesiDetail = () => {
     }
   };
 
-  // const onSubmitFormToggleMetodePengujian = (data) => {
-  //   console.log(data);
-
-  //   try {
-  //     mutate({ ...data, is_metode_pengujian: true });
-  //     setIsRefetch(true);
-  //   } catch (error) {
-  //     console.log(error);
-  //   } finally {
-  //     setIsDialogOpenTwo(false);
-  //   }
-  // };
+  const onSubmitFormToggleMetodePengujian = (data) => {
+    try {
+      console.log(data);
+      mutate({ ...data, is_metode_pengujian: true });
+      // setIsRefetch(true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsDialogOpenTwo(false);
+    }
+  };
 
   useEffect(() => {
     if (!!isRefetchLocation) {
@@ -281,6 +276,26 @@ export const EvaluasiAsesiDetail = () => {
     }
   }, []);
 
+  const isPraktikDemonstrasiValue = useWatch({
+    control: formToggleMetodePengujian.control,
+    name: "is_praktik_demonstrasi",
+  });
+
+  const isPortofolioValue = useWatch({
+    control: formToggleMetodePengujian.control,
+    name: "is_portofolio",
+  });
+
+  const isUjiTertulisValue = useWatch({
+    control: formToggleMetodePengujian.control,
+    name: "is_uji_tertulis",
+  });
+
+  const isWawancaraValue = useWatch({
+    control: formToggleMetodePengujian.control,
+    name: "is_wawancara",
+  });
+
   if (!!asesiData && !!idAsesiSkemaSertifikasi) {
     const {
       is_asesmen_mandiri_selesai: isAsesmenMandiriSelesai,
@@ -288,14 +303,11 @@ export const EvaluasiAsesiDetail = () => {
       is_metode_pengujian: isMetodePengujian,
       is_observasi_aktivitas_tempat_kerja_selesai: isObservasiAktivitasTempatKerjaSelesai,
       is_pertanyaan_lisan_selesai: isPertanyaanLisanSelesai,
-      is_pertanyaan_lisan: isPertanyaanLisan,
       is_pertanyaan_observasi_selesai: isPertanyaanObservasiSelesai,
       is_pertanyaan_tertulis_esai_selesai: isPertanyaanTertulisEsaiSelesai,
       is_pertanyaan_tertulis_pilihan_ganda_selesai: isPertanyaanTertulisPilihanGandaSelesai,
       is_pertanyaan_tertulis: isPertanyaanTertulis,
-      is_portofolio: isPortofolio,
       is_praktik_demonstrasi_selesai: isPraktikDemonstrasiSelesai,
-      is_praktik_demonstrasi: isPraktikDemonstrasi,
       is_punya_asesor: isPunyaAsesor,
       is_verifikasi_berkas: isVerifikasiBerkas,
       is_verifikasi_portofolio_selesai: isVerifikasiPortofolioSelesai,
@@ -303,6 +315,10 @@ export const EvaluasiAsesiDetail = () => {
       is_evaluasi_pertanyaan_tertulis_esai_selesai: isEvaluasiPertanyaanTertulisEsaiSelesai,
       is_evaluasi_asesi_selesai: isEvaluasiAsesiSelesai,
       is_tidak_kompeten: isTidakKompeten,
+      is_praktik_demonstrasi: isPraktikDemonstrasi,
+      is_portofolio: isPortofolio,
+      is_uji_tertulis: isUjiTertulis,
+      is_wawancara: isWawancara,
       asesi: {
         data_diri: {
           nik,
@@ -351,6 +367,97 @@ export const EvaluasiAsesiDetail = () => {
       year: "numeric",
     });
 
+    const isMetodePraktikDemonstrasi =
+      !!isPraktikDemonstrasi &&
+      !!isObservasiAktivitasTempatKerjaSelesai &&
+      !!isPraktikDemonstrasiSelesai &&
+      !!isPertanyaanObservasiSelesai &&
+      !!isProyekTerkaitPekerjaanSelesai &&
+      !isPortofolio &&
+      !isVerifikasiPortofolioSelesai &&
+      !isUjiTertulis &&
+      !isPertanyaanTertulisPilihanGandaSelesai &&
+      !isPertanyaanTertulisEsaiSelesai &&
+      !isPertanyaanLisanSelesai;
+
+    const isMetodePortofolio =
+      !isPraktikDemonstrasi &&
+      !isObservasiAktivitasTempatKerjaSelesai &&
+      !isPraktikDemonstrasiSelesai &&
+      !isPertanyaanObservasiSelesai &&
+      !isProyekTerkaitPekerjaanSelesai &&
+      !!isPortofolio &&
+      !!isVerifikasiPortofolioSelesai &&
+      !isUjiTertulis &&
+      !isPertanyaanTertulisPilihanGandaSelesai &&
+      !isPertanyaanTertulisEsaiSelesai &&
+      !isPertanyaanLisanSelesai;
+
+    const isMetodeUjiTertulis =
+      !isPraktikDemonstrasi &&
+      !isObservasiAktivitasTempatKerjaSelesai &&
+      !isPraktikDemonstrasiSelesai &&
+      !isPertanyaanObservasiSelesai &&
+      !isProyekTerkaitPekerjaanSelesai &&
+      !isPortofolio &&
+      !isVerifikasiPortofolioSelesai &&
+      !!isUjiTertulis &&
+      !!isPertanyaanTertulisPilihanGandaSelesai &&
+      !!isPertanyaanTertulisEsaiSelesai &&
+      !!isPertanyaanLisanSelesai;
+
+    const isMetodePraktikDemonstrasiAndMetodePortofolio =
+      !!isPraktikDemonstrasi &&
+      !!isObservasiAktivitasTempatKerjaSelesai &&
+      !!isPraktikDemonstrasiSelesai &&
+      !!isPertanyaanObservasiSelesai &&
+      !!isProyekTerkaitPekerjaanSelesai &&
+      !!isPortofolio &&
+      !!isVerifikasiPortofolioSelesai &&
+      !isUjiTertulis &&
+      !isPertanyaanTertulisPilihanGandaSelesai &&
+      !isPertanyaanTertulisEsaiSelesai &&
+      !isPertanyaanLisanSelesai;
+
+    const isMetodePortofolioAndMetodeUjiTertulis =
+      !isPraktikDemonstrasi &&
+      !isObservasiAktivitasTempatKerjaSelesai &&
+      !isPraktikDemonstrasiSelesai &&
+      !isPertanyaanObservasiSelesai &&
+      !isProyekTerkaitPekerjaanSelesai &&
+      !!isPortofolio &&
+      !!isVerifikasiPortofolioSelesai &&
+      !!isUjiTertulis &&
+      !!isPertanyaanTertulisPilihanGandaSelesai &&
+      !!isPertanyaanTertulisEsaiSelesai &&
+      !!isPertanyaanLisanSelesai;
+
+    const isMetodeUjiTertulisAndMetodePraktikDemonstrasi =
+      !!isPraktikDemonstrasi &&
+      !!isObservasiAktivitasTempatKerjaSelesai &&
+      !!isPraktikDemonstrasiSelesai &&
+      !!isPertanyaanObservasiSelesai &&
+      !!isProyekTerkaitPekerjaanSelesai &&
+      !isPortofolio &&
+      !isVerifikasiPortofolioSelesai &&
+      !!isUjiTertulis &&
+      !!isPertanyaanTertulisPilihanGandaSelesai &&
+      !!isPertanyaanTertulisEsaiSelesai &&
+      !!isPertanyaanLisanSelesai;
+
+    const isMetodePraktikDemonstrasiAndMetodePortofolioAndMetodeUjiTertulis =
+      !!isPraktikDemonstrasi &&
+      !!isObservasiAktivitasTempatKerjaSelesai &&
+      !!isPraktikDemonstrasiSelesai &&
+      !!isPertanyaanObservasiSelesai &&
+      !!isProyekTerkaitPekerjaanSelesai &&
+      !!isPortofolio &&
+      !!isVerifikasiPortofolioSelesai &&
+      !!isUjiTertulis &&
+      !!isPertanyaanTertulisPilihanGandaSelesai &&
+      !!isPertanyaanTertulisEsaiSelesai &&
+      !!isPertanyaanLisanSelesai;
+
     return (
       <>
         <section>
@@ -371,7 +478,7 @@ export const EvaluasiAsesiDetail = () => {
                       className="aspect-square w-56 rounded-lg bg-white object-cover"
                     />
                   </div>
-                  <div className="flex w-full gap-6 rounded-lg bg-white p-12 shadow-lg">
+                  <div className="relative flex w-full gap-6 rounded-lg bg-white p-12 shadow-lg">
                     <div className="flex w-9/12 flex-col">
                       <div className="flex flex-col gap-4">
                         <div>
@@ -564,14 +671,14 @@ export const EvaluasiAsesiDetail = () => {
                                                       <img
                                                         src={value.url_file_portofolio}
                                                         alt=""
-                                                        className="aspect-[3/4] w-20 rounded-lg border-2 border-secondary-300 object-cover"
+                                                        className="aspect-[3/4] w-20 rounded-lg border-2 border-secondary-200 object-cover"
                                                       />
                                                     </DialogTrigger>
                                                     <DialogContent>
                                                       <img
                                                         src={value.url_file_portofolio}
                                                         alt={`Gambar Portofolio ${keterangan}`}
-                                                        className="w-[50vh]"
+                                                        className="h-[80vh] w-[80vh] rounded-lg border-2 border-secondary-200 object-contain"
                                                       />
                                                     </DialogContent>
                                                   </Dialog>
@@ -588,7 +695,7 @@ export const EvaluasiAsesiDetail = () => {
                         </AccordionItem>
                       </Accordion>
                     </div>
-                    <div className="mt-16 flex w-3/12 flex-col gap-8 rounded-lg bg-secondary-500 p-6 text-white">
+                    <div className="mt-16 flex w-3/12 flex-shrink-0 flex-col gap-8 rounded-lg bg-secondary-500 p-6 text-white">
                       <div className="flex flex-col justify-between gap-4">
                         <div>
                           <Form {...formAsesmenMandiri}>
@@ -672,7 +779,7 @@ export const EvaluasiAsesiDetail = () => {
                           </Form>
                         </div>
                       </div>
-                      {/* {isAsesmenMandiri && (
+                      {!!isAsesmenMandiri && !!isAsesmenMandiriSelesai && (
                         <div className="flex flex-col gap-2">
                           <p className="font-bold">Metode Pengujian</p>
                           <div className="flex flex-col gap-2">
@@ -680,7 +787,7 @@ export const EvaluasiAsesiDetail = () => {
                               <form>
                                 <div className="flex flex-col gap-2">
                                   <div className="flex items-center justify-between">
-                                    <p>Demonstrasi</p>
+                                    <p>Praktik Demonstrasi</p>
                                     <FormField
                                       control={formToggleMetodePengujian.control}
                                       name="is_praktik_demonstrasi"
@@ -690,44 +797,6 @@ export const EvaluasiAsesiDetail = () => {
                                             <Switch
                                               disabled={isMetodePengujian}
                                               checked={field.value || isPraktikDemonstrasi}
-                                              onCheckedChange={field.onChange}
-                                              className="data-[state=unchecked]:bg-secondary-100"
-                                            />
-                                          </FormControl>
-                                        </FormItem>
-                                      )}
-                                    />
-                                  </div>
-                                  <div className="flex items-center justify-between">
-                                    <p>Pertanyaan Tertulis</p>
-                                    <FormField
-                                      control={formToggleMetodePengujian.control}
-                                      name="is_pertanyaan_tertulis"
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormControl>
-                                            <Switch
-                                              disabled={isMetodePengujian}
-                                              checked={field.value || isPertanyaanTertulis}
-                                              onCheckedChange={field.onChange}
-                                              className="data-[state=unchecked]:bg-secondary-100"
-                                            />
-                                          </FormControl>
-                                        </FormItem>
-                                      )}
-                                    />
-                                  </div>
-                                  <div className="flex items-center justify-between">
-                                    <p>Pertanyaan Lisan</p>
-                                    <FormField
-                                      control={formToggleMetodePengujian.control}
-                                      name="is_pertanyaan_lisan"
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormControl>
-                                            <Switch
-                                              disabled={isMetodePengujian}
-                                              checked={field.value || isPertanyaanLisan}
                                               onCheckedChange={field.onChange}
                                               className="data-[state=unchecked]:bg-secondary-100"
                                             />
@@ -755,12 +824,60 @@ export const EvaluasiAsesiDetail = () => {
                                       )}
                                     />
                                   </div>
+                                  <div className="flex items-center justify-between">
+                                    <p>Uji Tertulis</p>
+                                    <FormField
+                                      control={formToggleMetodePengujian.control}
+                                      name="is_uji_tertulis"
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormControl>
+                                            <Switch
+                                              disabled={isMetodePengujian}
+                                              checked={field.value || isUjiTertulis}
+                                              onCheckedChange={field.onChange}
+                                              className="data-[state=unchecked]:bg-secondary-100"
+                                            />
+                                          </FormControl>
+                                        </FormItem>
+                                      )}
+                                    />
+                                  </div>
+                                  {/* <div className="flex items-center justify-between">
+                                    <p>Wawancara</p>
+                                    <FormField
+                                      control={formToggleMetodePengujian.control}
+                                      name="is_wawancara"
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormControl>
+                                            <Switch
+                                              disabled={isMetodePengujian}
+                                              checked={field.value || isWawancara}
+                                              onCheckedChange={field.onChange}
+                                              className="data-[state=unchecked]:bg-secondary-100"
+                                            />
+                                          </FormControl>
+                                        </FormItem>
+                                      )}
+                                    />
+                                  </div> */}
                                   {!isMetodePengujian && (
                                     <AlertDialog
                                       open={isDialogOpenTwo}
                                       onOpenChange={setIsDialogOpenTwo}>
                                       <AlertDialogTrigger asChild>
-                                        <Button size="xs" className="w-full" type="button">
+                                        <Button
+                                          size="xs"
+                                          disabled={
+                                            !isPraktikDemonstrasiValue &&
+                                            !isPortofolioValue &&
+                                            !isUjiTertulisValue
+                                            // &&
+                                            // !isWawancaraValue
+                                          }
+                                          className="w-full"
+                                          type="button">
                                           Simpan Perubahan
                                         </Button>
                                       </AlertDialogTrigger>
@@ -812,7 +929,7 @@ export const EvaluasiAsesiDetail = () => {
                             </Form>
                           </div>
                         </div>
-                      )} */}
+                      )}
                     </div>
                   </div>
                 </div>
@@ -852,441 +969,627 @@ export const EvaluasiAsesiDetail = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex w-full items-center justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex w-full items-center gap-6">
-                        {!!isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
-                            <XCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!isObservasiAktivitasTempatKerjaSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isObservasiAktivitasTempatKerjaSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div className="flex w-full items-center justify-between">
-                          <div>
-                            <p className="text-xs font-bold leading-none">FR.IA.01</p>
-                            <p className="text-base">
-                              Observasi Aktivitas di Tempat Kerja atau Tempat Kerja Simulasi
-                            </p>
-                          </div>
-                          {!!isObservasiAktivitasTempatKerjaSelesai && (
-                            <div className="text-sm">
-                              <div className="flex flex-col items-center">
-                                <p className="font-bold">Kompeten</p>
-                                <div className="flex gap-2">
-                                  <p>{totalKompetenFRIA01}</p>
-                                  <p>/</p>
-                                  <p>{totalElemenFRIA01}</p>
-                                </div>
+                    {!!isPraktikDemonstrasi && (
+                      <>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
                               </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      {!isObservasiAktivitasTempatKerjaSelesai && !isTidakKompeten && (
-                        <div className="flex-shrink-0">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`FR-IA-01`, {
-                                state: {
-                                  ...state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Formulir
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex w-full items-center gap-6">
-                        {!!isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
-                            <XCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-xs font-bold leading-none">FR.IA.02</p>
-                          <p className="text-base">Tugas Praktik Demonstrasi</p>
-                        </div>
-                      </div>
-                      {!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
-                        <div className="flex flex-shrink-0 items-center">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`FR-IA-02`, {
-                                state: {
-                                  ...state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Formulir
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex w-full items-center gap-6">
-                        {!!isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
-                            <XCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!isPertanyaanObservasiSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isPertanyaanObservasiSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div className="flex w-full items-center justify-between">
-                          <div>
-                            <p className="text-xs font-bold leading-none">FR.IA.03</p>
-                            <p className="text-base">Pertanyaan Untuk Mendukung Observasi</p>
-                          </div>
-                          {!!isPertanyaanObservasiSelesai && (
-                            <div className="text-sm">
-                              <div className="flex flex-col items-center">
-                                <p className="font-bold">Kompeten</p>
-                                <div className="flex gap-2">
-                                  <p>{totalKompetenFRIA03}</p>
-                                  <p>/</p>
-                                  <p>{totalPertanyaanObservasiFRIA03}</p>
-                                </div>
+                            )}
+                            {!isObservasiAktivitasTempatKerjaSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
                               </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      {!isPertanyaanObservasiSelesai && !isTidakKompeten && (
-                        <div className="flex flex-shrink-0 items-center">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`FR-IA-03`, {
-                                state: {
-                                  ...state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Formulir
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex w-full items-center gap-6">
-                        {!!isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
-                            <XCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!isProyekTerkaitPekerjaanSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isProyekTerkaitPekerjaanSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-xs font-bold leading-none">FR.IA.04</p>
-                          <p className="text-base">
-                            Penjelasan Singkat Proyek Terkait Pekerjaan / Kegiatan Terstruktur
-                            Lainnya
-                          </p>
-                        </div>
-                      </div>
-                      {!isProyekTerkaitPekerjaanSelesai && !isTidakKompeten && (
-                        <div className="flex flex-shrink-0 items-center">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`FR-IA-04`, {
-                                state: {
-                                  ...state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Formulir
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex w-full items-center gap-6">
-                        {!!isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
-                            <XCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div className="flex w-full items-center justify-between">
-                          <div>
-                            <p className="text-xs font-bold leading-none">FR.IA.05</p>
-                            <p className="text-base">Pertanyaan Tertulis Pilihan Ganda</p>
-                          </div>
-                          {!!isPertanyaanTertulisPilihanGandaSelesai && (
-                            <div className="text-sm">
-                              <div className="flex flex-col items-center">
-                                <p className="font-bold">Kompeten</p>
-                                <div className="flex gap-2">
-                                  <p>{totalKompetenFRIA05}</p>
-                                  <p>/</p>
-                                  <p>{totalPertanyaanTertulisPilihanGandaFRIA05}</p>
-                                </div>
+                            )}
+                            {!!isObservasiAktivitasTempatKerjaSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
                               </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      {!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
-                        <div className="flex flex-shrink-0 items-center">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`FR-IA-05`, {
-                                state: {
-                                  ...state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Formulir
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex w-full items-center gap-6">
-                        {!!isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
-                            <XCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!isEvaluasiPertanyaanTertulisEsaiSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isEvaluasiPertanyaanTertulisEsaiSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div className="flex w-full items-center justify-between">
-                          <div>
-                            <p className="text-xs font-bold leading-none">FR.IA.06</p>
-                            <p className="text-base">Pertanyaan Tertulis Esai</p>
-                          </div>
-                          {!!isEvaluasiPertanyaanTertulisEsaiSelesai && (
-                            <div className="text-sm">
-                              <div className="flex flex-col items-center">
-                                <p className="font-bold">Kompeten</p>
-                                <div className="flex gap-2">
-                                  <p>{totalKompetenFRIA06}</p>
-                                  <p>/</p>
-                                  <p>{totalPertanyaanTertulisEsaiFRIA06}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex flex-shrink-0 items-center">
-                        {!isEvaluasiPertanyaanTertulisEsaiSelesai &&
-                          !!isPertanyaanTertulisEsaiSelesai &&
-                          !isTidakKompeten && (
-                            <Button
-                              size="xs"
-                              onClick={() => {
-                                navigate(`FR-IA-06`, {
-                                  state: {
-                                    ...state,
-                                    id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                  },
-                                });
-                              }}>
-                              Lihat Formulir
-                            </Button>
-                          )}
-                      </div>
-                    </div>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex w-full items-center gap-6">
-                        {!!isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
-                            <XCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!isPertanyaanLisanSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isPertanyaanLisanSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div className="flex w-full items-center justify-between">
-                          <div>
-                            <p className="text-xs font-bold leading-none">FR.IA.07</p>
-                            <p className="text-base">Pertanyaan Lisan</p>
-                          </div>
-                          {!!isPertanyaanLisanSelesai && (
-                            <div className="text-sm">
-                              <div className="flex flex-col items-center">
-                                <p className="font-bold">Kompeten</p>
-                                <div className="flex gap-2">
-                                  <p>{totalKompetenFRIA07}</p>
-                                  <p>/</p>
-                                  <p>{totalPertanyaanLisanFRIA07}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      {!isPertanyaanLisanSelesai && !isTidakKompeten && (
-                        <div className="flex flex-shrink-0 items-center">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`FR-IA-07`, {
-                                state: {
-                                  ...state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Formulir
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
-                      <div className="flex w-full items-center gap-6">
-                        {!!isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
-                            <XCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
-                            <InfoCircle className="text-2xl" />
-                          </div>
-                        )}
-                        {!!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
-                          <div className="flex h-20 w-12 items-center justify-center rounded-lg bg-success-500 text-white">
-                            <CheckCircle className="text-2xl" />
-                          </div>
-                        )}
-                        <div className="flex w-full items-center justify-between">
-                          <div>
-                            <p className="text-xs font-bold leading-none">FR.IA.08</p>
-                            <p className="text-base">Verifikasi Portofolio</p>
-                          </div>
-                          {!!isVerifikasiPortofolioSelesai && (
-                            <div className="grid grid-cols-4 gap-4 text-sm">
+                            )}
+                            <div className="flex w-full items-center justify-between">
                               <div>
-                                <div className="flex flex-col items-center">
-                                  <p className="font-bold">Asli</p>
-                                  <div className="flex gap-2">
-                                    <p>{totalAsliFRIA08}</p>
-                                    <p>/</p>
-                                    <p>{totalPortofolioFRIA08}</p>
+                                <p className="text-xs font-bold leading-none">FR.IA.01</p>
+                                <p className="text-base">
+                                  Observasi Aktivitas di Tempat Kerja atau Tempat Kerja Simulasi
+                                </p>
+                              </div>
+                              {!!isObservasiAktivitasTempatKerjaSelesai && (
+                                <div className="text-sm">
+                                  <div className="flex flex-col items-center">
+                                    <p className="font-bold">Kompeten</p>
+                                    <div className="flex gap-2">
+                                      <p>{totalKompetenFRIA01}</p>
+                                      <p>/</p>
+                                      <p>{totalElemenFRIA01}</p>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                              <div>
-                                <div className="flex flex-col items-center">
-                                  <p className="font-bold">Memadai</p>
-                                  <div className="flex gap-2">
-                                    <p>{totalMemadaiFRIA08}</p>
-                                    <p>/</p>
-                                    <p>{totalPortofolioFRIA08}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div>
-                                <div className="flex flex-col items-center">
-                                  <p className="font-bold">Terkini</p>
-                                  <div className="flex gap-2">
-                                    <p>{totalTerkiniFRIA08}</p>
-                                    <p>/</p>
-                                    <p>{totalPortofolioFRIA08}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div>
-                                <div className="flex flex-col items-center">
-                                  <p className="font-bold">Valid</p>
-                                  <div className="flex gap-2">
-                                    <p>{totalValidFRIA08}</p>
-                                    <p>/</p>
-                                    <p>{totalPortofolioFRIA08}</p>
-                                  </div>
-                                </div>
-                              </div>
+                              )}
+                            </div>
+                          </div>
+                          {!isObservasiAktivitasTempatKerjaSelesai && !isTidakKompeten && (
+                            <div className="flex-shrink-0">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-01`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
                             </div>
                           )}
                         </div>
-                      </div>
-                      {!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
-                        <div className="flex flex-shrink-0 items-center">
-                          <Button
-                            size="xs"
-                            onClick={() => {
-                              navigate(`FR-IA-08`, {
-                                state: {
-                                  ...state,
-                                  id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
-                                },
-                              });
-                            }}>
-                            Lihat Formulir
-                          </Button>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div>
+                              <p className="text-xs font-bold leading-none">FR.IA.02</p>
+                              <p className="text-base">Tugas Praktik Demonstrasi</p>
+                            </div>
+                          </div>
+                          {!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
+                            <div className="flex flex-shrink-0 items-center">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-02`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isPertanyaanObservasiSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isPertanyaanObservasiSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div className="flex w-full items-center justify-between">
+                              <div>
+                                <p className="text-xs font-bold leading-none">FR.IA.03</p>
+                                <p className="text-base">Pertanyaan Untuk Mendukung Observasi</p>
+                              </div>
+                              {!!isPertanyaanObservasiSelesai && (
+                                <div className="text-sm">
+                                  <div className="flex flex-col items-center">
+                                    <p className="font-bold">Kompeten</p>
+                                    <div className="flex gap-2">
+                                      <p>{totalKompetenFRIA03}</p>
+                                      <p>/</p>
+                                      <p>{totalPertanyaanObservasiFRIA03}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {!isPertanyaanObservasiSelesai && !isTidakKompeten && (
+                            <div className="flex flex-shrink-0 items-center">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-03`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isProyekTerkaitPekerjaanSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isProyekTerkaitPekerjaanSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div>
+                              <p className="text-xs font-bold leading-none">FR.IA.04</p>
+                              <p className="text-base">
+                                Penjelasan Singkat Proyek Terkait Pekerjaan / Kegiatan Terstruktur
+                                Lainnya
+                              </p>
+                            </div>
+                          </div>
+                          {!isProyekTerkaitPekerjaanSelesai && !isTidakKompeten && (
+                            <div className="flex flex-shrink-0 items-center">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-04`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                    {!!isUjiTertulis && (
+                      <>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div className="flex w-full items-center justify-between">
+                              <div>
+                                <p className="text-xs font-bold leading-none">FR.IA.05</p>
+                                <p className="text-base">Pertanyaan Tertulis Pilihan Ganda</p>
+                              </div>
+                              {!!isPertanyaanTertulisPilihanGandaSelesai && (
+                                <div className="text-sm">
+                                  <div className="flex flex-col items-center">
+                                    <p className="font-bold">Kompeten</p>
+                                    <div className="flex gap-2">
+                                      <p>{totalKompetenFRIA05}</p>
+                                      <p>/</p>
+                                      <p>{totalPertanyaanTertulisPilihanGandaFRIA05}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {!isPertanyaanTertulisPilihanGandaSelesai && !isTidakKompeten && (
+                            <div className="flex flex-shrink-0 items-center">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-05`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isEvaluasiPertanyaanTertulisEsaiSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isEvaluasiPertanyaanTertulisEsaiSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div className="flex w-full items-center justify-between">
+                              <div>
+                                <p className="text-xs font-bold leading-none">FR.IA.06</p>
+                                <p className="text-base">Pertanyaan Tertulis Esai</p>
+                              </div>
+                              {!!isEvaluasiPertanyaanTertulisEsaiSelesai && (
+                                <div className="text-sm">
+                                  <div className="flex flex-col items-center">
+                                    <p className="font-bold">Kompeten</p>
+                                    <div className="flex gap-2">
+                                      <p>{totalKompetenFRIA06}</p>
+                                      <p>/</p>
+                                      <p>{totalPertanyaanTertulisEsaiFRIA06}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex flex-shrink-0 items-center">
+                            {!isEvaluasiPertanyaanTertulisEsaiSelesai &&
+                              !!isPertanyaanTertulisEsaiSelesai &&
+                              !isTidakKompeten && (
+                                <Button
+                                  size="xs"
+                                  onClick={() => {
+                                    navigate(`FR-IA-06`, {
+                                      state: {
+                                        ...state,
+                                        id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                      },
+                                    });
+                                  }}>
+                                  Lihat Formulir
+                                </Button>
+                              )}
+                          </div>
+                        </div>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isPertanyaanLisanSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isPertanyaanLisanSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div className="flex w-full items-center justify-between">
+                              <div>
+                                <p className="text-xs font-bold leading-none">FR.IA.07</p>
+                                <p className="text-base">Pertanyaan Lisan</p>
+                              </div>
+                              {!!isPertanyaanLisanSelesai && (
+                                <div className="text-sm">
+                                  <div className="flex flex-col items-center">
+                                    <p className="font-bold">Kompeten</p>
+                                    <div className="flex gap-2">
+                                      <p>{totalKompetenFRIA07}</p>
+                                      <p>/</p>
+                                      <p>{totalPertanyaanLisanFRIA07}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {!isPertanyaanLisanSelesai && !isTidakKompeten && (
+                            <div className="flex flex-shrink-0 items-center">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-07`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                    {!!isPortofolio && (
+                      <>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div className="flex w-full items-center justify-between">
+                              <div>
+                                <p className="text-xs font-bold leading-none">FR.IA.08</p>
+                                <p className="text-base">Verifikasi Portofolio</p>
+                              </div>
+                              {!!isVerifikasiPortofolioSelesai && (
+                                <div className="grid grid-cols-4 gap-4 text-sm">
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Asli</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalAsliFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Memadai</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalMemadaiFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Terkini</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalTerkiniFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Valid</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalValidFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                            <div className="flex flex-shrink-0 items-center">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-08`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                    {!!isWawancara && (
+                      <>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div className="flex w-full items-center justify-between">
+                              <div>
+                                <p className="text-xs font-bold leading-none">FR.IA.09</p>
+                                <p className="text-base">Pertanyaan Wawancara</p>
+                              </div>
+                              {!!isVerifikasiPortofolioSelesai && (
+                                <div className="grid grid-cols-4 gap-4 text-sm">
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Asli</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalAsliFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Memadai</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalMemadaiFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Terkini</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalTerkiniFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Valid</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalValidFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                            <div className="flex flex-shrink-0 items-center">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-08`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                          <div className="flex w-full items-center gap-6">
+                            {!!isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                                <XCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-warning-500 text-white">
+                                <InfoCircle className="text-2xl" />
+                              </div>
+                            )}
+                            {!!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                              <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                                <CheckCircle className="text-2xl" />
+                              </div>
+                            )}
+                            <div className="flex w-full items-center justify-between">
+                              <div>
+                                <p className="text-xs font-bold leading-none">FR.IA.10</p>
+                                <p className="text-base">Klarifikasi Bukti Pihak Ketiga</p>
+                              </div>
+                              {!!isVerifikasiPortofolioSelesai && (
+                                <div className="grid grid-cols-4 gap-4 text-sm">
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Asli</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalAsliFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Memadai</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalMemadaiFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Terkini</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalTerkiniFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Valid</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalValidFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {!isVerifikasiPortofolioSelesai && !isTidakKompeten && (
+                            <div className="flex flex-shrink-0 items-center">
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  navigate(`FR-IA-08`, {
+                                    state: {
+                                      ...state,
+                                      id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+                                    },
+                                  });
+                                }}>
+                                Lihat Formulir
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
               </div>
@@ -1337,7 +1640,56 @@ export const EvaluasiAsesiDetail = () => {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  {!!isObservasiAktivitasTempatKerjaSelesai &&
+                  {isMetodePraktikDemonstrasi ||
+                  isMetodePortofolio ||
+                  isMetodeUjiTertulis ||
+                  isMetodePraktikDemonstrasiAndMetodePortofolio ||
+                  isMetodePortofolioAndMetodeUjiTertulis ||
+                  isMetodeUjiTertulisAndMetodePraktikDemonstrasi ||
+                  isMetodePraktikDemonstrasiAndMetodePortofolioAndMetodeUjiTertulis ? (
+                    <AlertDialog open={isDialogOpenTwo} onOpenChange={setIsDialogOpenTwo}>
+                      <AlertDialogTrigger className={cn(buttonVariants(), "w-full")}>
+                        Kompeten
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            <div className="flex flex-col items-center gap-2">
+                              <AnnotationAlert className="text-5xl text-secondary-500" />
+                              <p className="font-anek-latin text-xl">Asesi Kompeten</p>
+                            </div>
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            <p className="py-4 text-sm">
+                              Harap diingat bahwa setelah tindakan ini dilakukan, tidak akan ada
+                              kesempatan untuk mengulanginya. Apakah Anda yakin?
+                            </p>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <div className="flex w-full gap-4">
+                            <AlertDialogCancel asChild>
+                              <Button size="sm" variant="outline-error" className="w-full">
+                                Batalkan
+                              </Button>
+                            </AlertDialogCancel>
+                            <AlertDialogAction asChild>
+                              <Button
+                                size="sm"
+                                className="w-full"
+                                onClick={() => {
+                                  mutate({ is_evaluasi_asesi_selesai: true, is_kompeten: true });
+                                  navigate("/evaluasi-asesi", { state: { is_refetch: true } });
+                                }}>
+                                Konfirmasi
+                              </Button>
+                            </AlertDialogAction>
+                          </div>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  ) : null}
+                  {/* {!!isObservasiAktivitasTempatKerjaSelesai &&
                     !!isPraktikDemonstrasiSelesai &&
                     !!isPertanyaanObservasiSelesai &&
                     !!isProyekTerkaitPekerjaanSelesai &&
@@ -1386,7 +1738,7 @@ export const EvaluasiAsesiDetail = () => {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
-                    )}
+                    )} */}
                 </div>
               )}
             </div>

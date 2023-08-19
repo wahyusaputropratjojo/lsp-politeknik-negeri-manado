@@ -81,6 +81,9 @@ export const BuatSkemaSertifikasi = () => {
     values: {
       id_tempat_uji_kompetensi: administratorTUKData?.id,
     },
+    resolver: {
+      
+    }
   });
 
   useQuery({

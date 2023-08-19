@@ -179,9 +179,11 @@ export const FRIA06 = () => {
                                     <tbody>
                                       <tr className="border-2 border-secondary-100">
                                         <td className="border-2 border-secondary-100 p-4 align-top text-sm">
-                                          {jawaban}
+                                          <p className="rounded-lg border-2 border-success-500 bg-success-50 p-4">
+                                            {jawaban}
+                                          </p>
                                         </td>
-                                        <td className="border-2 border-secondary-100 p-4 align-top text-sm">
+                                        <td className="border-2 border-secondary-100 p-8 px-4 align-top text-sm">
                                           {asesi_jawaban_pertanyaan_tertulis_esai[0]?.jawaban}
                                         </td>
                                         <td className="border-2 border-secondary-100 text-center">

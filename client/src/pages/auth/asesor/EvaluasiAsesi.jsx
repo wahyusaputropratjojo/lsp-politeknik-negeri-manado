@@ -75,7 +75,7 @@ export const EvaluasiAsesi = () => {
             </h1>
             <p>Evaluasi Asesi untuk Peserta Bimbingan Asesi</p>
           </div>
-          <div className="grid grid-cols-1 gap-8">
+          <div className="grid grid-cols-1 gap-4">
             {asesorAsesiData &&
               asesorAsesiData.map((value) => {
                 const {

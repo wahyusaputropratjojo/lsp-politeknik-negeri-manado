@@ -664,11 +664,9 @@ export const getStatusSkemaSertifikasiAsesi = async (req, res, next) => {
           is_metode_pengujian: true,
           is_observasi_aktivitas_tempat_kerja_selesai: true,
           is_pertanyaan_lisan_selesai: true,
-          is_pertanyaan_lisan: true,
           is_pertanyaan_observasi_selesai: true,
           is_pertanyaan_tertulis_esai_selesai: true,
           is_pertanyaan_tertulis_pilihan_ganda_selesai: true,
-          is_pertanyaan_tertulis: true,
           is_portofolio: true,
           is_praktik_demonstrasi_selesai: true,
           is_praktik_demonstrasi: true,
@@ -680,6 +678,8 @@ export const getStatusSkemaSertifikasiAsesi = async (req, res, next) => {
           is_evaluasi_pertanyaan_tertulis_esai_selesai: true,
           is_kompeten: true,
           is_tidak_kompeten: true,
+          is_wawancara: true,
+          is_uji_tertulis: true,
         },
       });
 
@@ -720,6 +720,196 @@ export const getAsesi = async (req, res, next) => {
       code: 200,
       status: "OK",
       data: dataAsesi,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getKompetensiAsesmenMandiri = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const kompetensiAsesmenMandiri =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          asesmen_mandiri: {
+            select: {
+              is_kompeten: true,
+            },
+          },
+          skema_sertifikasi: {
+            select: {
+              unit_kompetensi: {
+                select: {
+                  aktivitas_unit_kompetensi: {
+                    select: {
+                      elemen: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+    const unitKompetensiArray =
+      kompetensiAsesmenMandiri.skema_sertifikasi.unit_kompetensi;
+
+    const asesmenMandiriArray = kompetensiAsesmenMandiri.asesmen_mandiri;
+
+    const totalElemen = unitKompetensiArray.reduce((totalCount, unit) => {
+      return totalCount + unit.aktivitas_unit_kompetensi.length;
+    }, 0);
+
+    const totalKompeten = asesmenMandiriArray.reduce((total, item) => {
+      if (item.is_kompeten === true) {
+        total += 1;
+      }
+      return total;
+    }, 0);
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: {
+        total_kompeten: totalKompeten,
+        total_elemen: totalElemen,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getKompetensiObservasiTempatKerja = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const kompetensiObservasiTempatKerja =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: { id },
+        select: {
+          asesor_observasi_aktivitas_tempat_kerja: {
+            select: {
+              is_kompeten: true,
+            },
+          },
+          skema_sertifikasi: {
+            select: {
+              nama_skema_sertifikasi: true,
+              unit_kompetensi: {
+                select: {
+                  aktivitas_unit_kompetensi: {
+                    select: {
+                      elemen: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+    const unitKompetensiArray =
+      kompetensiObservasiTempatKerja?.skema_sertifikasi?.unit_kompetensi;
+
+    const totalElemen = unitKompetensiArray.reduce((totalCount, unit) => {
+      totalCount += unit.aktivitas_unit_kompetensi.length;
+      return totalCount;
+    }, 0);
+
+    const kompetenArray =
+      kompetensiObservasiTempatKerja.asesor_observasi_aktivitas_tempat_kerja.filter(
+        (item) => item.is_kompeten === true
+      );
+
+    const totalKompeten = kompetenArray.length;
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: {
+        total_kompeten: totalKompeten,
+        total_elemen: totalElemen,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getKompetensiPertanyaanObservasi = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const kompetensiPertanyaanObservasi =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          skema_sertifikasi: {
+            select: {
+              unit_kompetensi: {
+                select: {
+                  pertanyaan_observasi: {
+                    select: {
+                      pertanyaan: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          asesor_pertanyaan_observasi: {
+            select: {
+              is_kompeten: true,
+            },
+          },
+        },
+      });
+
+    const asesorPertanyaanObservasiArray =
+      kompetensiPertanyaanObservasi.asesor_pertanyaan_observasi;
+
+    const unitKompetensiArray =
+      kompetensiPertanyaanObservasi.skema_sertifikasi.unit_kompetensi;
+
+    const totalPertanyaanObservasiTrue = asesorPertanyaanObservasiArray.reduce(
+      (totalCount, item) => {
+        if (item.is_kompeten === true) {
+          totalCount++;
+        }
+        return totalCount;
+      },
+      0
+    );
+
+    const totalPertanyaanObservasi = unitKompetensiArray.reduce(
+      (totalCount, unit) => {
+        unit.pertanyaan_observasi.forEach((pertanyaan) => {
+          totalCount += pertanyaan.pertanyaan ? 1 : 0;
+        });
+        return totalCount;
+      },
+      0
+    );
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: {
+        total_kompeten: totalPertanyaanObservasiTrue,
+        total_pertanyaan_observasi: totalPertanyaanObservasi,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -860,6 +1050,138 @@ export const getKompetensiPertanyaanTertulisEsai = async (req, res, next) => {
       data: {
         total_kompeten: totalKompeten,
         total_pertanyaan_tertulis_esai: totalPertanyaan,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getKompetensiPertanyaanLisan = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const kompetensiPertanyaanLisan =
+      await prisma.asesiSkemaSertifikasi.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          skema_sertifikasi: {
+            select: {
+              unit_kompetensi: {
+                select: {
+                  pertanyaan_lisan: {
+                    select: {
+                      pertanyaan: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          asesor_pertanyaan_lisan: {
+            select: {
+              is_kompeten: true,
+            },
+          },
+        },
+      });
+
+    const unitKompetensiArray =
+      kompetensiPertanyaanLisan.skema_sertifikasi.unit_kompetensi;
+
+    const asesorPertanyaanObservasiArray =
+      kompetensiPertanyaanLisan.asesor_pertanyaan_lisan;
+
+    const totalPertanyaan = unitKompetensiArray.reduce((totalCount, unit) => {
+      totalCount += unit.pertanyaan_lisan.length;
+      return totalCount;
+    }, 0);
+
+    const totalKompeten = asesorPertanyaanObservasiArray.reduce(
+      (totalCount, item) => {
+        if (item.is_kompeten === true) {
+          totalCount++;
+        }
+        return totalCount;
+      },
+      0
+    );
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: {
+        total_kompeten: totalKompeten,
+        total_pertanyaan_lisan: totalPertanyaan,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getKompetensiPortofolio = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const kompetensiPortofolio = await prisma.asesiSkemaSertifikasi.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        portofolio: {
+          select: {
+            keterangan: true,
+            asesor_verifikasi_portofolio: {
+              select: {
+                is_valid: true,
+                is_asli: true,
+                is_terkini: true,
+                is_memadai: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const portofolioArray = kompetensiPortofolio.portofolio;
+
+    const totalPortofolio = portofolioArray.length;
+    let totalIsValid = 0;
+    let totalIsAsli = 0;
+    let totalIsTerkini = 0;
+    let totalIsMemadai = 0;
+
+    portofolioArray.forEach((item) => {
+      item.asesor_verifikasi_portofolio.forEach((verifikasi) => {
+        if (verifikasi.is_valid === true) {
+          totalIsValid++;
+        }
+        if (verifikasi.is_asli === true) {
+          totalIsAsli++;
+        }
+        if (verifikasi.is_terkini === true) {
+          totalIsTerkini++;
+        }
+        if (verifikasi.is_memadai === true) {
+          totalIsMemadai++;
+        }
+      });
+    });
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: {
+        total_portofolio: totalPortofolio,
+        total_is_valid: totalIsValid,
+        total_is_asli: totalIsAsli,
+        total_is_terkini: totalIsTerkini,
+        total_is_memadai: totalIsMemadai,
       },
     });
   } catch (error) {

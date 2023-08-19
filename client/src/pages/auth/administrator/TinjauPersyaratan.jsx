@@ -174,7 +174,7 @@ export const TinjauPersyaratan = () => {
                                   <div>
                                     <img
                                       src={urlProfilUser}
-                                      alt="File Bukti Persyaratan"
+                                      alt="Profil Pengguna"
                                       className="aspect-square w-24 rounded-lg object-cover"
                                     />
                                   </div>
@@ -407,7 +407,7 @@ export const TinjauPersyaratan = () => {
                                                                   value.url_file_bukti_persyaratan_dasar
                                                                 }
                                                                 alt="File Bukti Persyaratan"
-                                                                className="w-[50vh]"
+                                                                className="h-[80vh] w-[80vh] rounded-lg border-2 border-secondary-200 object-contain"
                                                               />
                                                             </DialogContent>
                                                           </Dialog>
@@ -457,7 +457,7 @@ export const TinjauPersyaratan = () => {
                                                               <img
                                                                 src={value.url_file_portofolio}
                                                                 alt="File Portofolio"
-                                                                className="w-[50vh]"
+                                                                className="h-[80vh] w-[80vh] rounded-lg border-2 border-secondary-200 object-contain"
                                                               />
                                                             </DialogContent>
                                                           </Dialog>

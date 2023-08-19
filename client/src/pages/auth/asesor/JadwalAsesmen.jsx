@@ -53,7 +53,7 @@ export const JadwalAsesmen = () => {
           </h1>
           <p>Jadwal pelaksanaan Asesmen Asesi</p>
         </div>
-        <div className="grid grid-cols-1 gap-8">
+        <div className="grid grid-cols-1 gap-4">
           {jadwalAsesmen &&
             jadwalAsesmen.map((value) => {
               const {

@@ -7,14 +7,19 @@ import { upload } from "../middlewares/upload.js";
 // Controllers
 import {
   createAsesmenMandiri,
-  createJawabanPertanyaanTertulisPilihanGanda,
   createJawabanPertanyaanTertulisEsai,
+  createJawabanPertanyaanTertulisPilihanGanda,
+  getAsesi,
+  getKompetensiAsesmenMandiri,
+  getKompetensiObservasiTempatKerja,
+  getKompetensiPertanyaanLisan,
+  getKompetensiPertanyaanObservasi,
+  getKompetensiPertanyaanTertulisEsai,
+  getKompetensiPertanyaanTertulisPilihanGanda,
+  getKompetensiPortofolio,
   getSkemaSertifikasiAsesi,
   getStatusPendaftaran,
   getStatusSkemaSertifikasiAsesi,
-  getAsesi,
-  getKompetensiPertanyaanTertulisEsai,
-  getKompetensiPertanyaanTertulisPilihanGanda,
   listAktivitasUnitKompetensiUntukAsesmenMandiri,
   listPertanyaanTertulisEsai,
   listPertanyaanTertulisPilihanGanda,
@@ -49,12 +54,32 @@ router.get(
   listPertanyaanTertulisPilihanGanda
 );
 router.get(
+  "/skema-sertifikasi/:id/kompetensi-asesmen-mandiri",
+  getKompetensiAsesmenMandiri
+);
+router.get(
+  "/skema-sertifikasi/:id/kompetensi-observasi-tempat-kerja",
+  getKompetensiObservasiTempatKerja
+);
+router.get(
+  "/skema-sertifikasi/:id/kompetensi-pertanyaan-observasi",
+  getKompetensiPertanyaanObservasi
+);
+router.get(
   "/skema-sertifikasi/:id/kompetensi-pertanyaan-tertulis-pilihan-ganda",
   getKompetensiPertanyaanTertulisPilihanGanda
 );
 router.get(
   "/skema-sertifikasi/:id/kompetensi-pertanyaan-tertulis-esai",
   getKompetensiPertanyaanTertulisEsai
+);
+router.get(
+  "/skema-sertifikasi/:id/kompetensi-pertanyaan-lisan",
+  getKompetensiPertanyaanLisan
+);
+router.get(
+  "/skema-sertifikasi/:id/kompetensi-portofolio",
+  getKompetensiPortofolio
 );
 router.post("/register", upload.any(), registerAsesi);
 router.post(
