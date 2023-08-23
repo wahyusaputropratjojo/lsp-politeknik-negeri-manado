@@ -112,8 +112,6 @@ const PenggunaBaru = () => {
   const [fotoProfilPreview, setFotoProfilPreview, resetFotoProfilPreview] = useImagePreview();
   const { toast } = useToast();
 
-  console.log(location);
-
   const [provinsiAlamatRumahData, setProvinsiAlamatRumahData] = useState();
   const [kotaKabupatenAlamatRumahData, setKotaKabupatenAlamatRumahData] = useState();
   const [kecamatanAlamatRumahData, setKecamatanAlamatRumahData] = useState();
@@ -583,27 +581,29 @@ const PenggunaBaru = () => {
                               <CommandGroup>
                                 <ScrollArea className="h-48">
                                   {!!skemaSertifikasiData &&
-                                    skemaSertifikasiData.map((data) => (
-                                      <CommandItem
-                                        className="min-w-max pr-6 first:rounded-t-lg last:rounded-b-lg"
-                                        key={data.id}
-                                        value={data.id}
-                                        onSelect={(value) => {
-                                          form.setValue("id_skema_sertifikasi", value, {
-                                            shouldValidate: true,
-                                          });
-                                          form.setValue("persyaratan_dasar", null);
-                                          setIdSkemaSertifikasi(data.id);
-                                        }}>
-                                        <Check
-                                          className={cn(
-                                            "mr-2 h-4 w-4",
-                                            data.id === field.value ? "opacity-100" : "opacity-0",
-                                          )}
-                                        />
-                                        {data.nama_skema_sertifikasi}
-                                      </CommandItem>
-                                    ))}
+                                    skemaSertifikasiData
+                                      .filter((data) => data.is_tersedia === true)
+                                      .map((data) => (
+                                        <CommandItem
+                                          className="min-w-max pr-6 first:rounded-t-lg last:rounded-b-lg"
+                                          key={data.id}
+                                          value={data.id}
+                                          onSelect={(value) => {
+                                            form.setValue("id_skema_sertifikasi", value, {
+                                              shouldValidate: true,
+                                            });
+                                            form.setValue("persyaratan_dasar", null);
+                                            setIdSkemaSertifikasi(data.id);
+                                          }}>
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              data.id === field.value ? "opacity-100" : "opacity-0",
+                                            )}
+                                          />
+                                          {data.nama_skema_sertifikasi}
+                                        </CommandItem>
+                                      ))}
                                 </ScrollArea>
                               </CommandGroup>
                             </Command>

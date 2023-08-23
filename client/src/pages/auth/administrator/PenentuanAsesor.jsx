@@ -274,11 +274,11 @@ const PenentuanAsesorForm = ({ id, setIsRefetch }) => {
                     <PopoverContent className="w-full p-0">
                       <Command>
                         <CommandGroup>
-                          <ScrollArea className="h-min w-max rounded-md">
+                          <ScrollArea className="h-48">
                             {asesorTempatUjiKompetensi &&
                               asesorTempatUjiKompetensi.map((data) => (
                                 <CommandItem
-                                  className="min-w-max"
+                                  className="min-w-max pr-6 first:rounded-t-lg last:rounded-b-lg"
                                   key={data.id}
                                   value={data.id}
                                   onSelect={(value) => {

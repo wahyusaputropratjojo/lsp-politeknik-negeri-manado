@@ -34,11 +34,7 @@ export const PertanyaanTertulisEsai = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [pertanyaanTertulisEsai, setPertanyaanTertulisEsai] = useState();
 
-  const form = useForm({
-    defaultValues: {
-      jawaban: [],
-    },
-  });
+  const form = useForm({});
 
   useQuery({
     queryKey: ["pertanyaan-tertulis-esai", idAsesiSkemaSertifikasi],
@@ -98,8 +94,7 @@ export const PertanyaanTertulisEsai = () => {
   });
 
   const onSubmit = (data) => {
-    const jawaban = data?.jawaban.filter((item) => item.jawaban !== undefined);
-
+    const jawaban = data.unit_kompetensi.flatMap((unit) => unit.jawaban);
     try {
       mutateJawabanPertanyaanTertulisEsai({ jawaban });
       mutateUpdateAsesiSkemaSertifikasi({ is_pertanyaan_tertulis_esai_selesai: true });
@@ -126,7 +121,7 @@ export const PertanyaanTertulisEsai = () => {
                 <Form {...form}>
                   <div className="flex flex-col gap-12">
                     {!!pertanyaanTertulisEsai &&
-                      pertanyaanTertulisEsai.map((value) => {
+                      pertanyaanTertulisEsai.map((value, indexUnitKompetensi) => {
                         const {
                           id,
                           kode_unit_kompetensi: kodeUnitKompetensi,
@@ -152,29 +147,37 @@ export const PertanyaanTertulisEsai = () => {
                             </div>
                             <div className="flex flex-col gap-8 rounded-lg bg-white px-32 py-12 shadow-lg">
                               {!!pertanyaanTertulisEsai &&
-                                pertanyaanTertulisEsai.map((value, index) => {
+                                pertanyaanTertulisEsai.map((value, indexPertanyaan) => {
                                   const { id, pertanyaan } = value;
 
-                                  // if (!!form.watch(`jawaban.${index}.jawaban`)) {
+                                  // if (!!form.watch(`jawaban.${indexPertanyaan}.jawaban`)) {
                                   // }
                                   form.setValue(
-                                    `jawaban.${index}.id_asesi_skema_sertifikasi`,
+                                    `unit_kompetensi.${indexUnitKompetensi}.jawaban.${indexPertanyaan}.id_asesi_skema_sertifikasi`,
                                     idAsesiSkemaSertifikasi,
                                   );
-                                  form.setValue(`jawaban.${index}.id_pertanyaan_tertulis_esai`, id);
+                                  form.setValue(
+                                    `unit_kompetensi.${indexUnitKompetensi}.jawaban.${indexPertanyaan}.id_pertanyaan_tertulis_esai`,
+                                    id,
+                                  );
 
-                                  form.register(`jawaban.${index}.jawaban`, { value: "" });
+                                  form.register(
+                                    `unit_kompetensi.${indexUnitKompetensi}.jawaban.${indexPertanyaan}.jawaban`,
+                                    {
+                                      value: "",
+                                    },
+                                  );
 
                                   return (
                                     <div key={id} className="flex flex-col gap-2">
                                       <div className="flex items-center gap-2">
-                                        <p className="self-start">{index + 1}.</p>
+                                        <p className="self-start">{indexPertanyaan + 1}.</p>
                                         <p>{pertanyaan}</p>
                                       </div>
                                       <div className="px-4">
                                         <FormField
                                           control={form.control}
-                                          name={`jawaban.${index}.jawaban`}
+                                          name={`unit_kompetensi.${indexUnitKompetensi}.jawaban.${indexPertanyaan}.jawaban`}
                                           render={({ field }) => (
                                             <FormItem>
                                               <FormControl>

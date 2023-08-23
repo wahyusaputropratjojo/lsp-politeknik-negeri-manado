@@ -424,6 +424,27 @@ export const PendaftaranAsesor = () => {
                       )}
                     </dir>
                     <div className="flex flex-col gap-8">
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name="nomor_registrasi"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Nomor Registrasi</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  disabled={isLoading}
+                                  variant={
+                                    form.formState.errors?.nama_lengkap ? "error" : "primary"
+                                  }
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                       <div className="grid grid-cols-2 gap-8">
                         <FormField
                           control={form.control}

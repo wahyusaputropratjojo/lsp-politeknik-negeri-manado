@@ -13,6 +13,7 @@ export const getSkemaSertifikasi = async (req, res, next) => {
         kode_skema_sertifikasi: true,
         nama_skema_sertifikasi: true,
         url_profil_skema_sertifikasi: true,
+        is_tersedia: true,
         unit_kompetensi: {
           orderBy: {
             kode_unit_kompetensi: "asc",
@@ -52,6 +53,7 @@ export const listSkemaSertifikasi = async (req, res, next) => {
         kode_skema_sertifikasi: true,
         nama_skema_sertifikasi: true,
         url_profil_skema_sertifikasi: true,
+        is_tersedia: true,
       },
     });
 
@@ -262,7 +264,7 @@ export const createSkemaSertifikasiWithAllRelated = async (req, res, next) => {
 
 export const updateSkemaSertifikasi = async (req, res, next) => {
   const { id } = req.params;
-  const { kode, nama } = req.body;
+  const { kode, nama, is_tersedia } = req.body;
 
   try {
     await prisma.skemaSertifikasi.update({
@@ -272,6 +274,7 @@ export const updateSkemaSertifikasi = async (req, res, next) => {
       data: {
         kode,
         nama,
+        is_tersedia,
       },
     });
 

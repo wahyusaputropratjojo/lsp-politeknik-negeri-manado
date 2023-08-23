@@ -92,6 +92,11 @@ export const FRIA06 = () => {
       .filter((value) => value !== undefined);
 
     try {
+      // console.log({
+      //   id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
+      //   is_evaluasi_pertanyaan_tertulis_esai_selesai: true,
+      //   evaluasi_pertanyaan_tertulis_esai,
+      // });
       mutate({
         id_asesi_skema_sertifikasi: idAsesiSkemaSertifikasi,
         is_evaluasi_pertanyaan_tertulis_esai_selesai: true,

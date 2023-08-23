@@ -17,7 +17,7 @@ export const route = express.Router();
 route.post("/", createSkemaSertifikasi);
 route.post(
   "/unit-kompetensi/aktivitas-unit-kompetensi/all",
-  createSkemaSertifikasiWithAllRelated,
+  createSkemaSertifikasiWithAllRelated
 );
 route.get("/", listSkemaSertifikasi);
 route.get("/tujuan-asesmen", listTujuanAsesmen);

@@ -140,6 +140,7 @@ export const SkemaSertifikasiDetail = () => {
       nama_skema_sertifikasi: namaSkemaSertifikasi,
       url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
       unit_kompetensi: unitKompetensi,
+      is_tersedia: isTersedia,
     } = skemaSertifikasiData;
 
     return (
@@ -459,12 +460,12 @@ export const SkemaSertifikasiDetail = () => {
                 </Table>
               </div>
             )}
-
             <div
               className={cn("flex gap-12 rounded-lg bg-white p-6 shadow-lg", {
                 hidden: isAsesor || isAdministrator,
               })}>
               <Button
+                disabled={!isTersedia}
                 className="w-full"
                 onClick={() => {
                   navigate("/pendaftaran", { state: { id_skema_sertifikasi: idSkemaSertifikasi } });

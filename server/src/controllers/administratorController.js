@@ -532,6 +532,7 @@ export const listSkemaSertifikasi = async (req, res, next) => {
                 kode_skema_sertifikasi: true,
                 nama_skema_sertifikasi: true,
                 url_profil_skema_sertifikasi: true,
+                is_tersedia: true,
               },
             },
           },

@@ -38,11 +38,7 @@ export const PertanyaanTertulisPilihanGanda = () => {
   const isPertanyaanTertulisPilihanGandaSelesai =
     statusAsesiSkemaSertifikasiData?.is_pertanyaan_tertulis_pilihan_ganda_selesai;
 
-  const form = useForm({
-    defaultValues: {
-      jawaban: [],
-    },
-  });
+  const form = useForm({});
 
   useQuery({
     queryKey: ["asesi-skema-sertifikasi", idAsesiSkemaSertifikasi],
@@ -110,9 +106,20 @@ export const PertanyaanTertulisPilihanGanda = () => {
   });
 
   const onSubmit = (data) => {
-    const jawaban = data?.jawaban.filter(
-      (item) => item.id_jawaban_pertanyaan_tertulis_pilihan_ganda !== undefined,
+    // const jawaban = data.filter(
+    //   (item) =>
+    //     item?.unit_kompetensi?.jawaban?.id_jawaban_pertanyaan_tertulis_pilihan_ganda !== undefined,
+    // );
+
+    const jawaban = data.unit_kompetensi.flatMap((unit) =>
+      unit.jawaban.filter(
+        (item) =>
+          item.id_asesi_skema_sertifikasi !== undefined &&
+          item.id_jawaban_pertanyaan_tertulis_pilihan_ganda !== undefined,
+      ),
     );
+
+    console.log(jawaban);
 
     try {
       mutateJawabanPertanyaanTertulisPilihanGanda({
@@ -144,7 +151,7 @@ export const PertanyaanTertulisPilihanGanda = () => {
                 <Form {...form}>
                   <div className="flex flex-col gap-12">
                     {!!pertanyaanTertulisPilihanGandaData &&
-                      pertanyaanTertulisPilihanGandaData.map((value) => {
+                      pertanyaanTertulisPilihanGandaData.map((value, indexUnitKompetensi) => {
                         const {
                           id,
                           kode_unit_kompetensi: kodeUnitKompetensi,
@@ -180,12 +187,15 @@ export const PertanyaanTertulisPilihanGanda = () => {
 
                                   if (
                                     !!form.watch(
-                                      `jawaban.${indexPertanyaan}.id_jawaban_pertanyaan_tertulis_pilihan_ganda`,
+                                      `unit_kompetensi.${indexUnitKompetensi}.jawaban.${indexPertanyaan}.id_jawaban_pertanyaan_tertulis_pilihan_ganda`,
                                     )
                                   ) {
-                                    form.setValue(`jawaban.${indexPertanyaan}.is_benar`, true);
                                     form.setValue(
-                                      `jawaban.${indexPertanyaan}.id_asesi_skema_sertifikasi`,
+                                      `unit_kompetensi.${indexUnitKompetensi}.jawaban.${indexPertanyaan}.is_benar`,
+                                      true,
+                                    );
+                                    form.setValue(
+                                      `unit_kompetensi.${indexUnitKompetensi}.jawaban.${indexPertanyaan}.id_asesi_skema_sertifikasi`,
                                       idAsesiSkemaSertifikasi,
                                     );
                                   }
@@ -201,7 +211,7 @@ export const PertanyaanTertulisPilihanGanda = () => {
                                       <div className="px-4">
                                         <FormField
                                           control={form.control}
-                                          name={`jawaban.${indexPertanyaan}.id_jawaban_pertanyaan_tertulis_pilihan_ganda`}
+                                          name={`unit_kompetensi.${indexUnitKompetensi}.jawaban.${indexPertanyaan}.id_jawaban_pertanyaan_tertulis_pilihan_ganda`}
                                           render={({ field }) => (
                                             <FormItem className="space-y-3">
                                               <FormControl>

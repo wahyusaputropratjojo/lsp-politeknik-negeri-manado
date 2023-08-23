@@ -21,9 +21,11 @@ import {
 } from "../../components/ui/alert-dialog";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "../../components/ui/card";
+import { Switch } from "../../components/ui/switch";
 
 import AnnotationAlert from "../../assets/icons/untitled-ui-icons/line/components/AnnotationAlert";
 import PlusCircle from "../../assets/icons/untitled-ui-icons/line/components/PlusCircle";
+import Check from "../../assets/icons/untitled-ui-icons/line/components/Check";
 
 export const SkemaSertifikasi = () => {
   const navigate = useNavigate();
@@ -77,6 +79,7 @@ export const SkemaSertifikasi = () => {
         );
       }
     },
+    enabled: !!isAsesor || !!isAdministrator,
   });
 
   useQuery({
@@ -106,6 +109,15 @@ export const SkemaSertifikasi = () => {
     },
   });
 
+  const { mutate: mutateUpdateSkemaSertifikasi } = useMutation({
+    mutationFn: async (data) => {
+      return await axios.patch(`/skema-sertifikasi/${idSkemaSertifikasi}`, data);
+    },
+    onSuccess: (data) => {
+      console.log(data.data.data);
+    },
+  });
+
   if (!isAuth || isAsesi) {
     return (
       <section>
@@ -126,6 +138,7 @@ export const SkemaSertifikasi = () => {
                   kode_skema_sertifikasi: kodeSkemaSertifikasi,
                   nama_skema_sertifikasi: namaSkemaSertifikasi,
                   url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
+                  is_tersedia: isTersedia,
                 } = value;
 
                 return (
@@ -152,6 +165,18 @@ export const SkemaSertifikasi = () => {
                           <p className="truncate font-aileron text-base leading-snug">
                             {namaSkemaSertifikasi}
                           </p>
+                        </div>
+                        <div>
+                          <p className="font-aileron text-xs font-bold leading-none">Status</p>
+                          {!!isTersedia ? (
+                            <p className="truncate font-aileron text-base leading-snug">
+                              Pendaftaran Dibuka
+                            </p>
+                          ) : (
+                            <p className="truncate font-aileron text-base leading-snug">
+                              Pendaftaran Ditutup
+                            </p>
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -270,7 +295,7 @@ export const SkemaSertifikasi = () => {
           </div>
           <div className="flex flex-col gap-4">
             {!!isAdministrator && (
-              <div className="rounded-lg bg-white p-4">
+              <div className="rounded-lg bg-white p-4 shadow-lg">
                 <Button size="xs" onClick={() => navigate("buat-skema-sertifikasi")}>
                   <div className="flex items-center gap-2">
                     <PlusCircle />
@@ -287,8 +312,8 @@ export const SkemaSertifikasi = () => {
                     kode_skema_sertifikasi: kodeSkemaSertifikasi,
                     nama_skema_sertifikasi: namaSkemaSertifikasi,
                     url_profil_skema_sertifikasi: urlProfilSkemaSertifikasi,
+                    is_tersedia: isTersedia,
                   } = value;
-
                   return (
                     <Card key={id} className="shadow-lg">
                       <CardHeader>
@@ -300,6 +325,23 @@ export const SkemaSertifikasi = () => {
                       </CardHeader>
                       <CardContent>
                         <div className="flex flex-col gap-2">
+                          <div className="flex w-full items-center justify-between">
+                            <p className="font-aileron leading-none">Aktifkan</p>
+                            <div className="flex items-center gap-2">
+                              <Switch
+                                checked={isTersedia}
+                                onCheckedChange={(value) => {
+                                  setIdSkemaSertifikasi(id);
+                                  mutateUpdateSkemaSertifikasi({
+                                    is_tersedia: value,
+                                  });
+                                }}
+                              />
+                              {/* <Button size="xs">
+                                <Check />
+                              </Button> */}
+                            </div>
+                          </div>
                           <div>
                             <p className="font-aileron text-xs font-bold leading-none">
                               Kode Skema Sertifikasi
