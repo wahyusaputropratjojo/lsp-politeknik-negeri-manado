@@ -1449,7 +1449,7 @@ export const EvaluasiAsesiDetail = () => {
                                 <p className="text-base">Pertanyaan Tertulis Esai</p>
                               </div>
                               {!!isEvaluasiPertanyaanTertulisEsaiSelesai && (
-                                <div className="flex gap-4 text-sm">
+                                <div className="flex items-center gap-4 text-sm">
                                   <div className="flex flex-col items-center">
                                     <p className="font-bold">Kompeten</p>
                                     <div className="flex gap-2">
@@ -1510,7 +1510,7 @@ export const EvaluasiAsesiDetail = () => {
                                 <p className="text-base">Pertanyaan Lisan</p>
                               </div>
                               {!!isPertanyaanLisanSelesai && (
-                                <div className="flex gap-4 text-sm">
+                                <div className="flex items-center gap-4 text-sm">
                                   <div className="flex flex-col items-center">
                                     <p className="font-bold">Kompeten</p>
                                     <div className="flex gap-2">
@@ -1573,7 +1573,7 @@ export const EvaluasiAsesiDetail = () => {
                                 <p className="text-base">Verifikasi Portofolio</p>
                               </div>
                               {!!isVerifikasiPortofolioSelesai && (
-                                <div className="flex gap-4">
+                                <div className="flex items-center gap-4">
                                   <div className="grid grid-cols-4 gap-4 text-sm">
                                     <div>
                                       <div className="flex flex-col items-center">

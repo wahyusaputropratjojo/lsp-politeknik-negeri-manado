@@ -106,7 +106,9 @@ export const StatusPendaftaran = () => {
                           <div>
                             <p className="text-xs font-semibold leading-none">No. Telepon Asesor</p>
                             <p className="text-sm">
-                              {asesorAsesi[0]?.asesor?.data_diri?.nomor_telepon}
+                              {!!asesorAsesi[0]?.asesor?.data_diri?.nomor_telepon
+                                ? asesorAsesi[0]?.asesor?.data_diri?.nomor_telepon
+                                : "0812345678910"}
                             </p>
                           </div>
                         </>

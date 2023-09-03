@@ -247,6 +247,7 @@ export const DataAsesi = () => {
                   <th className="p-6">Nama</th>
                   <th className="p-6">Skema Sertifikasi</th>
                   <th className="p-6">Tujuan Asesmen</th>
+                  <th className="p-6">Asesor</th>
                   <th className="p-6">Jenis Kelamin</th>
                   <th className="p-6">NIK</th>
                   <th className="p-6">Kebangsaan</th>
@@ -306,10 +307,15 @@ export const DataAsesi = () => {
                             fax: faxKantor,
                           },
                         },
+                        asesor_asesi,
                         is_evaluasi_asesi_selesai: isEvaluasiAsesiSelesai,
+                        is_tidak_kompeten: isTidakKompeten,
+                        is_kompeten: isKompeten,
                         created_at,
                         tujuan_asesmen: { tujuan },
                       } = value;
+
+                      console.log(asesor_asesi[0]?.asesor?.user?.nama_lengkap);
 
                       const date = new Date(tanggal_lahir);
                       const tanggalLahir = date.toLocaleDateString("id-ID", {
@@ -324,7 +330,7 @@ export const DataAsesi = () => {
                         month: "long",
                         year: "numeric",
                       });
-                      console.log(value);
+
                       return (
                         <tr key={id} className="text-sm">
                           <td className="min-w-[6rem] border-2 border-b-0 border-l-0 border-secondary-100 px-4 py-2">
@@ -342,6 +348,9 @@ export const DataAsesi = () => {
                           </td>
                           <td className="min-w-[16rem] border-2 border-b-0 border-secondary-100 px-4 py-2">
                             {tujuan}
+                          </td>
+                          <td className="min-w-[16rem] border-2 border-b-0 border-secondary-100 px-4 py-2">
+                            {asesor_asesi[0]?.asesor?.user?.nama_lengkap}
                           </td>
                           <td className="min-w-[16rem] border-2 border-b-0 border-secondary-100 px-4 py-2">
                             {jenisKelamin}
@@ -387,7 +396,8 @@ export const DataAsesi = () => {
                             {tanggalPendaftaran}
                           </td>
                           <td className="min-w-[16rem] border-2 border-b-0 border-r-0 border-secondary-100 px-4 py-2">
-                            {!!isEvaluasiAsesiSelesai && "Kompeten"}
+                            {!!isEvaluasiAsesiSelesai && !!isKompeten && "Kompeten"}
+                            {!!isEvaluasiAsesiSelesai && !!isTidakKompeten && "Tidak Kompeten"}
                             {!isEvaluasiAsesiSelesai && "Dalam Proses Asesmen"}
                           </td>
                         </tr>

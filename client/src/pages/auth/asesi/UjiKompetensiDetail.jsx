@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useReactToPrint } from "react-to-print";
 import { useForm } from "react-hook-form";
 
 import { cn } from "../../../utils/cn";
@@ -19,11 +20,29 @@ import {
 } from "../../../components/ui/alert-dialog";
 import { Button } from "../../../components/ui/button";
 
+import {
+  FRAPL01Document,
+  FRAPL02Document,
+  FRIA01Document,
+  FRIA02Document,
+  FRIA03Document,
+  FRIA04Document,
+  FRIA05ADocument,
+  FRIA05BDocument,
+  FRIA05CDocument,
+  FRIA06ADocument,
+  FRIA06BDocument,
+  FRIA06CDocument,
+  FRIA07Document,
+  FRIA08Document,
+} from "../administrator-asesor-asesi";
+
 import AnnotationAlert from "../../../assets/icons/untitled-ui-icons/line/components/AnnotationAlert";
 import CheckCircle from "../../../assets/icons/untitled-ui-icons/line/components/CheckCircle";
 import PencilLine from "../../../assets/icons/untitled-ui-icons/line/components/PencilLine";
 import InfoCircle from "../../../assets/icons/untitled-ui-icons/line/components/InfoCircle";
 import XCircle from "../../../assets/icons/untitled-ui-icons/line/components/XCircle";
+import Printer from "../../../assets/icons/untitled-ui-icons/line/components/Printer";
 
 export const UjiKompetensiDetail = () => {
   const navigate = useNavigate();
@@ -54,6 +73,108 @@ export const UjiKompetensiDetail = () => {
   const [totalMemadaiFRIA08, setTotalMemadaiFRIA08] = useState();
   const [totalTerkiniFRIA08, setTotalTerkiniFRIA08] = useState();
   const [totalValidFRIA08, setTotalValidFRIA08] = useState();
+
+  const [namaAsesi, setNamaAsesi] = useState();
+
+  const componentRefFRAPL01Document = useRef();
+  const componentRefFRAPL02Document = useRef();
+  const componentRefFRIA01Document = useRef();
+  const componentRefFRIA02Document = useRef();
+  const componentRefFRIA03Document = useRef();
+  const componentRefFRIA04Document = useRef();
+  const componentRefFRIA05ADocument = useRef();
+  const componentRefFRIA05BDocument = useRef();
+  const componentRefFRIA05CDocument = useRef();
+  const componentRefFRIA06ADocument = useRef();
+  const componentRefFRIA06BDocument = useRef();
+  const componentRefFRIA06CDocument = useRef();
+  const componentRefFRIA07Document = useRef();
+  const componentRefFRIA08Document = useRef();
+  const componentRefFRIA09Document = useRef();
+
+  const handlePrintFRAPL01Document = useReactToPrint({
+    content: () => componentRefFRAPL01Document.current,
+    documentTitle: `FR.APL.01 - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRAPL02Document = useReactToPrint({
+    content: () => componentRefFRAPL02Document.current,
+    documentTitle: `FR.APL.02 - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA01Document = useReactToPrint({
+    content: () => componentRefFRIA01Document.current,
+    documentTitle: `FR.IA.01 - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA02Document = useReactToPrint({
+    content: () => componentRefFRIA02Document.current,
+    documentTitle: `FR.IA.02 - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA03Document = useReactToPrint({
+    content: () => componentRefFRIA03Document.current,
+    documentTitle: `FR.IA.03 - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA04Document = useReactToPrint({
+    content: () => componentRefFRIA04Document.current,
+    documentTitle: `FR.IA.04 - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA05ADocument = useReactToPrint({
+    content: () => componentRefFRIA05ADocument.current,
+    documentTitle: `FR.IA.05.A - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA05BDocument = useReactToPrint({
+    content: () => componentRefFRIA05BDocument.current,
+    documentTitle: `FR.IA.05.B - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA05CDocument = useReactToPrint({
+    content: () => componentRefFRIA05CDocument.current,
+    documentTitle: `FR.IA.05.C - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA06ADocument = useReactToPrint({
+    content: () => componentRefFRIA06ADocument.current,
+    documentTitle: `FR.IA.06.A - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA06BDocument = useReactToPrint({
+    content: () => componentRefFRIA06BDocument.current,
+    documentTitle: `FR.IA.06.B - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA06CDocument = useReactToPrint({
+    content: () => componentRefFRIA06CDocument.current,
+    documentTitle: `FR.IA.06.C - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA07Document = useReactToPrint({
+    content: () => componentRefFRIA07Document.current,
+    documentTitle: `FR.IA.07 - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
+
+  const handlePrintFRIA08Document = useReactToPrint({
+    content: () => componentRefFRIA08Document.current,
+    documentTitle: `FR.IA.08 - ${namaAsesi}`,
+    bodyClass: "bg-white",
+  });
 
   useQuery({
     queryKey: ["kompetensi-asesmen-mandiri", idAsesiSkemaSertifikasi],
@@ -250,6 +371,35 @@ export const UjiKompetensiDetail = () => {
           </div>
           <div className="bottom-16 flex w-full gap-6">
             <div className="flex w-full flex-col gap-4">
+              <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
+                <div className="flex w-full items-center gap-6">
+                  {!!isTidakKompeten && (
+                    <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-error-500 text-white">
+                      <XCircle className="text-2xl" />
+                    </div>
+                  )}
+                  {!!isAsesmenMandiriSelesai && !isTidakKompeten && (
+                    <div className="flex h-20 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-success-500 text-white">
+                      <CheckCircle className="text-2xl" />
+                    </div>
+                  )}
+                  <div className="flex w-full items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold leading-none">FR.APL.01</p>
+                      <p className="text-base">Permohonan Sertifikasi Kompetensi</p>
+                    </div>
+                    {!!isAsesmenMandiriSelesai && (
+                      <>
+                        <div className="flex items-center gap-4">
+                          <Button size="xs" className="gap-2" onClick={handlePrintFRAPL01Document}>
+                            <Printer className="text-base" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
               {!!isAsesmenMandiriSelesai && (
                 <>
                   <div className="flex w-full justify-between rounded-lg bg-white p-6 shadow-lg">
@@ -270,16 +420,24 @@ export const UjiKompetensiDetail = () => {
                           <p className="text-base">Asesmen Mandiri</p>
                         </div>
                         {!!isAsesmenMandiriSelesai && (
-                          <div className="text-sm">
-                            <div className="flex flex-col items-center">
-                              <p className="font-bold">Kompeten</p>
-                              <div className="flex gap-2">
-                                <p>{totalKompetenFRAPL02}</p>
-                                <p>/</p>
-                                <p>{totalElemenFRAPL02}</p>
+                          <>
+                            <div className="flex items-center gap-4 text-sm">
+                              <div className="flex flex-col items-center">
+                                <p className="font-bold">Kompeten</p>
+                                <div className="flex gap-2">
+                                  <p>{totalKompetenFRAPL02}</p>
+                                  <p>/</p>
+                                  <p>{totalElemenFRAPL02}</p>
+                                </div>
                               </div>
+                              <Button
+                                size="xs"
+                                className="gap-2"
+                                onClick={handlePrintFRAPL02Document}>
+                                <Printer className="text-base" />
+                              </Button>
                             </div>
-                          </div>
+                          </>
                         )}
                       </div>
                     </div>
@@ -315,7 +473,7 @@ export const UjiKompetensiDetail = () => {
                               </p>
                             </div>
                             {!!isObservasiAktivitasTempatKerjaSelesai && (
-                              <div className="text-sm">
+                              <div className="flex items-center gap-4 text-sm">
                                 <div className="flex flex-col items-center">
                                   <p className="font-bold">Kompeten</p>
                                   <div className="flex gap-2">
@@ -324,6 +482,12 @@ export const UjiKompetensiDetail = () => {
                                     <p>{totalElemenFRIA01}</p>
                                   </div>
                                 </div>
+                                <Button
+                                  size="xs"
+                                  className="gap-2"
+                                  onClick={handlePrintFRIA01Document}>
+                                  <Printer className="text-base" />
+                                </Button>
                               </div>
                             )}
                           </div>
@@ -348,9 +512,23 @@ export const UjiKompetensiDetail = () => {
                           <CheckCircle className="text-2xl" />
                         </div>
                       )}
-                      <div>
-                        <p className="text-xs font-bold leading-none">FR.IA.02</p>
-                        <p className="text-base">Tugas Praktek Demonstrasi</p>
+                      <div className="flex w-full items-center justify-between">
+                        <div>
+                          <p className="text-xs font-bold leading-none">FR.IA.02</p>
+                          <p className="text-base">Tugas Praktek Demonstrasi</p>
+                        </div>
+                        {!!isPraktikDemonstrasiSelesai && (
+                          <>
+                            <div className="flex items-center gap-4">
+                              <Button
+                                size="xs"
+                                className="gap-2"
+                                onClick={handlePrintFRIA02Document}>
+                                <Printer className="text-base" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                     {!isPraktikDemonstrasiSelesai && !isTidakKompeten && (
@@ -395,7 +573,7 @@ export const UjiKompetensiDetail = () => {
                               <p className="text-base">Pertanyaan Untuk Mendukung Observasi</p>
                             </div>
                             {!!isPertanyaanObservasiSelesai && (
-                              <div className="text-sm">
+                              <div className="flex items-center gap-4 text-sm">
                                 <div className="flex flex-col items-center">
                                   <p className="font-bold">Kompeten</p>
                                   <div className="flex gap-2">
@@ -404,6 +582,12 @@ export const UjiKompetensiDetail = () => {
                                     <p>{totalPertanyaanObservasiFRIA03}</p>
                                   </div>
                                 </div>
+                                <Button
+                                  size="xs"
+                                  className="gap-2"
+                                  onClick={handlePrintFRIA03Document}>
+                                  <Printer className="text-base" />
+                                </Button>
                               </div>
                             )}
                           </div>
@@ -430,12 +614,26 @@ export const UjiKompetensiDetail = () => {
                               <CheckCircle className="text-2xl" />
                             </div>
                           )}
-                          <div>
-                            <p className="text-xs font-bold leading-none">FR.IA.04</p>
-                            <p className="text-base">
-                              Penjelasan Singkat Proyek Terkait Pekerjaan / Kegiatan Terstruktur
-                              Lainnya
-                            </p>
+                          <div className="flex w-full items-center justify-between">
+                            <div>
+                              <p className="text-xs font-bold leading-none">FR.IA.04</p>
+                              <p className="text-base">
+                                Penjelasan Singkat Proyek Terkait Pekerjaan / Kegiatan Terstruktur
+                                Lainnya
+                              </p>
+                            </div>
+                            {!!isProyekTerkaitPekerjaanSelesai && (
+                              <>
+                                <div className="flex items-center gap-4">
+                                  <Button
+                                    size="xs"
+                                    className="gap-2"
+                                    onClick={handlePrintFRIA04Document}>
+                                    <Printer className="text-base" />
+                                  </Button>
+                                </div>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -539,7 +737,7 @@ export const UjiKompetensiDetail = () => {
                       </>
                     )} */}
                       {!!isPertanyaanTertulisPilihanGandaSelesai && (
-                        <div className="text-sm">
+                        <div className="flex items-center gap-4 text-sm">
                           <div className="flex flex-col items-center">
                             <p className="font-bold">Kompeten</p>
                             <div className="flex gap-2">
@@ -548,6 +746,9 @@ export const UjiKompetensiDetail = () => {
                               <p>{totalPertanyaanTertulisPilihanGandaFRIA05}</p>
                             </div>
                           </div>
+                          <Button size="xs" className="gap-2" onClick={handlePrintFRIA05CDocument}>
+                            <Printer className="text-base" />
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -656,7 +857,7 @@ export const UjiKompetensiDetail = () => {
                           </div>
                         )}
                       {!!isEvaluasiPertanyaanTertulisEsaiSelesai && (
-                        <div className="text-sm">
+                        <div className="flex items-center gap-4 text-sm">
                           <div className="flex flex-col items-center">
                             <p className="font-bold">Kompeten</p>
                             <div className="flex gap-2">
@@ -665,6 +866,9 @@ export const UjiKompetensiDetail = () => {
                               <p>{totalPertanyaanTertulisEsaiFRIA06}</p>
                             </div>
                           </div>
+                          <Button size="xs" className="gap-2" onClick={handlePrintFRIA06CDocument}>
+                            <Printer className="text-base" />
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -694,7 +898,7 @@ export const UjiKompetensiDetail = () => {
                               <p className="text-base">Pertanyaan Lisan</p>
                             </div>
                             {!!isPertanyaanLisanSelesai && (
-                              <div className="text-sm">
+                              <div className="flex items-center gap-4 text-sm">
                                 <div className="flex flex-col items-center">
                                   <p className="font-bold">Kompeten</p>
                                   <div className="flex gap-2">
@@ -703,6 +907,12 @@ export const UjiKompetensiDetail = () => {
                                     <p>{totalPertanyaanLisanFRIA07}</p>
                                   </div>
                                 </div>
+                                <Button
+                                  size="xs"
+                                  className="gap-2"
+                                  onClick={handlePrintFRIA07Document}>
+                                  <Printer className="text-base" />
+                                </Button>
                               </div>
                             )}
                           </div>
@@ -739,47 +949,55 @@ export const UjiKompetensiDetail = () => {
                               <p className="text-base">Verifikasi Portofolio</p>
                             </div>
                             {!!isVerifikasiPortofolioSelesai && (
-                              <div className="grid grid-cols-4 gap-4 text-sm">
-                                <div>
-                                  <div className="flex flex-col items-center">
-                                    <p className="font-bold">Asli</p>
-                                    <div className="flex gap-2">
-                                      <p>{totalAsliFRIA08}</p>
-                                      <p>/</p>
-                                      <p>{totalPortofolioFRIA08}</p>
+                              <div className="flex items-center gap-4">
+                                <div className="grid grid-cols-4 gap-4 text-sm">
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Asli</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalAsliFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Memadai</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalMemadaiFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Terkini</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalTerkiniFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-col items-center">
+                                      <p className="font-bold">Valid</p>
+                                      <div className="flex gap-2">
+                                        <p>{totalValidFRIA08}</p>
+                                        <p>/</p>
+                                        <p>{totalPortofolioFRIA08}</p>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                                <div>
-                                  <div className="flex flex-col items-center">
-                                    <p className="font-bold">Memadai</p>
-                                    <div className="flex gap-2">
-                                      <p>{totalMemadaiFRIA08}</p>
-                                      <p>/</p>
-                                      <p>{totalPortofolioFRIA08}</p>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="flex flex-col items-center">
-                                    <p className="font-bold">Terkini</p>
-                                    <div className="flex gap-2">
-                                      <p>{totalTerkiniFRIA08}</p>
-                                      <p>/</p>
-                                      <p>{totalPortofolioFRIA08}</p>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="flex flex-col items-center">
-                                    <p className="font-bold">Valid</p>
-                                    <div className="flex gap-2">
-                                      <p>{totalValidFRIA08}</p>
-                                      <p>/</p>
-                                      <p>{totalPortofolioFRIA08}</p>
-                                    </div>
-                                  </div>
-                                </div>
+                                <Button
+                                  size="xs"
+                                  className="gap-2"
+                                  onClick={handlePrintFRIA08Document}>
+                                  <Printer className="text-base" />
+                                </Button>
                               </div>
                             )}
                           </div>
@@ -790,6 +1008,24 @@ export const UjiKompetensiDetail = () => {
                 </>
               )}
             </div>
+          </div>
+        </div>
+        <div style={{ display: "none" }}>
+          <div className="bg-white p-12">
+            <FRAPL01Document id={idAsesiSkemaSertifikasi} ref={componentRefFRAPL01Document} />
+            <FRAPL02Document id={idAsesiSkemaSertifikasi} ref={componentRefFRAPL02Document} />
+            <FRIA01Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA01Document} />
+            <FRIA02Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA02Document} />
+            <FRIA03Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA03Document} />
+            <FRIA04Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA04Document} />
+            <FRIA05ADocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05ADocument} />
+            <FRIA05BDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05BDocument} />
+            <FRIA05CDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05CDocument} />
+            <FRIA06ADocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06ADocument} />
+            <FRIA06BDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06BDocument} />
+            <FRIA06CDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06CDocument} />
+            <FRIA07Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA07Document} />
+            <FRIA08Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA08Document} />
           </div>
         </div>
       </section>

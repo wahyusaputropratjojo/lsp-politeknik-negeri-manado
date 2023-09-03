@@ -255,6 +255,21 @@ export const listAsesiByTempatUjiKompetensi = async (req, res, next) => {
                   select: {
                     id: true,
                     created_at: true,
+                    asesor_asesi: {
+                      select: {
+                        id: true,
+                        tanggal_pelaksanaan: true,
+                        asesor: {
+                          select: {
+                            user: {
+                              select: {
+                                nama_lengkap: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
                     tujuan_asesmen: {
                       select: {
                         tujuan: true,
@@ -264,6 +279,8 @@ export const listAsesiByTempatUjiKompetensi = async (req, res, next) => {
                     is_punya_asesor: true,
                     is_evaluasi_asesi_selesai: true,
                     is_berkas_memenuhi_syarat: true,
+                    is_tidak_kompeten: true,
+                    is_kompeten: true,
                     asesi: {
                       select: {
                         id: true,
