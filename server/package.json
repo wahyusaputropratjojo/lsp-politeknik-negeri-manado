@@ -16,7 +16,7 @@
   "author": "Wahyu Saputro Pratjojo",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^4.16.2",
+    "@prisma/client": "^5.2.0",
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -26,11 +26,12 @@
     "express-async-handler": "^1.2.0",
     "idn-area-data": "^2.1.0",
     "jsonwebtoken": "^9.0.0",
+    "jspdf": "^2.5.1",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^1.14.9",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "prisma": "^4.16.2"
+    "prisma": "^5.2.0"
   }
 }

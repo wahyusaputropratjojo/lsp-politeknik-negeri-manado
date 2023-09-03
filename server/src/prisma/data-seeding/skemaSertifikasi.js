@@ -5,7 +5,7 @@ export const skemaSertifikasi = [
     kode_skema_sertifikasi: "SKM/0412/00019/2/2015/8",
     nama_skema_sertifikasi: "Food and Beverage Outlet Manager",
     url_profil_skema_sertifikasi:
-      "http://localhost:5000/uploads/food-and-baverage-outlet-manager.png",
+      "https://res.cloudinary.com/deeqhbhr6/image/upload/f_auto,q_auto/v1/politeknik-negeri-manado/lembaga-sertifikasi-profesi/rkzucuzzy4kwgorhclxw",
   },
   {
     id: "a364d474-185c-405d-ad56-280d0432729e",
@@ -13,7 +13,7 @@ export const skemaSertifikasi = [
     kode_skema_sertifikasi: "SKM/0412/00004/3/2015/5",
     nama_skema_sertifikasi: "Memasang dan Merakit PHB",
     url_profil_skema_sertifikasi:
-      "http://localhost:5000/uploads/memasang-dan-merakit-phb.png",
+      "https://res.cloudinary.com/deeqhbhr6/image/upload/f_auto,q_auto/v1/politeknik-negeri-manado/lembaga-sertifikasi-profesi/cqquz1r0utsku3sm7rxi",
   },
   {
     id: "baba1dd6-0715-4776-85b2-afcf0f1d0abc",
@@ -21,7 +21,7 @@ export const skemaSertifikasi = [
     kode_skema_sertifikasi: "SKM/0412/00014/2/2015/7",
     nama_skema_sertifikasi: "Office Supervisor",
     url_profil_skema_sertifikasi:
-      "http://localhost:5000/uploads/office-supervisor.png",
+      "https://res.cloudinary.com/deeqhbhr6/image/upload/f_auto,q_auto/v1/politeknik-negeri-manado/lembaga-sertifikasi-profesi/bd0g5qvsokowbmgq8jus",
   },
   {
     id: "c16a1394-a1fd-473b-8129-88a5bd3d471f",
@@ -30,7 +30,7 @@ export const skemaSertifikasi = [
     nama_skema_sertifikasi:
       "Welder SMAW Objek Pelat dan Pipa dengan Posisi Horizontal, Vertical dan Overhead",
     url_profil_skema_sertifikasi:
-      "http://localhost:5000/uploads/welder-smaw-objek-pelat-dan-pipa-dengan-posisi-horisontal-vertikal-&-overhead.png",
+      "https://res.cloudinary.com/deeqhbhr6/image/upload/f_auto,q_auto/v1/politeknik-negeri-manado/lembaga-sertifikasi-profesi/jof42es7hme9x6btidxs",
   },
   {
     id: "3f2e5536-e8cf-4db9-aa3d-c5d17b645576",
@@ -38,6 +38,6 @@ export const skemaSertifikasi = [
     kode_skema_sertifikasi: "SKM/0412/00013/2/2015/6",
     nama_skema_sertifikasi: "Teknisi Akuntansi Madya",
     url_profil_skema_sertifikasi:
-      "http://localhost:5000/uploads/teknisi-akuntansi-madya.png",
+      "https://res.cloudinary.com/deeqhbhr6/image/upload/f_auto,q_auto/v1/politeknik-negeri-manado/lembaga-sertifikasi-profesi/usyfd2znijiokv7jkzzx",
   },
 ];

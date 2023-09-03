@@ -20,7 +20,13 @@ import {
 } from "./data-seeding/administrator.js";
 import { userAsAsesor, asesor } from "./data-seeding/asesor.js";
 import { tujuanAsesmen } from "./data-seeding/tujuanAsesmen.js";
-import { unitKompetensiMemasangDanMerakitPHB } from "./data-seeding/unitKompetensi.js";
+import {
+  unitKompetensiMemasangDanMerakitPHB,
+  unitKompetensiFoodBeverage,
+  unitKompetensiOfficeSupervisor,
+  unitKompetensiTeknisiAkuntansi,
+  unitKompetensiWelder,
+} from "./data-seeding/unitKompetensi.js";
 import {
   aktivitasUnitKompetensi101,
   aktivitasUnitKompetensi102,
@@ -124,7 +130,13 @@ const main = async () => {
   });
 
   await prisma.unitKompetensi.createMany({
-    data: unitKompetensiMemasangDanMerakitPHB,
+    data: [
+      ...unitKompetensiMemasangDanMerakitPHB,
+      ...unitKompetensiFoodBeverage,
+      ...unitKompetensiOfficeSupervisor,
+      ...unitKompetensiTeknisiAkuntansi,
+      ...unitKompetensiWelder,
+    ],
     skipDuplicates: true,
   });
 

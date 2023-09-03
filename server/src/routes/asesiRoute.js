@@ -20,6 +20,16 @@ import {
   getSkemaSertifikasiAsesi,
   getStatusPendaftaran,
   getStatusSkemaSertifikasiAsesi,
+  getFRAPL01,
+  getFRAPL02,
+  getFRIA01,
+  getFRIA02,
+  getFRIA03,
+  getFRIA04,
+  getFRIA05,
+  getFRIA06,
+  getFRIA07,
+  getFRIA08,
   listAktivitasUnitKompetensiUntukAsesmenMandiri,
   listPertanyaanTertulisEsai,
   listPertanyaanTertulisPilihanGanda,
@@ -33,6 +43,16 @@ import {
 export const router = express.Router();
 
 router.get("/:id/status-pendaftaran", getStatusPendaftaran);
+router.get("/:id/fr-apl-01", getFRAPL01);
+router.get("/:id/fr-apl-02", getFRAPL02);
+router.get("/:id/fr-ia-01", getFRIA01);
+router.get("/:id/fr-ia-02", getFRIA02);
+router.get("/:id/fr-ia-03", getFRIA03);
+router.get("/:id/fr-ia-04", getFRIA04);
+router.get("/:id/fr-ia-05", getFRIA05);
+router.get("/:id/fr-ia-06", getFRIA06);
+router.get("/:id/fr-ia-07", getFRIA07);
+router.get("/:id/fr-ia-08", getFRIA08);
 router.get("/skema-sertifikasi/:id", getSkemaSertifikasiAsesi);
 router.get("/skema-sertifikasi/:id/status", getStatusSkemaSertifikasiAsesi);
 router.get("/:id/skema-sertifikasi", listSkemaSertifikasiAsesi);

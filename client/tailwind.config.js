@@ -6,8 +6,7 @@ export default {
   theme: {
     extend: {
       content: {
-        "chevron-right":
-          "url('/src/assets/icons/untitled-ui-icons/line/svg/chevron-right.svg')",
+        "chevron-right": "url('/src/assets/icons/untitled-ui-icons/line/svg/chevron-right.svg')",
       },
       colors: {
         primary: {
@@ -86,6 +85,7 @@ export default {
       fontFamily: {
         aileron: ["Aileron"],
         "anek-latin": ["Anek Latin"],
+        calibri: ["Calibri"],
       },
       keyframes: {
         "accordion-down": {

@@ -28,3 +28,22 @@ export const pertanyaanTertulisPilihanGanda = [
       "Komponen yang termasuk alat pengaman otomatis yang bekerja bila mendeteksi adanya arus bocor ke tanah adalah",
   },
 ];
+
+export const PTGUnitKompetensiKTL01 = [
+  {
+    id: "ba674a93-533b-4e82-8292-4d48b449ee93",
+    id_unit_kompetensi: "2be131b0-24b3-4689-9d59-981ac081a080",
+    pertanyaan: "Apa fungsi dari kabel tanah dalam instalasi penerangan?",
+  },
+  {
+    id: "06addec3-eb54-42be-a743-18303231bdae",
+    id_unit_kompetensi: "2be131b0-24b3-4689-9d59-981ac081a080",
+    pertanyaan: "Manakah langkah yang tepat dalam memasang PHB?",
+  },
+  {
+    id: "88352d8d-19aa-4682-9305-192fc6c25492",
+    id_unit_kompetensi: "2be131b0-24b3-4689-9d59-981ac081a080",
+    pertanyaan:
+      "Komponen utama apa yang biasanya terdapat dalam sebuah PHB untuk penerangan bangunan sederhana?",
+  },
+];

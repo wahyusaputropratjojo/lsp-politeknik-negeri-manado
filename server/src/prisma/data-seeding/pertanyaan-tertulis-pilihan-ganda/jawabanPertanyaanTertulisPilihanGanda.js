@@ -120,3 +120,80 @@ export const jawabanPertanyaanTertulisPilihanGanda = [
     is_benar: false,
   },
 ];
+
+export const JPTGUnitKompetensiKTL01 = [
+  {
+    id: "48a500c6-988f-4054-ae2d-93a20ba43cf1",
+    id_pertanyaan_tertulis: "ba674a93-533b-4e82-8292-4d48b449ee93",
+    jawaban: "Menghantarkan listrik dari sumber",
+    is_benar: true,
+  },
+  {
+    id: "fd1be576-a59b-404f-a91a-80e2ca9e4f3a",
+    id_pertanyaan_tertulis: "ba674a93-533b-4e82-8292-4d48b449ee93",
+    jawaban: "Menyediakan jalur komunikasi",
+    is_benar: false,
+  },
+  {
+    id: "4944fe16-e2db-4d2a-8ed9-135a9e4e2741",
+    id_pertanyaan_tertulis: "ba674a93-533b-4e82-8292-4d48b449ee93",
+    jawaban: "Memberikan pencahayaan alami",
+    is_benar: false,
+  },
+  {
+    id: "9ad7e830-0147-42a1-9828-48bda8e7f45f",
+    id_pertanyaan_tertulis: "ba674a93-533b-4e82-8292-4d48b449ee93",
+    jawaban: "Melindungi dari petir",
+    is_benar: false,
+  },
+
+  {
+    id: "53bfaa5c-c671-44d3-a375-e4b20ddd3b8e",
+    id_pertanyaan_tertulis: "06addec3-eb54-42be-a743-18303231bdae",
+    jawaban: "Menyambungkan kabel langsung ke sumber listrik utama",
+    is_benar: false,
+  },
+  {
+    id: "245f94a6-8023-4f48-9e75-5a516cfd34e1",
+    id_pertanyaan_tertulis: "06addec3-eb54-42be-a743-18303231bdae",
+    jawaban: "Meletakkan PHB dalam air untuk pendinginan",
+    is_benar: false,
+  },
+  {
+    id: "c5c7e6f0-1821-4751-adfb-d4b77ea524c5",
+    id_pertanyaan_tertulis: "06addec3-eb54-42be-a743-18303231bdae",
+    jawaban: "Memasang PHB di tempat yang tersembunyi",
+    is_benar: false,
+  },
+  {
+    id: "34aedaca-8d63-4b6d-beec-160d6c6ed178",
+    id_pertanyaan_tertulis: "06addec3-eb54-42be-a743-18303231bdae",
+    jawaban: "Mematuhi standar keselamatan dan panduan produsen",
+    is_benar: true,
+  },
+
+  {
+    id: "06309729-0ea5-4335-bc48-eb5df2ba579a",
+    id_pertanyaan_tertulis: "88352d8d-19aa-4682-9305-192fc6c25492",
+    jawaban: "Saklar dan Stop Kontak",
+    is_benar: true,
+  },
+  {
+    id: "287e707e-ec10-4b2d-b4c0-48b31f454281",
+    id_pertanyaan_tertulis: "88352d8d-19aa-4682-9305-192fc6c25492",
+    jawaban: "Kipas angin dan lampu gantung",
+    is_benar: false,
+  },
+  {
+    id: "3a2c9075-c658-4e04-8e91-46311caead7e",
+    id_pertanyaan_tertulis: "88352d8d-19aa-4682-9305-192fc6c25492",
+    jawaban: "TV dan perangkat audio",
+    is_benar: false,
+  },
+  {
+    id: "5922d195-528f-4ea3-9b77-542f3ee98852",
+    id_pertanyaan_tertulis: "88352d8d-19aa-4682-9305-192fc6c25492",
+    jawaban: "AC dan kulkas",
+    is_benar: false,
+  },
+];

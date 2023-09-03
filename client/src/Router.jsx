@@ -64,6 +64,7 @@ import {
   UnitKompetensiDetail,
 } from "./pages/auth/administrator";
 import { DataAsesi } from "./pages/auth/administrator-asesor";
+import { FRAPL02Document } from "./pages/auth/administrator-asesor-asesi";
 
 // import {
 //   SkemaSertifikasiDashboard,
@@ -168,6 +169,14 @@ export const Router = createBrowserRouter(
               </Route>
               <Route element={<Authorization allowedRoles={["Administrator", "Asesor"]} />}>
                 <Route path="data-asesi" element={<DataAsesi />} />
+              </Route>
+              <Route
+                element={<Authorization allowedRoles={["Administrator", "Asesor", "Asesi"]} />}>
+                <Route path="asesi">
+                  <Route path=":id">
+                    <Route path="FR-APL-02" element={<FRAPL02Document />} />
+                  </Route>
+                </Route>
               </Route>
             </Route>
           </Route>

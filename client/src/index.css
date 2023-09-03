@@ -127,6 +127,27 @@
   font-weight: 800;
   font-style: normal;
 }
+
+@font-face {
+  font-family: "Calibri";
+  src: url("../src/assets/fonts/calibri/calibri-light-300.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Calibri";
+  src: url("../src/assets/fonts/calibri/calibri-regular-400.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Calibri";
+  src: url("../src/assets/fonts/calibri/calibri-bold-700.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
 /* 
 ::-webkit-scrollbar {
   display: none;
