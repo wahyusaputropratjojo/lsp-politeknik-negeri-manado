@@ -1445,6 +1445,71 @@ export const getFRIA08 = async (req, res, next) => {
   }
 };
 
+export const getFRAK05 = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const FRAK05 = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        nama_lengkap: true,
+        asesor: {
+          select: {
+            id: true,
+            tempat_uji_kompetensi: {
+              select: {
+                id: true,
+                kode_tempat_uji_kompetensi: true,
+                tempat_uji_kompetensi: true,
+                skema_sertifikasi: {
+                  select: {
+                    id: true,
+                    kode_skema_sertifikasi: true,
+                    nama_skema_sertifikasi: true,
+                    url_profil_skema_sertifikasi: true,
+                    asesi_skema_sertifikasi: {
+                      where: {
+                        is_evaluasi_asesi_selesai: true,
+                      },
+                      select: {
+                        id: true,
+                        is_kompeten: true,
+                        is_tidak_kompeten: true,
+                        asesi: {
+                          select: {
+                            id: true,
+                            user: {
+                              select: {
+                                id: true,
+                                nama_lengkap: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      code: 200,
+      status: "OK",
+      data: FRAK05,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getStatusPendaftaran = async (req, res, next) => {
   const { id } = req.params;
 

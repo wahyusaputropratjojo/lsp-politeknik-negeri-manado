@@ -17,7 +17,7 @@ export const UnitKompetensiDetail = () => {
           <h1 className="font-anek-latin text-5xl font-semibold uppercase text-secondary-500">
             Detail Unit Kompetensi
           </h1>
-          <p className="text-base">Unit Kompetensi Bla Bla Bla</p>
+          <p className="text-base">Unit Kompetensi</p>
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between rounded-lg bg-white p-6 shadow-lg">

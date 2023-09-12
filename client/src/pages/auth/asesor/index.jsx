@@ -14,6 +14,7 @@ import { FRIA07 } from "./FRIA07";
 import { FRIA08 } from "./FRIA08";
 import { FRIA09 } from "./FRIA09";
 import { JadwalAsesmen } from "./JadwalAsesmen";
+import { LaporanAsesmen } from "./LaporanAsesmen";
 
 export {
   Asesi,
@@ -32,4 +33,5 @@ export {
   FRIA08,
   FRIA09,
   JadwalAsesmen,
+  LaporanAsesmen,
 };

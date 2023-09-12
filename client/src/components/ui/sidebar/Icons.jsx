@@ -15,8 +15,10 @@ import User01 from "../../../assets/icons/untitled-ui-icons/line/components/User
 import UserLeft01 from "../../../assets/icons/untitled-ui-icons/line/components/UserLeft01";
 import UsersEdit from "../../../assets/icons/untitled-ui-icons/line/components/UsersEdit";
 import Users01 from "../../../assets/icons/untitled-ui-icons/line/components/Users01";
+import Box from "../../../assets/icons/untitled-ui-icons/line/components/Box";
 
 export {
+  Box,
   BookClosed,
   CalendarCheck02,
   ChevronRight,

@@ -1013,19 +1013,41 @@ export const UjiKompetensiDetail = () => {
         <div style={{ display: "none" }}>
           <div className="bg-white p-12">
             <FRAPL01Document id={idAsesiSkemaSertifikasi} ref={componentRefFRAPL01Document} />
-            <FRAPL02Document id={idAsesiSkemaSertifikasi} ref={componentRefFRAPL02Document} />
-            <FRIA01Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA01Document} />
-            <FRIA02Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA02Document} />
-            <FRIA03Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA03Document} />
-            <FRIA04Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA04Document} />
-            <FRIA05ADocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05ADocument} />
-            <FRIA05BDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05BDocument} />
-            <FRIA05CDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05CDocument} />
-            <FRIA06ADocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06ADocument} />
-            <FRIA06BDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06BDocument} />
-            <FRIA06CDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06CDocument} />
-            <FRIA07Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA07Document} />
-            <FRIA08Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA08Document} />
+            {!!isAsesmenMandiriSelesai && (
+              <FRAPL02Document id={idAsesiSkemaSertifikasi} ref={componentRefFRAPL02Document} />
+            )}
+            {!!isObservasiAktivitasTempatKerjaSelesai && (
+              <FRIA01Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA01Document} />
+            )}
+            {!!isPraktikDemonstrasiSelesai && (
+              <FRIA02Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA02Document} />
+            )}
+            {!!isPertanyaanObservasiSelesai && (
+              <FRIA03Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA03Document} />
+            )}
+            {!!isProyekTerkaitPekerjaanSelesai && (
+              <FRIA04Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA04Document} />
+            )}
+            {!!isPertanyaanTertulisPilihanGandaSelesai && (
+              <>
+                <FRIA05ADocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05ADocument} />
+                <FRIA05BDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05BDocument} />
+                <FRIA05CDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA05CDocument} />
+              </>
+            )}
+            {!!isEvaluasiPertanyaanTertulisEsaiSelesai && (
+              <>
+                <FRIA06ADocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06ADocument} />
+                <FRIA06BDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06BDocument} />
+                <FRIA06CDocument id={idAsesiSkemaSertifikasi} ref={componentRefFRIA06CDocument} />
+              </>
+            )}
+            {!!isPertanyaanLisanSelesai && (
+              <FRIA07Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA07Document} />
+            )}
+            {!!isVerifikasiPortofolioSelesai && (
+              <FRIA08Document id={idAsesiSkemaSertifikasi} ref={componentRefFRIA08Document} />
+            )}
           </div>
         </div>
       </section>

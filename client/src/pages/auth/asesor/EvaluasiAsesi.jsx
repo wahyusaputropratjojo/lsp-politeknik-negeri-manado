@@ -121,7 +121,7 @@ export const EvaluasiAsesi = () => {
                           {!!isEvaluasiAsesiSelesai && !!isTidakKompeten && (
                             <div>
                               <p className="text-xs font-bold leading-none">Status</p>
-                              <p className="text-sm">Tidak Kompeten</p>
+                              <p className="text-sm">Belum Kompeten</p>
                             </div>
                           )}
                         </div>

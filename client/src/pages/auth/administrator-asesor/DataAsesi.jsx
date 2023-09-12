@@ -397,7 +397,7 @@ export const DataAsesi = () => {
                           </td>
                           <td className="min-w-[16rem] border-2 border-b-0 border-r-0 border-secondary-100 px-4 py-2">
                             {!!isEvaluasiAsesiSelesai && !!isKompeten && "Kompeten"}
-                            {!!isEvaluasiAsesiSelesai && !!isTidakKompeten && "Tidak Kompeten"}
+                            {!!isEvaluasiAsesiSelesai && !!isTidakKompeten && "Belum Kompeten"}
                             {!isEvaluasiAsesiSelesai && "Dalam Proses Asesmen"}
                           </td>
                         </tr>

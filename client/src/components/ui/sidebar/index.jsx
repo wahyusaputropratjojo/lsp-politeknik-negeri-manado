@@ -26,6 +26,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../too
 // Assets
 import { LSP, PoliteknikNegeriManado } from "../../../assets/logo/components";
 import {
+  Box,
   BookClosed,
   CalendarCheck02,
   ChevronRight,
@@ -348,6 +349,32 @@ export const Sidebar = () => {
                       isDisabled={isDisabled}>
                       <UsersEdit className="text-lg" />
                       {!isMinimized && <span>Evaluasi Asesi</span>}
+                    </Navigation>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    sideOffset={24}
+                    side="right"
+                    className={cn(
+                      "flex h-12 w-max items-center rounded-s-none bg-primary-500 shadow-lg",
+                      {
+                        hidden: !isMinimized,
+                      },
+                    )}>
+                    <div>
+                      <p className="font-aileron text-sm font-semibold">Evaluasi Asesi</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={1000} skipDelayDuration={800}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Navigation
+                      to="/laporan-asesmen"
+                      isMinimized={isMinimized}
+                      isDisabled={isDisabled}>
+                      <Box className="text-lg" />
+                      {!isMinimized && <span>Laporan Asesmen</span>}
                     </Navigation>
                   </TooltipTrigger>
                   <TooltipContent

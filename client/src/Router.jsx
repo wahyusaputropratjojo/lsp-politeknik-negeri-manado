@@ -48,6 +48,7 @@ import {
   FRIA08,
   FRIA09,
   JadwalAsesmen,
+  LaporanAsesmen,
 } from "./pages/auth/asesor";
 import {
   BuatSkemaSertifikasi,
@@ -157,6 +158,9 @@ export const Router = createBrowserRouter(
                     <Route path="FR-IA-08" element={<FRIA08 />} />
                     <Route path="FR-IA-09" element={<FRIA09 />} />
                   </Route>
+                </Route>
+                <Route path="laporan-asesmen">
+                  <Route index element={<LaporanAsesmen />} />
                 </Route>
                 <Route path="dokumen-asesi">
                   <Route index element={<DokumenAsesi />} />

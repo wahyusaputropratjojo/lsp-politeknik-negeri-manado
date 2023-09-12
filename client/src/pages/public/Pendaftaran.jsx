@@ -1844,7 +1844,7 @@ const PenggunaBaru = () => {
                 <AlertDialogTrigger asChild>
                   <Button disabled={isLoading} className="w-full gap-2">
                     {isLoading && <RefreshCw04 className="origin-center animate-spin" />}
-                    Selesai
+                    Daftar
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>

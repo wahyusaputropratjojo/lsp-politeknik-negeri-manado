@@ -218,6 +218,36 @@ export const FormulirAsesmenMandiriDetail = () => {
                                       />
                                     </div>
                                   </TableHead>
+                                  {/* <TableHead className="h-20 min-w-[4rem] text-center text-base">
+                                    <div className="flex flex-col items-center">
+                                      <p>BK</p>
+                                      <Checkbox
+                                        onCheckedChange={(value) => {
+                                          if (value === true) {
+                                            for (const [
+                                              index,
+                                              value,
+                                            ] of aktivitasUnitKompetensi.entries()) {
+                                              form.setValue(
+                                                `asesmen_mandiri.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${index}.is_kompeten`,
+                                                false,
+                                              );
+                                            }
+                                          } else if (value === false) {
+                                            for (const [
+                                              index,
+                                              value,
+                                            ] of aktivitasUnitKompetensi.entries()) {
+                                              form.setValue(
+                                                `asesmen_mandiri.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${index}.is_kompeten`,
+                                                true,
+                                              );
+                                            }
+                                          }
+                                        }}
+                                      />
+                                    </div>
+                                  </TableHead> */}
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -290,6 +320,25 @@ export const FormulirAsesmenMandiriDetail = () => {
                                               />
                                             </div>
                                           </TableCell>
+                                          {/* <TableCell>
+                                            <div className="flex flex-col items-center">
+                                              <FormField
+                                                control={form.control}
+                                                name={`asesmen_mandiri.${indexUnitKompetensi}.aktivitas_unit_kompetensi.${indexAktivitasUnitKompetensi}.is_kompeten`}
+                                                render={({ field }) => (
+                                                  <FormItem>
+                                                    <FormControl>
+                                                      <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                      />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                  </FormItem>
+                                                )}
+                                              />
+                                            </div>
+                                          </TableCell> */}
                                         </TableRow>
                                       );
                                     },

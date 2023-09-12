@@ -8,6 +8,7 @@ import { FRIA05ADocument, FRIA05BDocument, FRIA05CDocument } from "./FRIA05Docum
 import { FRIA06ADocument, FRIA06BDocument, FRIA06CDocument } from "./FRIA06Document";
 import { FRIA07Document } from "./FRIA07Document";
 import { FRIA08Document } from "./FRIA08Document";
+import { FRAK05Document } from "./FRAK05Document";
 
 export {
   FRAPL01Document,
@@ -24,4 +25,5 @@ export {
   FRIA06CDocument,
   FRIA07Document,
   FRIA08Document,
+  FRAK05Document,
 };

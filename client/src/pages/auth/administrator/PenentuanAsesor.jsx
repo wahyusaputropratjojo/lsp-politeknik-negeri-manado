@@ -7,6 +7,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { AuthContext } from "../../../context/AuthContext";
 
+import { useToast } from "../../../hooks/useToast";
+
 import { cn } from "../../../utils/cn";
 import axios from "../../../utils/axios";
 import { penentuanAsesor } from "../../../utils/yup";
@@ -169,6 +171,9 @@ export const PenentuanAsesor = () => {
 const PenentuanAsesorForm = ({ id, setIsRefetch }) => {
   const [idAsesiSkemaSertifikasi, setIdAsesiSkemaSertifikasi] = useState(id);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast();
+
+  const date = new Date();
 
   const form = useForm({
     resolver: yupResolver(penentuanAsesor),
@@ -216,6 +221,11 @@ const PenentuanAsesorForm = ({ id, setIsRefetch }) => {
     onSuccess: (data) => {
       setIdAsesiSkemaSertifikasi(null);
       refetch();
+      toast({
+        variant: "success",
+        title: "Berhasil",
+        description: "Penentuan Asesor dan Tanggal Pelaksanaan berhasil dilakukan",
+      });
     },
   });
 
@@ -337,7 +347,7 @@ const PenentuanAsesorForm = ({ id, setIsRefetch }) => {
                           selected={field.value}
                           onSelect={field.onChange}
                           initialFocus
-                          disabled={(date) => date <= new Date()}
+                          disabled={{ before: new Date() }}
                         />
                       </PopoverContent>
                     </Popover>

@@ -5,16 +5,12 @@ import { DayPicker } from "react-day-picker";
 import { cn } from "../../../utils/cn";
 import { id } from "date-fns/locale";
 
-export const Calendar = ({
-  className,
-  classNames,
-  showOutsideDays = true,
-  ...props
-}) => {
+export const Calendar = ({ className, classNames, showOutsideDays = true, ...props }) => {
   return (
     <DayPicker
       locale={id}
       showOutsideDays={showOutsideDays}
+      disabled={props.disabled}
       className={cn("p-3", className)}
       classNames={{
         vhidden: "hidden",
@@ -34,19 +30,17 @@ export const Calendar = ({
         nav_button_next: "transition-colors",
         table: "w-full border-collapse space-y-1 flex flex-col items-center",
         head_row: "flex",
-        head_cell:
-          "text-secondary-500 rounded-md w-9 font-normal text-[0.8rem]",
+        head_cell: "text-secondary-500 rounded-md w-9 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",
         cell: "text-center text-sm p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
         day: "h-9 w-9 p-0 font-aileron font-normal aria-selected:opacity-100",
         day_selected:
           "bg-secondary-400 text-white hover:bg-secondary-500 focus:bg-secondary-600 rounded-lg transition-colors",
-        day_today:
-          "bg-primary-500 hover:bg-primary-600 text-secondary-500 transition-colors rounded-lg",
+        // day_today:
+        //   "bg-primary-500 hover:bg-primary-600 text-secondary-500 transition-colors rounded-lg",
         day_outside: "text-secondary-50",
         day_disabled: "text-secondary-50",
-        day_range_middle:
-          "aria-selected:bg-secondary-500 aria-selected:text-accent-foreground",
+        day_range_middle: "aria-selected:bg-secondary-500 aria-selected:text-accent-foreground",
         day_hidden: "invisible",
         ...classNames,
       }}

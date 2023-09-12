@@ -485,11 +485,13 @@ export const FRIA05CDocument = forwardRef((props, ref) => {
                             isKompeten = comparisonResult;
                           }
                         }
+
+                        // console.log(filterJawabanAsesi);
                         return (
                           <tr key={id}>
                             <td className="border border-black text-center">{index + 1}.</td>
                             <td className="border border-black px-2 py-2">
-                              {filterJawabanAsesi[0].jawaban}
+                              {filterJawabanAsesi[0]?.jawaban}
                             </td>
                             <td className="border border-black text-center">
                               <input type="checkbox" checked={false || !!isKompeten} />

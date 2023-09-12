@@ -30,6 +30,7 @@ import {
   getFRIA06,
   getFRIA07,
   getFRIA08,
+  getFRAK05,
   listAktivitasUnitKompetensiUntukAsesmenMandiri,
   listPertanyaanTertulisEsai,
   listPertanyaanTertulisPilihanGanda,
@@ -53,6 +54,7 @@ router.get("/:id/fr-ia-05", getFRIA05);
 router.get("/:id/fr-ia-06", getFRIA06);
 router.get("/:id/fr-ia-07", getFRIA07);
 router.get("/:id/fr-ia-08", getFRIA08);
+router.get("/:id/fr-ak-05", getFRAK05);
 router.get("/skema-sertifikasi/:id", getSkemaSertifikasiAsesi);
 router.get("/skema-sertifikasi/:id/status", getStatusSkemaSertifikasiAsesi);
 router.get("/:id/skema-sertifikasi", listSkemaSertifikasiAsesi);
